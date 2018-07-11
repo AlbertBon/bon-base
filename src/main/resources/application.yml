@@ -1,17 +1,18 @@
-#ÈÕÖ¾ĞÅÏ¢
+#æ—¥å¿—ä¿¡æ¯
 app:
   name: bon-base
   logPath: C:/logs
   logLevel: INFO
 
-#web¶Ë¿Ú
+#webç«¯å£
 server:
     port: 3020
 
 spring:
-# jacksonÊ±¼ä¸ñÊ½»¯
+# jacksonæ—¶é—´æ ¼å¼åŒ–
   jackson:
     time-zone: GMT+8
+#æ•°æ®æº
   datasource:
       type: com.alibaba.druid.pool.DruidDataSource
       driver-class-name: com.mysql.jdbc.Driver
@@ -19,22 +20,22 @@ spring:
       name: wxmanage
       username: root
       password: root
-      initialSize: 5    # ³õÊ¼»¯´óĞ¡
-      minIdle: 5        # ×îĞ¡
-      maxActive: 20     # ×î´ó
-      maxWait: 60000    # »ñÈ¡Á¬½ÓµÈ´ı³¬Ê±µÄÊ±¼ä
-      timeBetweenEvictionRunsMillis: 60000    # ÅäÖÃ¼ä¸ô¶à¾Ã²Å½øĞĞÒ»´Î¼ì²â£¬¼ì²âĞèÒª¹Ø±ÕµÄ¿ÕÏĞÁ¬½Ó£¬µ¥Î»ÊÇºÁÃë
-      minEvictableIdleTimeMillis: 300000      # ÅäÖÃÒ»¸öÁ¬½ÓÔÚ³ØÖĞ×îĞ¡Éú´æµÄÊ±¼ä£¬µ¥Î»ÊÇºÁÃë
+      initialSize: 5    # åˆå§‹åŒ–å¤§å°
+      minIdle: 5        # æœ€å°
+      maxActive: 20     # æœ€å¤§
+      maxWait: 60000    # è·å–è¿æ¥ç­‰å¾…è¶…æ—¶çš„æ—¶é—´
+      timeBetweenEvictionRunsMillis: 60000    # é…ç½®é—´éš”å¤šä¹…æ‰è¿›è¡Œä¸€æ¬¡æ£€æµ‹ï¼Œæ£€æµ‹éœ€è¦å…³é—­çš„ç©ºé—²è¿æ¥ï¼Œå•ä½æ˜¯æ¯«ç§’
+      minEvictableIdleTimeMillis: 300000      # é…ç½®ä¸€ä¸ªè¿æ¥åœ¨æ± ä¸­æœ€å°ç”Ÿå­˜çš„æ—¶é—´ï¼Œå•ä½æ˜¯æ¯«ç§’
       validationQuery: SELECT 1 FROM DUAL
       testWhileIdle: true
       testOnBorrow: false
       testOnReturn: false
-      poolPreparedStatements: true                    # ´ò¿ªPSCache
-      maxPoolPreparedStatementPerConnectionSize: 20   # Ö¸¶¨Ã¿¸öÁ¬½ÓÉÏPSCacheµÄ´óĞ¡
-      filters: stat,wall,log4j                        # ÅäÖÃ¼à¿ØÍ³¼ÆÀ¹½ØµÄfilters£¬È¥µôºó¼à¿Ø½çÃæsqlÎŞ·¨Í³¼Æ£¬'wall'ÓÃÓÚ·À»ğÇ½
-      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000  # Í¨¹ıconnectPropertiesÊôĞÔÀ´´ò¿ªmergeSql¹¦ÄÜ£»ÂıSQL¼ÇÂ¼
+      poolPreparedStatements: true                    # æ‰“å¼€PSCache
+      maxPoolPreparedStatementPerConnectionSize: 20   # æŒ‡å®šæ¯ä¸ªè¿æ¥ä¸ŠPSCacheçš„å¤§å°
+      filters: stat,wall,log4j                        # é…ç½®ç›‘æ§ç»Ÿè®¡æ‹¦æˆªçš„filtersï¼Œå»æ‰åç›‘æ§ç•Œé¢sqlæ— æ³•ç»Ÿè®¡ï¼Œ'wall'ç”¨äºé˜²ç«å¢™
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000  # é€šè¿‡connectPropertieså±æ€§æ¥æ‰“å¼€mergeSqlåŠŸèƒ½ï¼›æ…¢SQLè®°å½•
 
-## MybatisÅäÖÃ
+## Mybatisé…ç½®
 mybatis:
   mapper-locations: classpath:mapper/*.xml
 pagehelper:

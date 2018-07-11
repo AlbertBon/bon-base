@@ -1,4 +1,4 @@
-package com.bon.config;
+package com.bon.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

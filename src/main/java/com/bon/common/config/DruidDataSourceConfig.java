@@ -1,4 +1,4 @@
-package com.bon.config;
+package com.bon.common.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.github.pagehelper.PageHelper;
@@ -32,7 +32,7 @@ import java.util.Properties;
  */
 @Configuration
 @EnableTransactionManagement
-@MapperScan(value = "com.bon.wx.dao")
+@MapperScan(value = "com.bon.dao")
 public class DruidDataSourceConfig implements EnvironmentAware {
 
     private Environment environment;
@@ -74,9 +74,6 @@ public class DruidDataSourceConfig implements EnvironmentAware {
         druidDataSource.setTestOnReturn(Boolean.parseBoolean(propertyResolver.getProperty("testOnReturn")));
         druidDataSource.setPoolPreparedStatements(Boolean.parseBoolean(propertyResolver.getProperty("poolPreparedStatements")));
         druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(Integer.parseInt(propertyResolver.getProperty("maxPoolPreparedStatementPerConnectionSize")));
-//        List<Filter> filters = new ArrayList<>();
-//        filters.add(wallFilter);
-//        druidDataSource.setProxyFilters(filters);
         druidDataSource.setFilters(propertyResolver.getProperty("filters"));
         return druidDataSource;
     }
@@ -96,9 +93,7 @@ public class DruidDataSourceConfig implements EnvironmentAware {
         pageHelper.setProperties(props); //添加插件
         sqlSessionFactoryBean.setPlugins(new Interceptor[]{pageHelper});
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-//        if(StringUtils.isNotBlank(mapperLocations)){
             sqlSessionFactoryBean.setMapperLocations(resolver.getResources(mapperLocations));
-//        }
         return sqlSessionFactoryBean.getObject();
     }
 
@@ -107,22 +102,4 @@ public class DruidDataSourceConfig implements EnvironmentAware {
         return new DataSourceTransactionManager(dataSource());
     }
 
-//    @Autowired
-//    WallFilter wallFilter;
-//
-//
-//    @Bean(name = "wallConfig")
-//    WallConfig wallFilterConfig(){
-//        WallConfig wc = new WallConfig ();
-//        wc.setMultiStatementAllow(true);
-//        return wc;
-//    }
-//
-//    @Bean(name = "wallFilter")
-//    @DependsOn("wallConfig")
-//    WallFilter wallFilter(WallConfig wallConfig){
-//        WallFilter wfilter = new WallFilter();
-//        wfilter.setConfig(wallConfig);
-//        return wfilter;
-//    }
 }
