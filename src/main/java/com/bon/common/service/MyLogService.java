@@ -1,4 +1,4 @@
-package com.bon.util;
+package com.bon.common.service;
 
 /**
  * @Description:
@@ -7,7 +7,7 @@ package com.bon.util;
  * @version V1.0
  * @Copyright: www.xxpay.org
  */
-public abstract interface MyLogInf {
+public abstract interface MyLogService {
 
     public abstract void debug(String paramString, Object[] paramArrayOfObject);
 

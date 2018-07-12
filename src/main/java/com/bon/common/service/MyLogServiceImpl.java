@@ -1,4 +1,6 @@
-package com.bon.util;
+package com.bon.common.service;
+
+import com.bon.common.service.MyLogService;
 
 /**
  * @Description:
@@ -7,7 +9,7 @@ package com.bon.util;
  * @version V1.0
  * @Copyright: www.xxpay.org
  */
-public class MyLogFace implements MyLogInf {
+public class MyLogServiceImpl implements MyLogService {
 
     private org.slf4j.Logger 				_log = null;
     public void setName(String clz) { 		_log = org.slf4j.LoggerFactory.getLogger(clz);	}

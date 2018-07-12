@@ -6,7 +6,7 @@ app:
 
 #web端口
 server:
-    port: 3020
+    port: 8080
 
 spring:
 # jackson时间格式化

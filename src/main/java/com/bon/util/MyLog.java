@@ -1,5 +1,7 @@
 package com.bon.util;
 
+import com.bon.common.service.MyLogServiceImpl;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -7,7 +9,7 @@ import java.util.Set;
 /**
  * Created by admin on 2016/4/27.
  */
-public class MyLog extends MyLogFace {
+public class MyLog extends MyLogServiceImpl {
 
     private static final Map<String,MyLog> _pool = new HashMap<String,MyLog>();
     //----------
