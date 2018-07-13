@@ -29,6 +29,11 @@ public class BusinessException extends RuntimeException {
         this.message = message;
     }
 
+    public BusinessException(String message) {
+        this.code = "200003";
+        this.message = message;
+    }
+
     public String getCode() {
         return code;
     }

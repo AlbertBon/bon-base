@@ -5,8 +5,8 @@ package com.bon.common.enums;
  */
 public enum ExceptionType {
     SUCCESS("00", "成功"),
-    DATA_ERROR("100003", "数据错误"),
     REQUEST_ERROR("100002", "请求信息错误"),
+    DATA_ERROR("100003", "数据错误"),
 
     //登录模块
     LOGIN_AUTHORITY_ERROR("100004", "登录权限错误"),
@@ -19,7 +19,9 @@ public enum ExceptionType {
     //系统异常
     SYSTEM_ERROR("100001", "网络异常"),
     CUSTOMER_ERROR("200001","程序运行异常"),
-    REDIS_ERROR("200002","redis连接异常"),;
+    REDIS_ERROR("200002","redis连接异常"),
+    OTHER_ERROR("200003","其他异常"),
+    NULL_ERROR("200004","数据为空错误"),;
 
     private String code;
     private String message;

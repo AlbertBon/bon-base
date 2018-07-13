@@ -1,6 +1,7 @@
 package com.bon.service;
 
 import com.bon.domain.dto.SysBaseDTO;
+import com.bon.domain.dto.SysCreateTableDTO;
 import com.bon.domain.vo.SysBaseTablesVO;
 import com.bon.domain.vo.SysBaseVO;
 
@@ -40,4 +41,10 @@ public interface SysBaseService {
      * @Date: 2018/7/12 17:23
      */
     void saveTable(SysBaseDTO dto);
+
+    /**
+     * 根据系统表创建数据库表
+     * @param dto
+     */
+    void createTable(SysCreateTableDTO dto);
 }

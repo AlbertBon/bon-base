@@ -1,5 +1,8 @@
 package com.bon.util;
 
+import com.bon.common.enums.ExceptionType;
+import com.bon.common.exception.BusinessException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,6 +59,11 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils{
         return sb.toString().toLowerCase();
     }
 
+    /**
+     * 小写转大写
+     * @param str
+     * @return
+     */
     public static String upperCase(String str) {
         if ((str == null) || (str.length() == 0)) return str;
         char[] ch = str.toCharArray();
@@ -63,5 +71,33 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils{
             ch[0] = (char) (ch[0] - 32);
         }
         return new String(ch);
+    }
+
+    /**
+     * 判断Integer是否是空并大于0
+     * @param num
+     * @return
+     */
+    public static boolean isNumNotBlank(Object obj){
+        Integer num = (Integer) obj;
+        if(null!=num&&num>0){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断byte是否为真 0假 1真
+     * @param b
+     * @return
+     */
+    public static boolean isByteTrue(Byte b){
+        if(null==b){
+            throw new BusinessException(ExceptionType.NULL_ERROR);
+        }
+        if(b==1){
+            return true;
+        }
+        return false;
     }
 }

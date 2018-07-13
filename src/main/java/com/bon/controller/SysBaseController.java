@@ -2,6 +2,7 @@ package com.bon.controller;
 
 import com.bon.common.vo.ResultBody;
 import com.bon.domain.dto.SysBaseDTO;
+import com.bon.domain.dto.SysCreateTableDTO;
 import com.bon.domain.vo.SysBaseVO;
 import com.bon.domain.vo.UserVO;
 import com.bon.service.SysBaseService;
@@ -45,6 +46,13 @@ public class SysBaseController {
     @PostMapping(value = "/saveTable")
     public ResultBody saveTable(@RequestBody SysBaseDTO dto){
         sysBaseService.saveTable(dto);
+        return new ResultBody();
+    }
+
+    @ApiOperation(value = "创建表")
+    @PostMapping(value = "/createTable")
+    public ResultBody createTable(@RequestBody SysCreateTableDTO dto){
+        sysBaseService.createTable(dto);
         return new ResultBody();
     }
 }

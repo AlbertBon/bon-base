@@ -21,17 +21,23 @@ public class SysBaseFieldDTO {
     @ApiModelProperty(value = "字段长度")
     private Integer fieldLength;
 
-    @ApiModelProperty(value = "00:是，01：否；是否可以为空")
-    private String isNull;
+    @ApiModelProperty(value = "1:是，0：否；是否可以为空")
+    private Byte isNull;
 
-    @ApiModelProperty(value = "00:是，01：否；是否唯一")
-    private String isUnique;
+    @ApiModelProperty(value = "1:是，0：否；是否唯一")
+    private Byte isUnique;
+
+    @ApiModelProperty(value = "1:是，0：否；是否为无符号")
+    private Byte isUnsigned;
 
     @ApiModelProperty(value = "默认值")
     private String defaultValue;
 
     @ApiModelProperty(value = "字段备注")
     private String fieldRemark;
+
+    @ApiModelProperty(value = "1:是，0：否；是否为id")
+    private Byte isId;
 
     public Long getSysBaseId() {
         return sysBaseId;
@@ -65,20 +71,28 @@ public class SysBaseFieldDTO {
         this.fieldLength = fieldLength;
     }
 
-    public String getIsNull() {
+    public Byte getIsNull() {
         return isNull;
     }
 
-    public void setIsNull(String isNull) {
+    public void setIsNull(Byte isNull) {
         this.isNull = isNull;
     }
 
-    public String getIsUnique() {
+    public Byte getIsUnique() {
         return isUnique;
     }
 
-    public void setIsUnique(String isUnique) {
+    public void setIsUnique(Byte isUnique) {
         this.isUnique = isUnique;
+    }
+
+    public Byte getIsUnsigned() {
+        return isUnsigned;
+    }
+
+    public void setIsUnsigned(Byte isUnsigned) {
+        this.isUnsigned = isUnsigned;
     }
 
     public String getDefaultValue() {
@@ -95,5 +109,13 @@ public class SysBaseFieldDTO {
 
     public void setFieldRemark(String fieldRemark) {
         this.fieldRemark = fieldRemark;
+    }
+
+    public Byte getIsId() {
+        return isId;
+    }
+
+    public void setIsId(Byte isId) {
+        this.isId = isId;
     }
 }
