@@ -5,6 +5,7 @@ import com.bon.domain.dto.SysCreateTableDTO;
 import com.bon.domain.vo.SysBaseTablesVO;
 import com.bon.domain.vo.SysBaseVO;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -47,4 +48,10 @@ public interface SysBaseService {
      * @param dto
      */
     void createTable(SysCreateTableDTO dto);
+
+    /**
+     * 根据系统表创建mapper和类
+     * @param dto
+     */
+    void generateClassByFile(SysCreateTableDTO dto);
 }

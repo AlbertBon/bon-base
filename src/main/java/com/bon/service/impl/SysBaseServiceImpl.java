@@ -12,12 +12,24 @@ import com.bon.domain.vo.SysBaseTablesVO;
 import com.bon.domain.vo.SysBaseVO;
 import com.bon.service.SysBaseService;
 import com.bon.util.BeanUtil;
+import com.bon.util.MyLog;
 import com.bon.util.StringUtils;
 import com.github.pagehelper.PageHelper;
 import org.apache.ibatis.javassist.runtime.DotClass;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
+import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
+import org.mybatis.generator.api.MyBatisGenerator;
+import org.mybatis.generator.config.Configuration;
+import org.mybatis.generator.config.xml.ConfigurationParser;
+import org.mybatis.generator.internal.DefaultShellCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +42,8 @@ import java.util.List;
  **/
 @Service
 public class SysBaseServiceImpl implements SysBaseService {
+
+    private static final MyLog log = MyLog.getLog(SysBaseServiceImpl.class);
 
     @Autowired
     SysBaseMapper sysBaseMapper;
@@ -100,7 +114,72 @@ public class SysBaseServiceImpl implements SysBaseService {
         generateMapper.createTable(sql);
     }
 
-    private String generateCreateSql(String tableName,String tableComment){
+    @Override
+    public void generateClassByFile(SysCreateTableDTO dto) {
+        try {
+            log.info("开始修改generate.xml文件");
+            //创建Document对象，读取已存在的Xml文件generator.xml
+            Document doc = new SAXReader().read(new File(SysBaseService.class.getResource("/generator.xml").getFile()));
+            //删除所有table标签
+            List<Element> elements = doc.getRootElement().element("context").elements();
+            for (Element element : elements) {
+                if (element.getName().equals("table")) {
+                    element.detach();
+                }
+            }
+
+            String domainName = StringUtils.upperCase(StringUtils.underline2Camel(dto.getTableName(), false));
+            log.info("实体类--{}--生成", domainName);
+            //1.得到属性值标签
+            Element tableElem = doc.getRootElement().element("context").addElement("table");
+            //2.通过增加同名属性的方法，修改属性值----key相同，覆盖；不存在key，则添加
+            tableElem.addAttribute("tableName", dto.getTableName()).addAttribute("domainObjectName", domainName)
+                    .addAttribute("enableCountByExample", "false").addAttribute("enableUpdateByExample", "false")
+                    .addAttribute("enableDeleteByExample", "false").addAttribute("enableSelectByExample", "false")
+                    .addAttribute("selectByExampleQueryId", "false").addAttribute("enableSelectByPrimaryKey", "true")//只留根据id查询接口
+                    .addAttribute("enableUpdateByPrimaryKey", "false").addAttribute("enableInsert", "false")
+                    .addAttribute("enableDeleteByPrimaryKey", "false");
+            tableElem.addElement("property").addAttribute("name", "useActualColumnNames").addAttribute("value", "false");
+
+            //指定文件输出的位置
+            FileOutputStream out = new FileOutputStream(SysBaseService.class.getResource("/generator.xml").getFile());
+            // 指定文本的写出的格式：
+            OutputFormat format = OutputFormat.createPrettyPrint();   //漂亮格式：有空格换行
+            format.setEncoding("UTF-8");
+            //1.创建写出对象
+            XMLWriter writer = new XMLWriter(out, format);
+            //2.写出Document对象
+            writer.write(doc);
+            //3.关闭流
+            writer.close();
+            log.info("修改generate.xml文件完成");
+
+
+            log.info("开始生成实体类 ...");
+            List<String> warnings = new ArrayList<String>();
+            boolean overwrite = true;
+            File configFile = new File(SysBaseService.class.getResource("/generator.xml").getFile());
+            ConfigurationParser cp = new ConfigurationParser(warnings);
+            Configuration config = cp.parseConfiguration(configFile);
+            DefaultShellCallback callback = new DefaultShellCallback(overwrite);
+            MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, callback, warnings);
+            myBatisGenerator.generate(null);
+            log.info("实体类生成完毕");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 创建数据库sql语句
+     * @param tableName
+     * @param tableComment
+     * @return
+     */
+    private String generateCreateSql(String tableName,String tableRemark){
+        if(StringUtils.isBlank(tableRemark)){
+            tableRemark = "";
+        }
         BaseDTO dto =new BaseDTO();
         dto.andFind(new SysBase(),"tableName",tableName);
         List<SysBase> sysBaseList = sysBaseMapper.selectByExample(dto.getExample());
@@ -108,8 +187,9 @@ public class SysBaseServiceImpl implements SysBaseService {
             throw new BusinessException("数据表不存在");
         }
         String sql="";
-        sql += "CREATE TABLE IF NOT EXISTS `" + tableName + "` ( `" +
-                "gmt_create` datetime DEFAULT NULL COMMENT '创建时间'," +
+        //语句头
+        sql += "CREATE TABLE IF NOT EXISTS `" + tableName + "` ( " +
+                "`gmt_create` datetime DEFAULT NULL COMMENT '创建时间'," +
                 "`gmt_modified` datetime DEFAULT NULL COMMENT '最后一次更新时间', ";
         for(int i = 0;i<sysBaseList.size();i++){
             SysBase sysBase = sysBaseList.get(i);
@@ -118,11 +198,14 @@ public class SysBaseServiceImpl implements SysBaseService {
             }
             /*判断是否是表id*/
             if (StringUtils.isByteTrue(sysBase.getIsId())) {
-                sql += "  `" + sysBase.getFieldName() + "`  bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',PRIMARY KEY (`" + sysBase.getFieldName() + "`),";
+                sql += "  `" + sysBase.getFieldName() + "`  bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',PRIMARY KEY (`" + sysBase.getFieldName() + "`) ";
+                if(sysBaseList.size() > 1){
+                    sql += ", ";
+                }
                 continue;
             }
             //字段名
-            sql += sysBase.getFieldName() + " ";
+            sql += " `" + sysBase.getFieldName() + "` ";
             //字段类型
             sql += sysBase.getFieldType();
             //字段长度
@@ -157,12 +240,9 @@ public class SysBaseServiceImpl implements SysBaseService {
             if(StringUtils.isNotBlank(sysBase.getFieldRemark())){
                 sql += " COMMENT '" + sysBase.getFieldRemark() + "' ";
             }
-            /*如果是最后一行*/
-            if (i == sysBaseList.size()-1) {
-                sql += ") ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='" + tableComment + "';";
-            }
-
         }
+        //语句尾
+        sql += ") ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='" + tableRemark + "';";
         return sql;
     }
 }
