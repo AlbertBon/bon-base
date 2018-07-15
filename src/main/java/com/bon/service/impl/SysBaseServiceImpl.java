@@ -4,17 +4,13 @@ import com.bon.common.dto.BaseDTO;
 import com.bon.common.exception.BusinessException;
 import com.bon.dao.GenerateMapper;
 import com.bon.dao.SysBaseMapper;
-import com.bon.domain.dto.SysBaseDTO;
-import com.bon.domain.dto.SysBaseFieldDTO;
-import com.bon.domain.dto.SysCreateTableDTO;
+import com.bon.domain.dto.*;
 import com.bon.domain.entity.SysBase;
-import com.bon.domain.vo.SysBaseTablesVO;
 import com.bon.domain.vo.SysBaseVO;
 import com.bon.service.SysBaseService;
 import com.bon.util.BeanUtil;
 import com.bon.util.MyLog;
 import com.bon.util.StringUtils;
-import com.github.pagehelper.PageHelper;
 import org.apache.ibatis.javassist.runtime.DotClass;
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -27,6 +23,7 @@ import org.mybatis.generator.config.xml.ConfigurationParser;
 import org.mybatis.generator.internal.DefaultShellCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,6 +37,7 @@ import java.util.List;
  * @author: Bon
  * @create: 2018-07-12 11:52
  **/
+@Transactional
 @Service
 public class SysBaseServiceImpl implements SysBaseService {
 
@@ -103,7 +101,7 @@ public class SysBaseServiceImpl implements SysBaseService {
     }
 
     @Override
-    public void createTable(SysCreateTableDTO dto) {
+    public void generateTable(SysGenerateTableDTO dto) {
         if(StringUtils.isBlank(dto.getTableName())){
             throw new BusinessException("表名不能为空");
         }
@@ -111,11 +109,11 @@ public class SysBaseServiceImpl implements SysBaseService {
             dto.setTableRemark("");
         }
         String sql = generateCreateSql(dto.getTableName(),dto.getTableRemark());
-        generateMapper.createTable(sql);
+        generateMapper.generateTable(sql);
     }
 
     @Override
-    public void generateClassByFile(SysCreateTableDTO dto) {
+    public void generateClass(List<SysGenerateClassDTO> dtoList) {
         try {
             log.info("开始修改generate.xml文件");
             //创建Document对象，读取已存在的Xml文件generator.xml
@@ -128,18 +126,21 @@ public class SysBaseServiceImpl implements SysBaseService {
                 }
             }
 
-            String domainName = StringUtils.upperCase(StringUtils.underline2Camel(dto.getTableName(), false));
-            log.info("实体类--{}--生成", domainName);
-            //1.得到属性值标签
-            Element tableElem = doc.getRootElement().element("context").addElement("table");
-            //2.通过增加同名属性的方法，修改属性值----key相同，覆盖；不存在key，则添加
-            tableElem.addAttribute("tableName", dto.getTableName()).addAttribute("domainObjectName", domainName)
-                    .addAttribute("enableCountByExample", "false").addAttribute("enableUpdateByExample", "false")
-                    .addAttribute("enableDeleteByExample", "false").addAttribute("enableSelectByExample", "false")
-                    .addAttribute("selectByExampleQueryId", "false").addAttribute("enableSelectByPrimaryKey", "true")//只留根据id查询接口
-                    .addAttribute("enableUpdateByPrimaryKey", "false").addAttribute("enableInsert", "false")
-                    .addAttribute("enableDeleteByPrimaryKey", "false");
-            tableElem.addElement("property").addAttribute("name", "useActualColumnNames").addAttribute("value", "false");
+            //循环写入修改表信息到xml文件
+            for(SysGenerateClassDTO dto:dtoList){
+                String domainName = StringUtils.upperCase(StringUtils.underline2Camel(dto.getTableName(), false));
+                log.info("实体类--{}--生成", domainName);
+                //1.得到属性值标签
+                Element tableElem = doc.getRootElement().element("context").addElement("table");
+                //2.通过增加同名属性的方法，修改属性值----key相同，覆盖；不存在key，则添加
+                tableElem.addAttribute("tableName", dto.getTableName()).addAttribute("domainObjectName", domainName)
+                        .addAttribute("enableCountByExample", "false").addAttribute("enableUpdateByExample", "false")
+                        .addAttribute("enableDeleteByExample", "false").addAttribute("enableSelectByExample", "false")
+                        .addAttribute("selectByExampleQueryId", "false").addAttribute("enableSelectByPrimaryKey", "true")//只留根据id查询接口
+                        .addAttribute("enableUpdateByPrimaryKey", "false").addAttribute("enableInsert", "false")
+                        .addAttribute("enableDeleteByPrimaryKey", "false");
+                tableElem.addElement("property").addAttribute("name", "useActualColumnNames").addAttribute("value", "false");
+            }
 
             //指定文件输出的位置
             FileOutputStream out = new FileOutputStream(SysBaseService.class.getResource("/generator.xml").getFile());
@@ -167,6 +168,29 @@ public class SysBaseServiceImpl implements SysBaseService {
             log.info("实体类生成完毕");
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteField(SysBaseDeleteDTO dto) {
+        sysBaseMapper.deleteByPrimaryKey(dto.getSysBaseId());
+    }
+
+    @Override
+    public void deleteTable(SysBaseDeleteDTO dto) {
+        dto.andFind(new SysBase(),"tableName",dto.getTableName());
+        sysBaseMapper.deleteByExample(dto.getExample());
+    }
+
+    @Override
+    public void dropTable(SysGenerateTableDTO dto) {
+        //运行销毁数据库语句
+        String sql = generateDropTable(dto.getTableName());
+        generateMapper.generateTable(sql);
+        //运行删除基础表
+        if(1 == dto.getIsDeleteBase()){
+            dto.andFind(new SysBase(),"tableName",dto.getTableName());
+            sysBaseMapper.deleteByPrimaryKey(dto.getExample());
         }
     }
 
@@ -243,6 +267,17 @@ public class SysBaseServiceImpl implements SysBaseService {
         }
         //语句尾
         sql += ") ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='" + tableRemark + "';";
+        return sql;
+    }
+
+    /**
+     * 销毁数据库sql语句
+     * @param tableName
+     * @param tableComment
+     * @return
+     */
+    private String generateDropTable(String tableName){
+        String sql = "DROP TABLE IF EXISTS `" + tableName + "`;";
         return sql;
     }
 }

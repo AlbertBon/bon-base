@@ -1,11 +1,11 @@
 package com.bon.service;
 
 import com.bon.domain.dto.SysBaseDTO;
-import com.bon.domain.dto.SysCreateTableDTO;
-import com.bon.domain.vo.SysBaseTablesVO;
+import com.bon.domain.dto.SysBaseDeleteDTO;
+import com.bon.domain.dto.SysGenerateClassDTO;
+import com.bon.domain.dto.SysGenerateTableDTO;
 import com.bon.domain.vo.SysBaseVO;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -47,11 +47,29 @@ public interface SysBaseService {
      * 根据系统表创建数据库表
      * @param dto
      */
-    void createTable(SysCreateTableDTO dto);
+    void generateTable(SysGenerateTableDTO dto);
 
     /**
      * 根据系统表创建mapper和类
      * @param dto
      */
-    void generateClassByFile(SysCreateTableDTO dto);
+    void generateClass(List<SysGenerateClassDTO> dtoList);
+
+    /**
+     * 删除表字段
+     * @param dto
+     */
+    void deleteField(SysBaseDeleteDTO dto);
+
+    /**
+     * 删除整张表
+     * @param dto
+     */
+    void deleteTable(SysBaseDeleteDTO dto);
+
+    /**
+     * 根据销毁数据库表
+     * @param dto
+     */
+    void dropTable(SysGenerateTableDTO dto);
 }

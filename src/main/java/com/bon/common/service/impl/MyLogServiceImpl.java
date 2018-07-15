@@ -1,4 +1,4 @@
-package com.bon.common.service;
+package com.bon.common.service.impl;
 
 import com.bon.common.service.MyLogService;
 

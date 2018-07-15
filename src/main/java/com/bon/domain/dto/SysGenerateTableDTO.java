@@ -9,12 +9,23 @@ import io.swagger.annotations.ApiModelProperty;
  * @author: Bon
  * @create: 2018-07-13 14:24
  **/
-public class SysCreateTableDTO extends BaseDTO{
+public class SysGenerateTableDTO extends BaseDTO{
     @ApiModelProperty(value = "表名")
     private String tableName;
 
     @ApiModelProperty(value = "表备注")
     private String tableRemark;
+
+    @ApiModelProperty(value = "是否删除基础数据表的数据；1是0否")
+    private Byte isDeleteBase;
+
+    public Byte getIsDeleteBase() {
+        return isDeleteBase;
+    }
+
+    public void setIsDeleteBase(Byte isDeleteBase) {
+        this.isDeleteBase = isDeleteBase;
+    }
 
     public String getTableName() {
         return tableName;

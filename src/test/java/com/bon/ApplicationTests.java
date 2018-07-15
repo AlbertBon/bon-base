@@ -1,7 +1,9 @@
 package com.bon;
 
 import com.bon.dao.GenerateMapper;
-import com.bon.domain.dto.SysCreateTableDTO;
+import com.bon.dao.SysBaseMapper;
+import com.bon.domain.dto.SysGenerateClassDTO;
+import com.bon.domain.entity.SysBase;
 import com.bon.service.SysBaseService;
 import com.bon.util.MyLog;
 import org.junit.After;
@@ -12,7 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -24,7 +27,7 @@ public class ApplicationTests {
     private SysBaseService sysBaseService;
 
     @Autowired
-    private GenerateMapper generateMapper;
+    private SysBaseMapper SysBaseMapper;
 
 
     @Before
@@ -42,10 +45,29 @@ public class ApplicationTests {
 	}
 
     @Test
-    public void generateClassByFile() throws Exception {
-        SysCreateTableDTO dto = new SysCreateTableDTO();
+    //生成某几个数据表类和mapper
+    public void generateClass() throws Exception {
+        List<SysGenerateClassDTO> dtoList = new ArrayList<>();
+        SysGenerateClassDTO dto = new SysGenerateClassDTO();
         dto.setTableName("user_test");
-        sysBaseService.generateClassByFile(dto);
+        dtoList.add(dto);
+        sysBaseService.generateClass(dtoList);
+    }
+
+    @Test
+    //生成所有数据表类和mapper
+    public void generateAllClass() throws Exception {
+        List<SysBase> sysBaseList = SysBaseMapper.listTables();
+        List<SysGenerateClassDTO> dtoList = new ArrayList<>();
+        for(SysBase sysBase:sysBaseList){
+            if("sys_base".equals(sysBase.getTableName())){
+                continue;
+            }
+            SysGenerateClassDTO dto = new SysGenerateClassDTO();
+            dto.setTableName(sysBase.getTableName());
+            dtoList.add(dto);
+        }
+        sysBaseService.generateClass(dtoList);
     }
 
 

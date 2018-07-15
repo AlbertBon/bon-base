@@ -2,14 +2,12 @@ package com.bon.controller;
 
 import com.bon.common.vo.ResultBody;
 import com.bon.domain.dto.SysBaseDTO;
-import com.bon.domain.dto.SysCreateTableDTO;
+import com.bon.domain.dto.SysBaseDeleteDTO;
+import com.bon.domain.dto.SysGenerateTableDTO;
 import com.bon.domain.vo.SysBaseVO;
-import com.bon.domain.vo.UserVO;
 import com.bon.service.SysBaseService;
-import com.bon.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,10 +47,33 @@ public class SysBaseController {
         return new ResultBody();
     }
 
-    @ApiOperation(value = "创建表")
-    @PostMapping(value = "/createTable")
-    public ResultBody createTable(@RequestBody SysCreateTableDTO dto){
-        sysBaseService.createTable(dto);
+    @ApiOperation(value = "根据id删除表字段数据")
+    @PostMapping(value = "/deleteField")
+    public ResultBody deleteField(@RequestBody SysBaseDeleteDTO dto){
+        sysBaseService.deleteField(dto);
         return new ResultBody();
     }
+
+    @ApiOperation(value = "根据id删除表")
+    @PostMapping(value = "/deleteTable")
+    public ResultBody deleteTable(@RequestBody SysBaseDeleteDTO dto){
+        sysBaseService.deleteTable(dto);
+        return new ResultBody();
+    }
+
+    @ApiOperation(value = "创建表")
+    @PostMapping(value = "/generateTable")
+    public ResultBody generateTable(@RequestBody SysGenerateTableDTO dto){
+        sysBaseService.generateTable(dto);
+        return new ResultBody();
+    }
+
+    @ApiOperation(value = "创建表")
+    @PostMapping(value = "/dropTable")
+    public ResultBody dropTable(@RequestBody SysGenerateTableDTO dto){
+        sysBaseService.dropTable(dto);
+        return new ResultBody();
+    }
+
+
 }

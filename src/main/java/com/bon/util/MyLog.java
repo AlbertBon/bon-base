@@ -1,6 +1,6 @@
 package com.bon.util;
 
-import com.bon.common.service.MyLogServiceImpl;
+import com.bon.common.service.impl.MyLogServiceImpl;
 
 import java.util.HashMap;
 import java.util.Map;
