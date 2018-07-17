@@ -180,6 +180,9 @@ public class SysBaseServiceImpl implements SysBaseService {
     public void deleteTable(SysBaseDeleteDTO dto) {
         dto.andFind(new SysBase(),"tableName",dto.getTableName());
         sysBaseMapper.deleteByExample(dto.getExample());
+        //运行销毁数据库语句
+        String sql = generateDropTable(dto.getTableName());
+        generateMapper.generateTable(sql);
     }
 
     @Override
@@ -188,7 +191,7 @@ public class SysBaseServiceImpl implements SysBaseService {
         String sql = generateDropTable(dto.getTableName());
         generateMapper.generateTable(sql);
         //运行删除基础表
-        if(1 == dto.getIsDeleteBase()){
+        if(null != dto.getIsDeleteBase()&&1 == dto.getIsDeleteBase()){
             dto.andFind(new SysBase(),"tableName",dto.getTableName());
             sysBaseMapper.deleteByPrimaryKey(dto.getExample());
         }
