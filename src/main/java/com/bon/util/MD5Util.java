@@ -101,6 +101,13 @@ public class MD5Util {
         return plainText;
     }
 
+    public static String encode(String plainText,int count) {
+        for (int i = 0; i < count; i++) {
+            plainText = md5(plainText);
+        }
+        return plainText;
+    }
+
     public Map<String,Object> getPosData(Map<String,Object> param) throws JsonGenerationException, JsonMappingException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(new File("param.json"), param);

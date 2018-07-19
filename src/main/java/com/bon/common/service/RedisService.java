@@ -1,5 +1,9 @@
 package com.bon.common.service;
 
+import org.apache.shiro.cache.Cache;
+import org.apache.shiro.cache.CacheException;
+import org.apache.shiro.cache.CacheManager;
+
 import java.util.List;
 import java.util.Set;
 
@@ -9,7 +13,7 @@ import java.util.Set;
  * @author: Bon
  * @create: 2018-05-16 17:04
  **/
-public interface RedisService {
+public interface RedisService extends CacheManager {
     public boolean set(String key, String value);
 
     public void create(String key, String value);
@@ -39,4 +43,7 @@ public interface RedisService {
     public void del(String key);
 
     boolean check(String pattern);
+
+    @Override
+    <K, V> Cache<K, V> getCache(String s) throws CacheException;
 }

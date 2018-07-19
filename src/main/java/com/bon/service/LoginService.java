@@ -12,8 +12,8 @@ import com.bon.domain.vo.TokenVO;
  * @create: 2018-05-16 11:14
  **/
 public interface LoginService {
-    LoginVO loginIn(LoginDTO loginDTO, String sessionId);
+    LoginVO loginIn(LoginDTO loginDTO);
     TokenVO getToken(TokenDTO dto);
     boolean check(String pattern);
-    void loginOut(String sessionId);
+    void loginOut();
 }

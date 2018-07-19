@@ -2,6 +2,7 @@ package com.bon.service.impl;
 
 import com.bon.common.config.Constants;
 
+import com.bon.common.config.shiro.ShiroToken;
 import com.bon.common.enums.ExceptionType;
 import com.bon.common.exception.BusinessException;
 import com.bon.common.service.RedisService;
@@ -18,9 +19,12 @@ import com.bon.util.BeanUtil;
 import com.bon.util.MD5Util;
 import com.bon.util.MyLog;
 import com.bon.util.StringUtils;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.sound.midi.Soundbank;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,21 +52,20 @@ public class LoginServiceImpl implements LoginService {
     private UserService userService;
 
     @Override
-    public LoginVO loginIn(LoginDTO loginDTO, String sessionId) {
-        String vCode=redisService.get(MessageFormat.format(Constants.RedisKey.LOGIN_CAPTCHA_SESSION_ID,sessionId));
-        if(!vCode.equalsIgnoreCase(loginDTO.getCode())){
+    public LoginVO loginIn(LoginDTO loginDTO) {
+        Subject subject = SecurityUtils.getSubject();
+        int time = (int) subject.getSession().getTimeout();
+        //校验验证码
+        Object vCode=subject.getSession().getAttribute("vCode");
+        if(vCode==null||!vCode.toString().equalsIgnoreCase(loginDTO.getCode())){
             throw new BusinessException(ExceptionType.VALIDATE_CODE_ERROR);
         }
-
-        loginDTO.andFind(new User(),"username",loginDTO.getUsername());
-        loginDTO.andFind(new User(),"password", MD5Util.encode(loginDTO.getPassword()));
-        User user = userMapper.selectOneByExample(loginDTO.getExample());
-        if(user == null ){
-            throw new BusinessException(ExceptionType.USERNAME_OR_PASSWORD_ERROR);
-        }
-
-        String key= MessageFormat.format(Constants.RedisKey.LOGIN_USERNAME_SESSION_ID,user.getUsername(),sessionId);
-        redisService.create(key,user.getUsername()+"_"+ System.currentTimeMillis()+"_"+sessionId);
+        ShiroToken token = new ShiroToken(loginDTO.getUsername(), MD5Util.encode(loginDTO.getPassword()),loginDTO.getCode());
+        subject.login(token);
+        subject.hasRole("123");
+        User user = (User) subject.getPrincipals().getPrimaryPrincipal();
+        System.out.println(subject.getSession().getTimeout());
+        String key= MessageFormat.format(Constants.RedisKey.LOGIN_USERNAME_SESSION_ID,user.getUsername(),subject.getSession().getId());
 
         LoginVO loginVO = new LoginVO();
         BeanUtil.copyPropertys(user,loginVO);
@@ -104,21 +107,13 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public void loginOut(String sessionId) {
-        String username;
-        String tokenPattern = redisService.findKey(MessageFormat.format(Constants.RedisKey.TOKEN_USERNAME_TOKEN,'*',sessionId));
-        String sessionPattern = redisService.findKey(MessageFormat.format(Constants.RedisKey.LOGIN_USERNAME_SESSION_ID,'*',sessionId));
-        if(tokenPattern!=null){
-            List list = Arrays.asList(tokenPattern.split("_"));
-            username = tokenPattern.split("_")[list.size()-2];
-            LOG.info("用户{}-token登出",username);
+    public void loginOut() {
+        Subject subject = SecurityUtils.getSubject();
+        if(null==subject.getPrincipal()){
+            throw new BusinessException(ExceptionType.EXPIRED_ERROR);
         }
-        if(sessionPattern!=null){
-            List list = Arrays.asList(sessionPattern.split("_"));
-            username = sessionPattern.split("_")[list.size()-2];
-            LOG.info("用户{}-session登出",username);
-        }
-        redisService.removeByPattern(MessageFormat.format(Constants.RedisKey.TOKEN_USERNAME_TOKEN,'*',sessionId));
-        redisService.removeByPattern(MessageFormat.format(Constants.RedisKey.LOGIN_USERNAME_SESSION_ID,'*',sessionId));
+        User user = (User) subject.getPrincipal();
+        subject.logout();
+        LOG.info("用户{}-session登录",user.getUsername());
     }
 }

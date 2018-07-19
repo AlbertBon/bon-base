@@ -1,6 +1,7 @@
 package com.bon.controller;
 
 import com.bon.common.config.Constants;
+import com.bon.common.config.shiro.ShiroToken;
 import com.bon.common.service.RedisService;
 import com.bon.common.vo.ResultBody;
 import com.bon.domain.dto.LoginDTO;
@@ -9,8 +10,14 @@ import com.bon.domain.vo.LoginVO;
 import com.bon.domain.vo.TokenVO;
 import com.bon.service.LoginService;
 import com.bon.util.ImageCodeUtil;
+import com.bon.util.MD5Util;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
+import org.crazycake.shiro.RedisCacheManager;
+import org.crazycake.shiro.RedisManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +47,7 @@ public class LoginController {
     @ApiOperation(value = "登录")
     @PostMapping(value = "/loginIn",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResultBody loginIn(@RequestBody LoginDTO loginDTO, HttpServletRequest request) {
-        LoginVO loginVO=loginService.loginIn(loginDTO,request.getSession().getId());
+        LoginVO loginVO=loginService.loginIn(loginDTO);
         return new ResultBody(loginVO);
     }
 
@@ -56,8 +63,7 @@ public class LoginController {
 
         ImageCodeUtil vCode = new ImageCodeUtil(120,40,4,100);
 
-        String key= MessageFormat.format(Constants.RedisKey.LOGIN_CAPTCHA_SESSION_ID,request.getSession().getId());
-        redisService.create(key,vCode.getCode());
+        SecurityUtils.getSubject().getSession().setAttribute("vCode",vCode.getCode());
         vCode.write(response.getOutputStream());
     }
 
@@ -71,12 +77,20 @@ public class LoginController {
     @ApiOperation(value = "登出")
     @PostMapping(value = "/loginOut",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResultBody loginOut(HttpServletRequest request) throws IOException {
-        if(request.getParameter("token")!=null){
-            loginService.loginOut(request.getParameter("token"));
-        }else {
-            loginService.loginOut(request.getRequestedSessionId());
-        }
+//        if(request.getParameter("token")!=null){
+//            loginService.loginOut(request.getParameter("token"));
+//        }else {
+//            loginService.loginOut(request.getRequestedSessionId());
+//        }
+        loginService.loginOut();
         return new ResultBody();
+    }
+
+    @ApiOperation(value = "登出")
+    @PostMapping(value = "/unauth",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResultBody unauth(HttpServletRequest request) throws IOException {
+
+        return new ResultBody("没有权限");
     }
 
 }

@@ -1,6 +1,7 @@
 package com.bon.service;
 
 
+import com.bon.domain.entity.User;
 import com.bon.domain.vo.UserVO;
 
 import java.util.List;
@@ -13,6 +14,8 @@ import java.util.List;
  **/
 public interface UserService {
     UserVO getUser(Long id);
+
+    User findByUsername(String username);
 
 
 }

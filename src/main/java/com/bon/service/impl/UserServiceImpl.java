@@ -1,6 +1,7 @@
 package com.bon.service.impl;
 
 
+import com.bon.common.dto.BaseDTO;
 import com.bon.common.enums.ExceptionType;
 import com.bon.common.exception.BusinessException;
 import com.bon.dao.UserMapper;
@@ -49,6 +50,14 @@ public class UserServiceImpl implements UserService {
 //        //放入用户角色id列表信息
 //        vo.setRoleIds(getUserRoleIds(user.getUserId()));
         return vo;
+    }
+
+    @Override
+    public User findByUsername(String username) {
+        BaseDTO dto = new BaseDTO();
+        dto.andFind(new User(),"username",username);
+
+        return userMapper.selectOneByExample(dto.getExample());
     }
 
 

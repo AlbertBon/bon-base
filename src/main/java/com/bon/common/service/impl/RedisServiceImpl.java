@@ -3,6 +3,8 @@ package com.bon.common.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.bon.common.config.Constants;
 import com.bon.common.service.RedisService;
+import org.apache.shiro.cache.Cache;
+import org.apache.shiro.cache.CacheException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -166,5 +168,10 @@ public class RedisServiceImpl implements RedisService {
         }
         this.expire(key,Constants.TOKEN_EXPIRES_SECONDS);
         return true;
+    }
+
+    @Override
+    public <K, V> Cache<K, V> getCache(String s) throws CacheException {
+        return null;
     }
 }
