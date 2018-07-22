@@ -24,10 +24,10 @@ import java.util.Arrays;
 import java.util.Properties;
 
 /**
- * @Description:
  * @author dingzhiwei jmdhappy@126.com
- * @date 2017-07-05
  * @version V1.0
+ * @Description:
+ * @date 2017-07-05
  * @Copyright: www.xxpay.org
  */
 @Configuration
@@ -46,6 +46,9 @@ public class DruidDataSourceConfig implements EnvironmentAware {
 
     @Value("${mybatis.mapper-locations:}")
     private String mapperLocations;
+
+    @Value("${mybatis.configuration.map-underscore-to-camel-case:}")
+    private Boolean mapUnderscoreToCamelCase;
 
     //注册dataSource
     @Bean(initMethod = "init", destroyMethod = "close")
@@ -93,7 +96,8 @@ public class DruidDataSourceConfig implements EnvironmentAware {
         pageHelper.setProperties(props); //添加插件
         sqlSessionFactoryBean.setPlugins(new Interceptor[]{pageHelper});
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-            sqlSessionFactoryBean.setMapperLocations(resolver.getResources(mapperLocations));
+        sqlSessionFactoryBean.setMapperLocations(resolver.getResources(mapperLocations));
+        sqlSessionFactoryBean.getObject().getConfiguration().setMapUnderscoreToCamelCase(mapUnderscoreToCamelCase);;
         return sqlSessionFactoryBean.getObject();
     }
 

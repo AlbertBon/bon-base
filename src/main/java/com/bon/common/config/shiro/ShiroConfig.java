@@ -43,7 +43,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/logout", "logout");
         // 配置不会被拦截的链接 顺序判断
         filterChainDefinitionMap.put("/swagger-ui.html", "anon");
-        filterChainDefinitionMap.put("/webjar/**", "anon");
+        filterChainDefinitionMap.put("/webjars/**", "anon");
         filterChainDefinitionMap.put("/swagger-resources", "anon");
         filterChainDefinitionMap.put("/v2/*", "anon");
         filterChainDefinitionMap.put("/configuration/*", "anon");
@@ -53,11 +53,11 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/login/*", "anon");
         filterChainDefinitionMap.put("/**", "authc");
         //配置shiro默认登录界面地址，前后端分离中登录界面跳转应由前端路由控制，后台仅返回json数据
-        shiroFilterFactoryBean.setLoginUrl("/unauth");
+        shiroFilterFactoryBean.setLoginUrl("/login/unauth");
         // 登录成功后要跳转的链接
 //        shiroFilterFactoryBean.setSuccessUrl("/index");
         //未授权界面;
-//        shiroFilterFactoryBean.setUnauthorizedUrl("/403");
+//        shiroFilterFactoryBean.setUnauthorizedUrl("/login/unauth");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }

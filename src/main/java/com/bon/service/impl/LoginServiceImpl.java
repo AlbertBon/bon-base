@@ -54,9 +54,11 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public LoginVO loginIn(LoginDTO loginDTO) {
         Subject subject = SecurityUtils.getSubject();
+        String sessionId = subject.getSession().getId().toString();
         int time = (int) subject.getSession().getTimeout();
         //校验验证码
-        Object vCode=subject.getSession().getAttribute("vCode");
+        String key= MessageFormat.format(Constants.RedisKey.LOGIN_CAPTCHA_SESSION_ID,sessionId);
+        Object vCode=subject.getSession().getAttribute(key);
         if(vCode==null||!vCode.toString().equalsIgnoreCase(loginDTO.getCode())){
             throw new BusinessException(ExceptionType.VALIDATE_CODE_ERROR);
         }
@@ -64,17 +66,16 @@ public class LoginServiceImpl implements LoginService {
         subject.login(token);
         subject.hasRole("123");
         User user = (User) subject.getPrincipals().getPrimaryPrincipal();
-        System.out.println(subject.getSession().getTimeout());
-        String key= MessageFormat.format(Constants.RedisKey.LOGIN_USERNAME_SESSION_ID,user.getUsername(),subject.getSession().getId());
+        String loginToken= MessageFormat.format(Constants.RedisKey.LOGIN_USERNAME_SESSION_ID,user.getUsername(),sessionId);
 
         LoginVO loginVO = new LoginVO();
         BeanUtil.copyPropertys(user,loginVO);
         LOG.info("用户{}-session登录",loginVO.getUsername());
         // TODO: 2018/5/21 给登录用户添加登录信息
-        loginVO.setToken(key);
+        loginVO.setToken(loginToken);
         //获取菜单路由
-//        List<MenuRouterVO> routers=userService.getMenuRouterByUser(user.getUserId());
-//        loginVO.setRouters(routers);
+        List<MenuRouterVO> routers=userService.getMenuRouter(user.getUsername());
+        loginVO.setRouters(routers);
         return loginVO;
     }
 

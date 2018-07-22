@@ -2,7 +2,9 @@ package com.bon;
 
 import com.bon.dao.GenerateMapper;
 import com.bon.dao.SysBaseMapper;
+import com.bon.dao.UserExtendMapper;
 import com.bon.domain.dto.SysGenerateClassDTO;
+import com.bon.domain.entity.Role;
 import com.bon.domain.entity.SysBase;
 import com.bon.service.SysBaseService;
 import com.bon.util.MyLog;
@@ -16,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -29,6 +32,9 @@ public class ApplicationTests {
     @Autowired
     private SysBaseMapper SysBaseMapper;
 
+    @Autowired
+    private UserExtendMapper userExtendMapper;
+
 
     @Before
     public void before() throws Exception {
@@ -41,7 +47,12 @@ public class ApplicationTests {
     }
 
 	@Test
-	public void contextLoads() {
+	public void test() {
+        List<Role> roles = userExtendMapper.getRoleByUsername("bon");
+        for(Role role:roles){
+            System.out.println(role);
+        }
+
 	}
 
     @Test
@@ -49,7 +60,7 @@ public class ApplicationTests {
     public void generateClass() throws Exception {
         List<SysGenerateClassDTO> dtoList = new ArrayList<>();
         SysGenerateClassDTO dto = new SysGenerateClassDTO();
-        dto.setTableName("user_test");
+        dto.setTableName("permission");
         dtoList.add(dto);
         sysBaseService.generateClass(dtoList);
     }

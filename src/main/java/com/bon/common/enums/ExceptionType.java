@@ -9,7 +9,7 @@ public enum ExceptionType {
     DATA_ERROR("100003", "数据错误"),
 
     //登录模块
-    LOGIN_AUTHORITY_ERROR("100004", "登录权限错误"),
+    LOGIN_AUTHORITY_ERROR("100004", "权限错误"),
     USERNAME_OR_PASSWORD_ERROR("100005","用户名或密码错误"),
     VALIDATE_CODE_ERROR("100006","验证码错误"),
     EXPIRED_ERROR("100007","登录信息过期,请重新登录"),

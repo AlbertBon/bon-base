@@ -2,6 +2,7 @@ package com.bon.controller;
 
 import com.bon.common.config.Constants;
 import com.bon.common.config.shiro.ShiroToken;
+import com.bon.common.enums.ExceptionType;
 import com.bon.common.service.RedisService;
 import com.bon.common.vo.ResultBody;
 import com.bon.domain.dto.LoginDTO;
@@ -63,7 +64,9 @@ public class LoginController {
 
         ImageCodeUtil vCode = new ImageCodeUtil(120,40,4,100);
 
-        SecurityUtils.getSubject().getSession().setAttribute("vCode",vCode.getCode());
+        String sessionId = SecurityUtils.getSubject().getSession().getId().toString();
+        String key= MessageFormat.format(Constants.RedisKey.LOGIN_CAPTCHA_SESSION_ID,sessionId);
+        SecurityUtils.getSubject().getSession().setAttribute(key,vCode.getCode());
         vCode.write(response.getOutputStream());
     }
 
@@ -87,10 +90,9 @@ public class LoginController {
     }
 
     @ApiOperation(value = "登出")
-    @PostMapping(value = "/unauth",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "/unauth",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResultBody unauth(HttpServletRequest request) throws IOException {
-
-        return new ResultBody("没有权限");
+        return new ResultBody(ExceptionType.LOGIN_AUTHORITY_ERROR);
     }
 
 }

@@ -38,6 +38,8 @@ spring:
 ## Mybatis配置
 mybatis:
   mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true #mybatis查询下划线自动转化为驼峰
 pagehelper:
   reasonable: true
   page-size-zero: true
