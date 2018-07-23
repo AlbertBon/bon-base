@@ -12,6 +12,8 @@ import com.bon.util.BeanUtil;
 import com.bon.util.MyLog;
 import com.bon.util.StringUtils;
 import org.apache.ibatis.javassist.runtime.DotClass;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;

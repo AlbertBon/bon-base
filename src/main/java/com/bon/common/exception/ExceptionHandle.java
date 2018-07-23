@@ -28,16 +28,19 @@ import java.util.Map;
 @RestControllerAdvice
 public class ExceptionHandle {
 
-    private static final MyLog LOG = MyLog.getLog(ExceptionHandle.class);
+    private static final MyLog log = MyLog.getLog(ExceptionHandle.class);
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ResultBody handle(RuntimeException e) {
         /*业务异常*/
-        LOG.error(e, e.getMessage());
+        log.error(e, e.getMessage());
         if (e instanceof BusinessException) {
             BusinessException businessException = (BusinessException) e;
             return new ResultBody(businessException.getCode(), businessException.getMessage());
+        }
+        if (e instanceof UnauthorizedException) {
+            return new ResultBody(ExceptionType.LOGIN_AUTHORITY_ERROR);
         }
         if(e instanceof IncorrectCredentialsException){
             return new ResultBody(ExceptionType.USERNAME_OR_PASSWORD_ERROR);

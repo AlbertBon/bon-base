@@ -1,7 +1,6 @@
 package com.bon.common.config.shiro;
 
 import com.bon.common.service.RedisService;
-import org.apache.shiro.authc.credential.SimpleCredentialsMatcher;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
@@ -15,8 +14,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.servlet.Filter;
 
 /**
  * @program: bon基础项目
@@ -48,8 +49,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/v2/*", "anon");
         filterChainDefinitionMap.put("/configuration/*", "anon");
 
-        filterChainDefinitionMap.put("/static/**", "anon");
-        filterChainDefinitionMap.put("/ajaxLogin", "anon");
+//        filterChainDefinitionMap.put("/sys/*", "anon");
         filterChainDefinitionMap.put("/login/*", "anon");
         filterChainDefinitionMap.put("/**", "authc");
         //配置shiro默认登录界面地址，前后端分离中登录界面跳转应由前端路由控制，后台仅返回json数据
@@ -57,10 +57,15 @@ public class ShiroConfig {
         // 登录成功后要跳转的链接
 //        shiroFilterFactoryBean.setSuccessUrl("/index");
         //未授权界面;
-//        shiroFilterFactoryBean.setUnauthorizedUrl("/login/unauth");
+        shiroFilterFactoryBean.setUnauthorizedUrl("/login/unauth");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+        Map<String, Filter> filters = new HashMap<>();
+        filters.put("authc",new ShiroFilterFormAuthentication());
+        shiroFilterFactoryBean.setFilters(filters);
         return shiroFilterFactoryBean;
     }
+
+
 
     /**
      * 凭证匹配器
