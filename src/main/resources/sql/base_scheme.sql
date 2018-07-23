@@ -2,19 +2,20 @@
 -- 主机:                           127.0.0.1
 -- 服务器版本:                        5.5.28 - MySQL Community Server (GPL)
 -- 服务器操作系统:                      Win32
--- HeidiSQL 版本:                  9.3.0.4984
+-- HeidiSQL 版本:                  9.5.0.5196
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+
 
 -- 导出 wxmanage 的数据库结构
 DROP DATABASE IF EXISTS `wxmanage`;
 CREATE DATABASE IF NOT EXISTS `wxmanage` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `wxmanage`;
-
 
 -- 导出  表 wxmanage.menu 结构
 DROP TABLE IF EXISTS `menu`;
@@ -33,26 +34,24 @@ CREATE TABLE IF NOT EXISTS `menu` (
   `data_path` varchar(512) DEFAULT NULL COMMENT '数据库id地址',
   `parent` bigint(20) DEFAULT NULL COMMENT '父菜单id',
   PRIMARY KEY (`menu_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='菜单表';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='菜单表';
 
 -- 数据导出被取消选择。
-
-
 -- 导出  表 wxmanage.permission 结构
 DROP TABLE IF EXISTS `permission`;
 CREATE TABLE IF NOT EXISTS `permission` (
   `permission_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `gmt_create` datetime DEFAULT NULL COMMENT '创建时间',
   `gmt_modified` datetime DEFAULT NULL COMMENT '最后一次更新时间',
+  `permission_flag` varchar(50) DEFAULT NULL COMMENT '权限标识',
   `permission_name` varchar(32) DEFAULT NULL COMMENT '权限名称',
   `type` char(2) DEFAULT NULL COMMENT '00:菜单权限',
   `object_id` bigint(20) DEFAULT NULL COMMENT '对应表id（菜单权限即为菜单id）',
-  PRIMARY KEY (`permission_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='权限表';
+  PRIMARY KEY (`permission_id`),
+  UNIQUE KEY `permission_flag` (`permission_flag`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='权限表';
 
 -- 数据导出被取消选择。
-
-
 -- 导出  表 wxmanage.role 结构
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE IF NOT EXISTS `role` (
@@ -61,12 +60,11 @@ CREATE TABLE IF NOT EXISTS `role` (
   `gmt_modified` datetime DEFAULT NULL COMMENT '最后一次更新时间',
   `role_name` varchar(32) DEFAULT NULL COMMENT '角色名称',
   `role_flag` varchar(32) DEFAULT NULL COMMENT '角色标识',
-  PRIMARY KEY (`role_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色表';
+  PRIMARY KEY (`role_id`),
+  UNIQUE KEY `role_flag` (`role_flag`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='角色表';
 
 -- 数据导出被取消选择。
-
-
 -- 导出  表 wxmanage.role_permission 结构
 DROP TABLE IF EXISTS `role_permission`;
 CREATE TABLE IF NOT EXISTS `role_permission` (
@@ -75,16 +73,10 @@ CREATE TABLE IF NOT EXISTS `role_permission` (
   `gmt_modified` datetime DEFAULT NULL COMMENT '最后一次更新时间',
   `permission_id` bigint(20) DEFAULT NULL COMMENT '权限id',
   `role_id` bigint(20) DEFAULT NULL COMMENT '角色id',
-  PRIMARY KEY (`role_permission_id`),
-  KEY `FK_role_permission_role` (`role_id`),
-  KEY `FK_role_permission_permission` (`permission_id`),
-  CONSTRAINT `FK_role_permission_permission` FOREIGN KEY (`permission_id`) REFERENCES `permission` (`permission_id`),
-  CONSTRAINT `FK_role_permission_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色权限表';
+  PRIMARY KEY (`role_permission_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COMMENT='角色权限表';
 
 -- 数据导出被取消选择。
-
-
 -- 导出  表 wxmanage.sys_base 结构
 DROP TABLE IF EXISTS `sys_base`;
 CREATE TABLE IF NOT EXISTS `sys_base` (
@@ -96,18 +88,16 @@ CREATE TABLE IF NOT EXISTS `sys_base` (
   `field_name` varchar(64) DEFAULT NULL COMMENT '字段名',
   `field_type` varchar(32) DEFAULT NULL COMMENT '字段类型',
   `field_length` int(11) DEFAULT NULL COMMENT '字段长度',
-  `is_null` tinyint(4) DEFAULT '1' COMMENT '1:是，0：否；是否可以为空',
-  `is_unique` tinyint(4) DEFAULT '0' COMMENT '1:是，0：否；是否唯一',
-  `is_unsigned` tinyint(4) DEFAULT '0' COMMENT '1:是，0：否；是否为无符号',
+  `is_null` tinyint(4) DEFAULT NULL COMMENT '1:是，0：否；是否可以为空',
+  `is_unique` tinyint(4) DEFAULT NULL COMMENT '1:是，0：否；是否唯一',
+  `is_unsigned` tinyint(4) DEFAULT NULL COMMENT '1:是，0：否；是否为无符号',
   `default_value` varchar(128) DEFAULT NULL COMMENT '默认值',
   `field_remark` varchar(255) DEFAULT NULL COMMENT '字段备注',
-  `is_id` tinyint(4) NOT NULL DEFAULT '1' COMMENT '1:是，0：否；是否为id',
+  `is_id` tinyint(4) DEFAULT NULL COMMENT '1:是，0：否；是否为id',
   PRIMARY KEY (`sys_base_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数据库基础表，包含所有数据库信息';
 
 -- 数据导出被取消选择。
-
-
 -- 导出  表 wxmanage.user 结构
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
@@ -127,11 +117,9 @@ CREATE TABLE IF NOT EXISTS `user` (
   `secret_key` char(64) DEFAULT NULL COMMENT '密钥',
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 -- 数据导出被取消选择。
-
-
 -- 导出  表 wxmanage.user_role 结构
 DROP TABLE IF EXISTS `user_role`;
 CREATE TABLE IF NOT EXISTS `user_role` (
@@ -140,12 +128,8 @@ CREATE TABLE IF NOT EXISTS `user_role` (
   `gmt_modified` datetime DEFAULT NULL COMMENT '最后一次更新时间',
   `user_id` bigint(20) DEFAULT NULL COMMENT '用户id',
   `role_id` bigint(20) DEFAULT NULL COMMENT '角色id',
-  PRIMARY KEY (`user_role_id`),
-  KEY `FK_user_role_user` (`user_id`),
-  KEY `FK_user_role_role` (`role_id`),
-  CONSTRAINT `FK_user_role_role` FOREIGN KEY (`role_id`) REFERENCES `role` (`role_id`),
-  CONSTRAINT `FK_user_role_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户角色映射表';
+  PRIMARY KEY (`user_role_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='用户角色映射表';
 
 -- 数据导出被取消选择。
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

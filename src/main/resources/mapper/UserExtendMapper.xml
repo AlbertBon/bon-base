@@ -8,14 +8,13 @@
     INNER JOIN user_role ur ON ur.role_id = r.role_id
     INNER JOIN user u ON u.user_id = ur.user_id AND username = #{username}
   </select>
-
     <select id="getPermissionByRoleFlag" resultType="com.bon.domain.entity.Permission">
-    select
-    p.*
-    from permission p
-    INNER JOIN role_permission rp ON rp.permission_id = p.permission_id
-    INNER JOIN role r ON rp.role_id = r.role_id AND role_flag = #{roleFlag} group by p.permission_id
-  </select>
+        select
+        p.*
+        from permission p
+        INNER JOIN role_permission rp ON rp.permission_id = p.permission_id
+        INNER JOIN role r ON rp.role_id = r.role_id AND role_flag = #{roleFlag} group by p.permission_id
+    </select>
     <select id="getMenuByUsername" resultType="com.bon.domain.entity.Menu">
         SELECT
         m.*
@@ -25,5 +24,36 @@
         INNER JOIN role r ON r.role_id = rp.role_id
         INNER JOIN user_role ur ON ur.role_id = r.role_id
         INNER JOIN USER u ON u.user_id = ur.user_id AND u.username = #{username} group by m.menu_id
+    </select>
+
+    <select id="getMenuByMenuId" resultType="com.bon.domain.vo.MenuVO">
+        select
+        m.*,m1.name as parent_name
+        from menu m
+        LEFT JOIN menu m1 ON m.parent = m1.menu_id and m.menu_id = #{menuId,jdbcType=BIGINT}
+    </select>
+    <select id="getMenuByUserId" resultType="com.bon.domain.entity.Menu">
+    SELECT
+    m.*
+    FROM menu m
+    RIGHT JOIN permission p ON m.menu_id = p.object_id AND p.`type`='00' AND m.parent=0
+    INNER JOIN role_permission rp ON p.permission_id = rp.permission_id
+    INNER JOIN role r ON r.role_id = rp.role_id
+    INNER JOIN user_role ur ON ur.role_id = r.role_id
+    INNER JOIN USER u ON u.user_id = ur.user_id AND u.user_id = #{user_id,jdbcType=BIGINT} group by m.menu_id
+    </select>
+    <select id="getAllMenu" resultType="com.bon.domain.vo.MenuVO">
+
+    select
+    m.*,m1.name as parent_name
+    from menu m
+    LEFT JOIN menu m1 ON m.parent = m1.menu_id and <![CDATA[ m.parent <> 0]]>
+    </select>
+
+    <select id="getAllPermission" resultType="com.bon.domain.vo.PermissionVO">
+        select
+        p.*,m.parent
+        from permission p
+        left join menu m on m.menu_id=p.object_id and <![CDATA[ m.parent <> 0 ]]>
     </select>
 </mapper>
