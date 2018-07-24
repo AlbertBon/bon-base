@@ -62,6 +62,12 @@ public interface UserService {
     List<Long> getUserRoleIds(Long userId);
 
     /**
+     * 保存角色权限
+     * @param roleIds
+     * @param userId
+     */
+    void saveRolePermission(List<Long> permissionIds,Long roleId);
+    /**
      * 获取角色权限id列表
      * @param roleId
      * @return

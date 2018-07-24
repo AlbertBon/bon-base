@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
         UserVO vo = new UserVO();
         vo = BeanUtil.copyPropertys(user, vo);
 //        //放入用户角色id列表信息
-//        vo.setRoleIds(getUserRoleIds(user.getUserId()));
+        vo.setRoleIds(getUserRoleIds(user.getUserId()));
         return vo;
     }
 
@@ -176,9 +176,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public RoleVO getRole(Long id) {
-        Role role = roleMapper.getById(id);
+        Role role = roleMapper.selectByPrimaryKey(id);
         RoleVO vo = new RoleVO();
         BeanUtil.copyPropertys(role, vo);
+        //获取角色权限id集合
+        List<Long> permissionIds = new ArrayList<>();
+        List<Permission> permissionList = userExtendMapper.getPermissionByRoleFlag(vo.getRoleFlag());
+        for(Permission permission: permissionList){
+            permissionIds.add(permission.getPermissionId());
+        }
+        vo.setPermissionIds(permissionIds);
         return vo;
     }
 
@@ -190,17 +197,29 @@ public class UserServiceImpl implements UserService {
         role.setGmtModified(new Date());
         BeanUtil.copyPropertys(dto, role);
         roleMapper.insertSelective(role);
+        //保存角色权限
+        List<Long> permissionIds = dto.getPermissionIds();
+        for (Long permissionId:permissionIds){
+            RolePermission rolePermission = new RolePermission();
+            rolePermission.setGmtCreate(new Date());
+            rolePermission.setGmtModified(new Date());
+            rolePermission.setPermissionId(permissionId);
+            rolePermission.setRoleId(role.getRoleId());
+            rolePermissionMapper.insertSelective(rolePermission);
+        }
     }
 
     @Override
     public void updateRole(RoleDTO dto) {
-        Role role = roleMapper.getById(dto.getRoleId());
+        Role role = roleMapper.selectByPrimaryKey(dto.getRoleId());
         if (role == null) {
             throw new BusinessException("获取角色失败");
         }
         role.setGmtModified(new Date());
         BeanUtil.copyPropertys(dto, role);
         roleMapper.updateByPrimaryKeySelective(role);
+        //保存角色权限
+        saveRolePermission(dto.getPermissionIds(),dto.getRoleId());
     }
 
     @Override
@@ -243,8 +262,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public MenuVO getMenu(Long id) {
-        MenuVO vo = userExtendMapper.getMenuByMenuId(id);
+        MenuVO vo = new MenuVO();
+        Menu menu = menuMapper.selectByPrimaryKey(id);
+        BeanUtil.copyPropertys(menu,vo);
+        //获取父菜单名称
+        Menu parentMenu = menuMapper.selectByPrimaryKey(vo.getParent());
+        if(null!=parentMenu){
+            vo.setParentName(parentMenu.getName());
+        }
+        //获取权限标识
+        String permissionFlag = getPermissionByMenuId(id).getPermissionFlag();
+        vo.setPermissionFlag(permissionFlag);
         return vo;
+    }
+
+    //根据菜单id获取权限
+    public Permission getPermissionByMenuId(Long menuId){
+        BaseDTO dto1 = new BaseDTO(new Permission());
+        dto1.andFind("objectId",menuId.toString());
+        dto1.andFind("type",PermissionType.MENU.getKey());
+        Permission permission = permissionMapper.selectOneByExample(dto1.getExample());
+        return permission;
     }
 
     @Override
@@ -269,6 +307,7 @@ public class UserServiceImpl implements UserService {
         Permission permission = new Permission();
         permission.setGmtCreate(new Date());
         permission.setGmtModified(new Date());
+        permission.setPermissionFlag(dto.getPermissionFlag());
         permission.setPermissionName("【" + PermissionType.MENU.getValue() + "】" + menu.getName());
         permission.setType(PermissionType.MENU.getKey());
         permission.setObjectId(menu.getMenuId());
@@ -284,6 +323,11 @@ public class UserServiceImpl implements UserService {
         menu.setGmtModified(new Date());
         BeanUtil.copyPropertys(dto, menu);
         menuMapper.updateByPrimaryKeySelective(menu);
+        //修改权限对应信息
+        Permission permission = getPermissionByMenuId(menu.getMenuId());
+        permission.setPermissionFlag(dto.getPermissionFlag());
+        permission.setGmtModified(new Date());
+        permissionMapper.updateByPrimaryKey(permission);
     }
 
     @Override
@@ -307,7 +351,7 @@ public class UserServiceImpl implements UserService {
             MenuVO vo = new MenuVO();
             BeanUtil.copyPropertys(menu, vo);
             if(menu.getParent()!=0){
-                vo.setParentName(menuMapper.getById(menu.getParent()).getName());
+                vo.setParentName(menuMapper.selectByPrimaryKey(menu.getParent()).getName());
             }
             voList.add(vo);
         }
@@ -360,6 +404,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void saveRolePermission(List<Long> permissionIds, Long roleId) {
+        //删除角色权限
+        BaseDTO dto = new BaseDTO();
+        dto.andFind(new RolePermission(), "roleId", roleId + "");
+        rolePermissionMapper.deleteByExample(dto.getExample());
+        //插入角色权限
+        for (Long permissionId : permissionIds) {
+            RolePermission rolePermission = new RolePermission();
+            rolePermission.setPermissionId(permissionId);
+            rolePermission.setRoleId(roleId);
+            rolePermission.setGmtCreate(new Date());
+            rolePermission.setGmtModified(new Date());
+            rolePermissionMapper.insertSelective(rolePermission);
+        }
+    }
+
+    @Override
     public List<Long> getRolePermissionIds(Long roleId) {
         //查找角色所有权限
         BaseDTO dto = new BaseDTO();
@@ -400,6 +461,11 @@ public class UserServiceImpl implements UserService {
     public List<MenuRouterVO> funMenuChild(List<Menu> menuList) {
         List<MenuRouterVO> voList = new ArrayList<>();
         for (Menu menu : menuList) {
+            String permissionFlag = getPermissionByMenuId(menu.getMenuId()).getPermissionFlag();
+            //判断是否有权限
+            if(!SecurityUtils.getSubject().isPermitted(permissionFlag)){
+                continue;
+            }
             //转化为路由菜单
             MenuRouterVO vo = new MenuRouterVO();
             MenuRouterVO.Meta meta = vo.new Meta();

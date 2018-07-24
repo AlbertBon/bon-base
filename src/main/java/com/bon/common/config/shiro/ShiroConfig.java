@@ -53,14 +53,17 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/login/*", "anon");
         filterChainDefinitionMap.put("/**", "authc");
         //配置shiro默认登录界面地址，前后端分离中登录界面跳转应由前端路由控制，后台仅返回json数据
-        shiroFilterFactoryBean.setLoginUrl("/login/unauth");
+//        shiroFilterFactoryBean.setLoginUrl("/login/unauth");
         // 登录成功后要跳转的链接
 //        shiroFilterFactoryBean.setSuccessUrl("/index");
         //未授权界面;
-        shiroFilterFactoryBean.setUnauthorizedUrl("/login/unauth");
+//        shiroFilterFactoryBean.setUnauthorizedUrl("/login/unauth");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+        //使用重写过滤器的方式解决options不能访问的问题。
         Map<String, Filter> filters = new HashMap<>();
         filters.put("authc",new ShiroFilterFormAuthentication());
+//        filters.put("roles",new ShiroFilterRoleAuthorization());
+//        filters.put("perms",new ShiroFilterPermissionAuthorization());
         shiroFilterFactoryBean.setFilters(filters);
         return shiroFilterFactoryBean;
     }

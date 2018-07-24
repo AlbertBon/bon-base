@@ -4,6 +4,7 @@ import com.bon.common.vo.PageVO;
 import com.bon.common.vo.ResultBody;
 import com.bon.domain.dto.*;
 import com.bon.domain.vo.MenuVO;
+import com.bon.domain.vo.PermissionVO;
 import com.bon.domain.vo.RoleVO;
 import com.bon.domain.vo.UserVO;
 import com.bon.service.UserService;
@@ -156,6 +157,13 @@ public class UserController {
     @GetMapping(value = "/menu/getAllMenu")
     public ResultBody getAllMenu(){
         List<MenuVO> list = userService.getAllMenu();
+        return new ResultBody(list);
+    }
+
+    @ApiOperation(value = "获取所有菜单")
+    @GetMapping(value = "/menu/getAllPermission")
+    public ResultBody getAllPermission(){
+        List<PermissionVO> list = userService.getAllPermission();
         return new ResultBody(list);
     }
 

@@ -5,6 +5,8 @@ import com.bon.domain.entity.Role;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
+
 /**
  * 
  * 实体类对应的数据表为：  role
@@ -21,6 +23,17 @@ public class RoleDTO extends BaseDTO<Role> {
 
     @ApiModelProperty(value = "角色标识")
     private String roleFlag;
+
+    @ApiModelProperty(value = "角色权限组")
+    private List<Long> permissionIds;
+
+    public List<Long> getPermissionIds() {
+        return permissionIds;
+    }
+
+    public void setPermissionIds(List<Long> permissionIds) {
+        this.permissionIds = permissionIds;
+    }
 
     public Long getRoleId() {
         return roleId;

@@ -34,12 +34,6 @@ public interface UserExtendMapper {
     List<Menu> getMenuByUsername(String username);
 
     /**
-     * 根据菜单id获取菜单视图（包括父节点名称）
-     * @param userId
-     * @return
-     */
-    MenuVO getMenuByMenuId(Long userId);
-    /**
      * 根据用户id获取所有菜单
      * @param userId
      * @return

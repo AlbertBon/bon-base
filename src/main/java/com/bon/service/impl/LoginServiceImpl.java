@@ -3,6 +3,7 @@ package com.bon.service.impl;
 import com.bon.common.config.Constants;
 
 import com.bon.common.config.shiro.ShiroToken;
+import com.bon.common.dto.BaseDTO;
 import com.bon.common.enums.ExceptionType;
 import com.bon.common.exception.BusinessException;
 import com.bon.common.service.RedisService;
@@ -65,7 +66,10 @@ public class LoginServiceImpl implements LoginService {
         ShiroToken token = new ShiroToken(loginDTO.getUsername(), MD5Util.encode(loginDTO.getPassword()),loginDTO.getCode());
         subject.login(token);
         subject.hasRole("123");
-        User user = (User) subject.getPrincipals().getPrimaryPrincipal();
+        String username = subject.getPrincipals().getPrimaryPrincipal().toString();
+        BaseDTO dto = new BaseDTO(new User());
+        dto.andFind("username",username);
+        User user = userMapper.selectOneByExample(dto.getExample());
         String loginToken= MessageFormat.format(Constants.RedisKey.LOGIN_USERNAME_SESSION_ID,user.getUsername(),sessionId);
 
         LoginVO loginVO = new LoginVO();
@@ -115,6 +119,7 @@ public class LoginServiceImpl implements LoginService {
         }
         User user = (User) subject.getPrincipal();
         subject.logout();
+
         LOG.info("用户{}-session登录",user.getUsername());
     }
 }

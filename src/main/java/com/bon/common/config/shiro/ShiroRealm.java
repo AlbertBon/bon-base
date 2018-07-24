@@ -41,8 +41,9 @@ public class ShiroRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         log.info("权限配置-->ShiroRealm.doGetAuthorizationInfo()");
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        User user = (User) principals.getPrimaryPrincipal();
-        List<Role> roleList = userService.getRoleByUsername(user.getUsername());
+//        User user = (User) principals.getPrimaryPrincipal();
+        String username = principals.getPrimaryPrincipal().toString();
+        List<Role> roleList = userService.getRoleByUsername(username);
         for(Role role:roleList){
             authorizationInfo.addRole(role.getRoleFlag());
             List<Permission> permissionList = userService.getPermissionByRoleFlag(role.getRoleFlag());
@@ -50,13 +51,6 @@ public class ShiroRealm extends AuthorizingRealm {
                 authorizationInfo.addStringPermission(permission.getPermissionFlag());
             }
         }
-
-//        for (SysRole role : userInfo.getRoleList()) {
-//            authorizationInfo.addRole(role.getRole());
-//            for (SysPermission p : role.getPermissions()) {
-//                authorizationInfo.addStringPermission(p.getPermission());
-//            }
-//        }
         return authorizationInfo;
     }
 
@@ -79,7 +73,7 @@ public class ShiroRealm extends AuthorizingRealm {
 //            throw new LockedAccountException();
 //        }
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
-                user, //用户名
+                user.getUsername(), //用户名
                 user.getPassword(), //密码
                 getName()  //realm name
         );

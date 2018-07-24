@@ -3,8 +3,7 @@ package com.bon.common.config.shiro;
 import com.bon.common.enums.ExceptionType;
 import com.bon.common.vo.ResultBody;
 import com.bon.util.PropertyUtil;
-import org.apache.shiro.web.filter.authz.AuthorizationFilter;
-import org.apache.shiro.web.filter.authz.RolesAuthorizationFilter;
+import org.apache.shiro.web.filter.authz.PermissionsAuthorizationFilter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -21,7 +20,7 @@ import java.io.OutputStream;
  * @author: Bon
  * @create: 2018-07-23 18:10
  **/
-public class ShiroFilterRoleAuthorization extends RolesAuthorizationFilter {
+public class ShiroFilterPermissionAuthorization extends PermissionsAuthorizationFilter {
 
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws IOException {

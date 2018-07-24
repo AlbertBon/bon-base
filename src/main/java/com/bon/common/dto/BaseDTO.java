@@ -24,6 +24,14 @@ public class BaseDTO<T> implements Serializable {
     @ApiModelProperty(value = "模板条件", hidden = true)
     private Example.Criteria criteria;
 
+
+    public BaseDTO() {
+    }
+
+    public BaseDTO(T t) {
+        this.createExample(t);
+    }
+
     //获取T的class类型
     public void getTClass(){
         this.tClass  = (Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];

@@ -89,7 +89,7 @@ public class LoginController {
         return new ResultBody();
     }
 
-    @ApiOperation(value = "登出")
+    @ApiOperation(value = "没有认证")
     @GetMapping(value = "/unauth",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResultBody unauth(HttpServletRequest request) throws IOException {
         return new ResultBody(ExceptionType.LOGIN_AUTHORITY_ERROR);

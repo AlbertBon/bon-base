@@ -35,6 +35,9 @@ public class MenuDTO extends BaseDTO<Menu> {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date gmtModified;
 
+    @ApiModelProperty(value = "权限标识")
+    private String permissionFlag;
+
     @ApiModelProperty(value = "菜单名称")
     private String name;
 
@@ -64,6 +67,14 @@ public class MenuDTO extends BaseDTO<Menu> {
 
     @ApiModelProperty(value = "父菜单id")
     private Long parent;
+
+    public String getPermissionFlag() {
+        return permissionFlag;
+    }
+
+    public void setPermissionFlag(String permissionFlag) {
+        this.permissionFlag = permissionFlag;
+    }
 
     public String getDataPath() {
         return dataPath;

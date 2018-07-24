@@ -21,6 +21,9 @@ public class MenuVO implements Serializable{
     @ApiModelProperty(value = "菜单名称")
     private String name;
 
+    @ApiModelProperty(value = "权限标识")
+    private String permissionFlag;
+
     @ApiModelProperty(value = "菜单地址")
     private String path;
 
@@ -50,6 +53,14 @@ public class MenuVO implements Serializable{
 
     @ApiModelProperty(value = "父菜单name")
     private String parentName;
+
+    public String getPermissionFlag() {
+        return permissionFlag;
+    }
+
+    public void setPermissionFlag(String permissionFlag) {
+        this.permissionFlag = permissionFlag;
+    }
 
     public String getParentName() {
         return parentName;

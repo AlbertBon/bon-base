@@ -48,8 +48,17 @@ public class ShiroFilterFormAuthentication extends FormAuthenticationFilter {
             if (log.isTraceEnabled()) {
                 log.trace("Attempting to access a path which requires authentication.  Forwarding to the Authentication url [" + this.getLoginUrl() + "]");
             }
+            //请求错误拦截
+            resp.setCharacterEncoding("UTF-8");
+            resp.setContentType("application/json; charset=utf-8");
+            resp.setHeader("Access-Control-Allow-Origin", PropertyUtil.getProperty("corsHost"));
+            resp.setHeader("Access-Control-Allow-Credentials","true");
+            resp.setHeader("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
+            OutputStream out = response.getOutputStream();
+            out.write(new ResultBody(ExceptionType.EXPIRED_ERROR).toErrString().getBytes("utf-8"));
+            out.close();
 
-            this.saveRequestAndRedirectToLogin(request, response);
+//            this.saveRequestAndRedirectToLogin(request, response);
             return false;
         }
 //        if (isLoginRequest(request, response)) {
