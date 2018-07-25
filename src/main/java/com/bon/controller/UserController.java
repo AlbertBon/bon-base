@@ -3,10 +3,7 @@ package com.bon.controller;
 import com.bon.common.vo.PageVO;
 import com.bon.common.vo.ResultBody;
 import com.bon.domain.dto.*;
-import com.bon.domain.vo.MenuVO;
-import com.bon.domain.vo.PermissionVO;
-import com.bon.domain.vo.RoleVO;
-import com.bon.domain.vo.UserVO;
+import com.bon.domain.vo.*;
 import com.bon.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -160,10 +157,17 @@ public class UserController {
         return new ResultBody(list);
     }
 
-    @ApiOperation(value = "获取所有菜单")
+    @ApiOperation(value = "获取所有权限")
     @GetMapping(value = "/menu/getAllPermission")
     public ResultBody getAllPermission(){
         List<PermissionVO> list = userService.getAllPermission();
+        return new ResultBody(list);
+    }
+
+    @ApiOperation(value = "获取所有权限树形结构")
+    @GetMapping(value = "/menu/getAllPermissionTree")
+    public ResultBody getAllPermissionTree(){
+        List<PermissionTreeVO> list = userService.getAllPermissionTree();
         return new ResultBody(list);
     }
 

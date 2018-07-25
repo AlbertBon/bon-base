@@ -44,9 +44,24 @@ public interface UserService {
     void updateMenu(MenuDTO dto);
     void deleteMenu(Long id);
     PageVO listMenu(MenuListDTO dto);
+
+    /**
+     * 获取所有菜单
+     * @return
+     */
     List<MenuVO> getAllMenu();
 
+    /**
+     * 获取所有权限
+     * @return
+     */
     List<PermissionVO> getAllPermission();
+
+    /**
+     * 获取所有权限
+     * @return
+     */
+    List<PermissionTreeVO> getAllPermissionTree();
 
     /**
      * 保存用户角色
@@ -73,8 +88,6 @@ public interface UserService {
      * @return
      */
     List<Long> getRolePermissionIds(Long roleId);
-
-
 
     /**
      * 根据用户名获取角色

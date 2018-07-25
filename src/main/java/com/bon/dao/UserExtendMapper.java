@@ -5,6 +5,7 @@ import com.bon.domain.entity.Permission;
 import com.bon.domain.entity.Role;
 import com.bon.domain.entity.User;
 import com.bon.domain.vo.MenuVO;
+import com.bon.domain.vo.PermissionTreeVO;
 import com.bon.domain.vo.PermissionVO;
 import tk.mybatis.mapper.common.Mapper;
 

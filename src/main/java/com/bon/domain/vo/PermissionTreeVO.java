@@ -1,21 +1,24 @@
 package com.bon.domain.vo;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 
- * 实体类对应的数据表为：  permission
+ * 权限树形结构视图
  * @author null
  * @date 2018-06-04 17:58:03
  */
-public class PermissionVO implements Serializable {
+public class PermissionTreeVO implements Serializable {
     @Id
     @ApiModelProperty(value = "ID")
     private Long permissionId;
+
+    @ApiModelProperty(value = "权限标识")
+    private String permissionFlag;
 
     @ApiModelProperty(value = "权限名称")
     private String permissionName;
@@ -26,15 +29,23 @@ public class PermissionVO implements Serializable {
     @ApiModelProperty(value = "对应表id（菜单权限即为菜单id）")
     private Long objectId;
 
-    @ApiModelProperty(value = "对应表id的父id（菜单权限即为菜单id的父id）")
-    private Long objectParent;
+    @ApiModelProperty(value = "对应表id（菜单权限即为菜单id）")
+    List<PermissionTreeVO> children;
 
-    public Long getObjectParent() {
-        return objectParent;
+    public String getPermissionFlag() {
+        return permissionFlag;
     }
 
-    public void setObjectParent(Long objectParent) {
-        this.objectParent = objectParent;
+    public void setPermissionFlag(String permissionFlag) {
+        this.permissionFlag = permissionFlag;
+    }
+
+    public List<PermissionTreeVO> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<PermissionTreeVO> children) {
+        this.children = children;
     }
 
     public Long getPermissionId() {

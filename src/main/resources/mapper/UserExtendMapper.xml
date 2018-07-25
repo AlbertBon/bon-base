@@ -41,7 +41,7 @@
     select
     m.*,m1.name as parent_name
     from menu m
-    LEFT JOIN menu m1 ON m.parent = m1.menu_id and <![CDATA[ m.parent <> 0]]>
+    INNER JOIN menu m1 ON m.parent = m1.menu_id and <![CDATA[ m.parent <> 0]]>
     </select>
 
     <select id="getAllPermission" resultType="com.bon.domain.vo.PermissionVO">

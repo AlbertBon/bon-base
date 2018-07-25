@@ -173,20 +173,35 @@ public class UserServiceImpl implements UserService {
      * @param id
      * @return
      */
-
     @Override
     public RoleVO getRole(Long id) {
         Role role = roleMapper.selectByPrimaryKey(id);
         RoleVO vo = new RoleVO();
         BeanUtil.copyPropertys(role, vo);
         //获取角色权限id集合
-        List<Long> permissionIds = new ArrayList<>();
         List<Permission> permissionList = userExtendMapper.getPermissionByRoleFlag(vo.getRoleFlag());
-        for(Permission permission: permissionList){
-            permissionIds.add(permission.getPermissionId());
-        }
+        //获取id数组(不含父节点)
+        List<Long> permissionIds = funPermissionIds(permissionList);
         vo.setPermissionIds(permissionIds);
         return vo;
+    }
+    /**
+     * 通过递归方法获取权限子节点权限id（因前端不可包含有子节点的父节点id）
+     * @param permissionList
+     * @return
+     */
+    public List<Long> funPermissionIds(List<Permission> permissionList) {
+        List<Long> permissionIds = new ArrayList<>();
+        for(Permission permission:permissionList){
+            BaseDTO dto = new BaseDTO(new Permission());
+            dto.andFind("objectParent",permission.getObjectId().toString());
+            dto.andFind("type",permission.getType());
+            List<Permission> permissionList1 = permissionMapper.selectByExample(dto.getExample());
+            if(permissionList1.size() <= 0){
+                permissionIds.add(permission.getPermissionId());
+            }
+        }
+        return permissionIds;
     }
 
     @Override
@@ -311,6 +326,7 @@ public class UserServiceImpl implements UserService {
         permission.setPermissionName("【" + PermissionType.MENU.getValue() + "】" + menu.getName());
         permission.setType(PermissionType.MENU.getKey());
         permission.setObjectId(menu.getMenuId());
+        permission.setObjectParent(menu.getParent());
         permissionMapper.insertSelective(permission);
     }
 
@@ -368,8 +384,40 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<PermissionVO> getAllPermission() {
-        //此处sql查询会去除根菜单
         List<PermissionVO> voList = userExtendMapper.getAllPermission();
+        return voList;
+    }
+
+    @Override
+    public List<PermissionTreeVO> getAllPermissionTree() {
+        //只查询根节点权限
+        BaseDTO dto = new BaseDTO(new Permission());
+        dto.andFind("objectParent","0");
+        List<Permission> permissionList = permissionMapper.selectByExample(dto.getExample());
+        //通过递归方法获取权限树形结构
+        List<PermissionTreeVO> voList = funPermissionChild(permissionList);
+        return voList;
+    }
+
+    /**
+     * 通过递归方法获取权限树形结构
+     * @param permissionList
+     * @return
+     */
+    public List<PermissionTreeVO> funPermissionChild(List<Permission> permissionList) {
+        List<PermissionTreeVO> voList = new ArrayList<>();
+        for (Permission permission : permissionList) {
+            PermissionTreeVO vo = new PermissionTreeVO();
+            BeanUtil.copyPropertys(permission,vo);
+            BaseDTO dto = new BaseDTO(new Permission());
+            dto.andFind("objectParent",vo.getObjectId().toString());
+            dto.andFind("type",vo.getType());
+            List<Permission> permissionList1 = permissionMapper.selectByExample(dto.getExample());
+            if(permissionList1.size() > 0){
+                vo.setChildren(funPermissionChild(permissionList1));
+            }
+            voList.add(vo);
+        }
         return voList;
     }
 
@@ -445,6 +493,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<MenuRouterVO> getMenuRouter(String username) {
+        //只查询根节点菜单
         List<Menu> menuList = userExtendMapper.getMenuByUsername(username);
         List<MenuRouterVO> voList = funMenuChild(menuList);
         return voList;
