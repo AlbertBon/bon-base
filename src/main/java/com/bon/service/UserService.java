@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @program: bon-dubbo
+ * @program: bon-bon基础项目
  * @description: 用户管理模块
  * @author: Bon
  * @create: 2018-04-27 17:47

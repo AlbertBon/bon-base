@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import java.util.Random;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: 图形验证码工具类
  * @author: Bon
  * @create: 2018-05-16 11:23

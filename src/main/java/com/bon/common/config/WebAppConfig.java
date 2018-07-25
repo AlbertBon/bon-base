@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: config配置
  * @author: Bon
  * @create: 2018-05-10 15:38

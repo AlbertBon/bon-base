@@ -1,7 +1,7 @@
 package com.bon.common.config;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: 常量
  * @author: Bon
  * @create: 2018-05-15 12:05

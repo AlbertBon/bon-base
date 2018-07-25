@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: mybatis生成xml覆盖插件；修改生成的方法名
  * @author: Bon
  * @create: 2018-05-07 11:16

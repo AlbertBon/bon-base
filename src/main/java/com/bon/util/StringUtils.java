@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: 字符串工具类
  * @author: Bon
  * @create: 2018-05-21 17:48

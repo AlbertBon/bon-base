@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: 基础数据传输对象
  * @author: Bon
  * @create: 2018-05-03 18:35

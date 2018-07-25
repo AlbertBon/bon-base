@@ -6,13 +6,16 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.crazycake.shiro.RedisCacheManager;
 import org.crazycake.shiro.RedisManager;
 import org.crazycake.shiro.RedisSessionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -25,12 +28,15 @@ import javax.servlet.Filter;
  * @author: Bon
  * @create: 2018-07-19 08:58
  **/
-
+@Component
 @Configuration
 public class ShiroConfig {
 
     @Autowired
     RedisService redisService;
+
+    @Value("${redis.shiro.timeout}")
+    private Integer sessionTimeOut;
 
     @Bean
     public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager) {
@@ -100,7 +106,7 @@ public class ShiroConfig {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(myShiroRealm());
         // 自定义session管理 使用redis
-        securityManager.setSessionManager(sessionManager());
+        securityManager.setSessionManager(defaultWebSessionManager());
         // 自定义缓存实现 使用redis
         securityManager.setCacheManager(cacheManager());
         return securityManager;
@@ -114,6 +120,13 @@ public class ShiroConfig {
         return mySessionManager;
     }
 
+    @Bean
+    public DefaultWebSessionManager defaultWebSessionManager() {
+        DefaultWebSessionManager mySessionManager = new DefaultWebSessionManager();
+        mySessionManager.setGlobalSessionTimeout(sessionTimeOut);
+        return mySessionManager;
+    }
+
     /**
      * 配置shiro redisManager
      * <p>
@@ -121,6 +134,7 @@ public class ShiroConfig {
      *
      * @return
      */
+    @Bean
     @ConfigurationProperties(prefix = "redis.shiro")
     public RedisManager redisManager() {
         return new RedisManager();
@@ -149,6 +163,7 @@ public class ShiroConfig {
     public RedisSessionDAO redisSessionDAO() {
         RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
         redisSessionDAO.setRedisManager(redisManager());
+        redisSessionDAO.setKeyPrefix("shiro_redis:");
         return redisSessionDAO;
     }
 

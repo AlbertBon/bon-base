@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: 分页bean
  * @author: Bon
  * @create: 2018-05-11 15:24

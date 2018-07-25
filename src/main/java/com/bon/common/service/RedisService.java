@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: redis接口
  * @author: Bon
  * @create: 2018-05-16 17:04

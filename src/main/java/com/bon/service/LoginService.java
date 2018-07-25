@@ -6,7 +6,7 @@ import com.bon.domain.vo.LoginVO;
 import com.bon.domain.vo.TokenVO;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: 登录模块
  * @author: Bon
  * @create: 2018-05-16 11:14

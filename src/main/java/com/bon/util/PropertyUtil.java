@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: 常量值获取
  * @author: Bon
  * @create: 2018-05-16 12:41

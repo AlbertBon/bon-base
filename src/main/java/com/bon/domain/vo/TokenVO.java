@@ -3,7 +3,7 @@ package com.bon.domain.vo;
 import java.io.Serializable;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: token结果信息
  * @author: Bon
  * @create: 2018-05-23 17:58

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * @program: bon-dubbo
+ * @program: bon-bon基础项目
  * @description: 用户管理模块
  * @author: Bon
  * @create: 2018-04-27 18:16

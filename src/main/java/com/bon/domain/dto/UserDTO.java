@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: 用户数据传输对象
  * @author: Bon
  * @create: 2018-05-03 18:36

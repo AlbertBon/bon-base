@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: 用户返回信息
  * @author: Bon
  * @create: 2018-05-24 17:05

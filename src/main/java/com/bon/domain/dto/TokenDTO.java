@@ -3,7 +3,7 @@ package com.bon.domain.dto;
 import com.bon.common.dto.BaseDTO;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: token参数
  * @author: Bon
  * @create: 2018-05-23 17:51

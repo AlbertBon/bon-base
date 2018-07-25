@@ -16,7 +16,7 @@ import java.security.SignatureException;
 import java.util.Map;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: MD5加密工具
  * @author: Bon
  * @create: 2018-05-21 12:44

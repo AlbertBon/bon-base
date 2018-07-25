@@ -12,7 +12,7 @@ import java.io.OutputStream;
 import java.text.MessageFormat;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: 拦截器
  * @author: Bon
  * @create: 2018-05-10 15:35

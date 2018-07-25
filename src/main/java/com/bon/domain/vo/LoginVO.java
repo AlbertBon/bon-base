@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: 登录信息
  * @author: Bon
  * @create: 2018-05-16 14:06

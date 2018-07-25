@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: redis实现类
  * @author: Bon
  * @create: 2018-05-16 17:05

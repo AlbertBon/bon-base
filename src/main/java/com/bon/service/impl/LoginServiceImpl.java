@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: 登录模块实现类
  * @author: Bon
  * @create: 2018-05-16 16:37
@@ -117,9 +117,9 @@ public class LoginServiceImpl implements LoginService {
         if(null==subject.getPrincipal()){
             throw new BusinessException(ExceptionType.EXPIRED_ERROR);
         }
-        User user = (User) subject.getPrincipal();
+        String username =  subject.getPrincipal().toString();
         subject.logout();
 
-        LOG.info("用户{}-session登录",user.getUsername());
+        LOG.info("用户{}-session登录",username);
     }
 }

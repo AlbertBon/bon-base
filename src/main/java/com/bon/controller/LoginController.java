@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: 登录
  * @author: Bon
  * @create: 2018-05-16 11:10

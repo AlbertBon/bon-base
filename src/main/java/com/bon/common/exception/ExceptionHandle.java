@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @program: dubbo-wxmanage
+ * @program: bon基础项目
  * @description: 异常拦截
  * @author: Bon
  * @create: 2018-05-02 11:07
