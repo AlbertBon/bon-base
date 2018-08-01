@@ -11,10 +11,7 @@ import com.bon.domain.entity.*;
 import com.bon.domain.enums.PermissionType;
 import com.bon.domain.vo.*;
 import com.bon.service.UserService;
-import com.bon.util.BeanUtil;
-import com.bon.util.MD5Util;
-import com.bon.util.MyLog;
-import com.bon.util.StringUtils;
+import com.bon.util.*;
 import com.github.pagehelper.PageHelper;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -22,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @program: bon-bon基础项目
@@ -98,13 +92,14 @@ public class UserServiceImpl implements UserService {
         if (userList.size() > 0) {
             throw new BusinessException("用户名重复");
         }
-
-        dto.setPassword(MD5Util.encode(dto.getPassword()));
         User user = new User();
         BeanUtil.copyPropertys(dto, user);
         user.setUserId(null);
         user.setGmtCreate(new Date());
         user.setGmtModified(new Date());
+        String salt = UUID.randomUUID().toString().replace("-", "");
+        user.setPassword(ShiroUtil.md5encode(dto.getPassword(), salt));
+        user.setSalt(salt);
         userMapper.insertSelective(user);
         //保存用户角色
         saveUserRole(dto.getRoleIds(), user.getUserId());
@@ -112,13 +107,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(UserDTO dto) {
+        User user = userMapper.selectByPrimaryKey(dto.getUserId());
         if (StringUtils.isNotBlank(dto.getPassword())) {
-            dto.setPassword(MD5Util.encode(dto.getPassword()));
+            dto.setPassword(ShiroUtil.md5encode(dto.getPassword(),user.getSalt()));
         } else {
             dto.setPassword(null);
         }
-
-        User user = userMapper.selectByPrimaryKey(dto.getUserId());
         if (user == null) {
             throw new BusinessException(ExceptionType.USERNAME_NULL_PASSWORD_ERROR);
         }

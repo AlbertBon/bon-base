@@ -10,12 +10,14 @@ import com.bon.domain.entity.User;
 import com.bon.domain.vo.UserVO;
 import com.bon.service.UserService;
 import com.bon.util.MyLog;
+import com.bon.util.PropertyUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.Resource;
@@ -77,9 +79,9 @@ public class ShiroRealm extends AuthorizingRealm {
                 user.getPassword(), //密码
                 getName()  //realm name
         );
+        //设置盐
+        authenticationInfo.setCredentialsSalt(ByteSource.Util.bytes(user.getSalt()));
         return authenticationInfo;
-
-//        return null;
     }
 
 }

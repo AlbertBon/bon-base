@@ -22,6 +22,7 @@ import com.bon.util.MyLog;
 import com.bon.util.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.crazycake.shiro.RedisManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +51,9 @@ public class LoginServiceImpl implements LoginService {
     private RedisService redisService;
 
     @Autowired
+    private RedisManager redisManager;
+
+    @Autowired
     private UserService userService;
 
     @Override
@@ -63,7 +67,7 @@ public class LoginServiceImpl implements LoginService {
         if(vCode==null||!vCode.toString().equalsIgnoreCase(loginDTO.getCode())){
             throw new BusinessException(ExceptionType.VALIDATE_CODE_ERROR);
         }
-        ShiroToken token = new ShiroToken(loginDTO.getUsername(), MD5Util.encode(loginDTO.getPassword()),loginDTO.getCode());
+        ShiroToken token = new ShiroToken(loginDTO.getUsername(), loginDTO.getPassword(),loginDTO.getCode());
         subject.login(token);
         subject.hasRole("123");
         String username = subject.getPrincipals().getPrimaryPrincipal().toString();
@@ -88,13 +92,15 @@ public class LoginServiceImpl implements LoginService {
         // 使用 uuid 作为源 token
         String token = UUID.randomUUID().toString().replace("-", "");
         if(StringUtils.isNotBlank(dto.getWxOpenid())){
-            dto.andFind(new User(),"wx_openid",dto.getWxOpenid());
-            User user = userMapper.selectOneByExample(dto.getWxOpenid());
+            dto.andFind(new User(),"wxOpenid",dto.getWxOpenid());
+            User user = userMapper.selectOneByExample(dto.getExample());
             if(user==null){
                 throw new BusinessException(ExceptionType.USERNAME_NULL_PASSWORD_ERROR);
             }
             // 存储到 redis 并设置过期时间(默认2小时)
-            redisService.create(MessageFormat.format(Constants.RedisKey.TOKEN_USERNAME_TOKEN,user.getUsername(),token),token);
+//            redisService.create(MessageFormat.format(Constants.RedisKey.TOKEN_USERNAME_TOKEN,user.getUsername(),token),token);
+//            redisManager.set(MessageFormat.format(Constants.RedisKey.TOKEN_USERNAME_TOKEN,user.getUsername()).getBytes(),token.getBytes());
+            SecurityUtils.getSubject().getSession().setAttribute("token",token);
         }
         TokenVO vo = new TokenVO();
         vo.setToken(token);
