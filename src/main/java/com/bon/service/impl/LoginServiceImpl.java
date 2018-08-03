@@ -51,9 +51,6 @@ public class LoginServiceImpl implements LoginService {
     private RedisService redisService;
 
     @Autowired
-    private RedisManager redisManager;
-
-    @Autowired
     private UserService userService;
 
     @Override
@@ -63,13 +60,17 @@ public class LoginServiceImpl implements LoginService {
         int time = (int) subject.getSession().getTimeout();
         //校验验证码
         String key= MessageFormat.format(Constants.RedisKey.LOGIN_CAPTCHA_SESSION_ID,sessionId);
-        Object vCode=subject.getSession().getAttribute(key);
+        //redis模式
+        Object vCode=redisService.get(key);
         if(vCode==null||!vCode.toString().equalsIgnoreCase(loginDTO.getCode())){
             throw new BusinessException(ExceptionType.VALIDATE_CODE_ERROR);
         }
+        //清除seesion中code
+        redisService.del(key);
+        //登录
         ShiroToken token = new ShiroToken(loginDTO.getUsername(), loginDTO.getPassword(),loginDTO.getCode());
         subject.login(token);
-        subject.hasRole("123");
+
         String username = subject.getPrincipals().getPrimaryPrincipal().toString();
         BaseDTO dto = new BaseDTO(new User());
         dto.andFind("username",username);
@@ -98,9 +99,7 @@ public class LoginServiceImpl implements LoginService {
                 throw new BusinessException(ExceptionType.USERNAME_NULL_PASSWORD_ERROR);
             }
             // 存储到 redis 并设置过期时间(默认2小时)
-//            redisService.create(MessageFormat.format(Constants.RedisKey.TOKEN_USERNAME_TOKEN,user.getUsername(),token),token);
-//            redisManager.set(MessageFormat.format(Constants.RedisKey.TOKEN_USERNAME_TOKEN,user.getUsername()).getBytes(),token.getBytes());
-            SecurityUtils.getSubject().getSession().setAttribute("token",token);
+            redisService.set(MessageFormat.format(Constants.RedisKey.TOKEN_USERNAME_TOKEN,user.getUsername()),token);
         }
         TokenVO vo = new TokenVO();
         vo.setToken(token);

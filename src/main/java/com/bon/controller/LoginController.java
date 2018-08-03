@@ -66,7 +66,8 @@ public class LoginController {
 
         String sessionId = SecurityUtils.getSubject().getSession().getId().toString();
         String key= MessageFormat.format(Constants.RedisKey.LOGIN_CAPTCHA_SESSION_ID,sessionId);
-        SecurityUtils.getSubject().getSession().setAttribute(key,vCode.getCode());
+        //redis存储验证码
+        redisService.set(key,vCode.getCode());
         vCode.write(response.getOutputStream());
     }
 
