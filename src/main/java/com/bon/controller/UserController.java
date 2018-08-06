@@ -158,14 +158,14 @@ public class UserController {
     }
 
     @ApiOperation(value = "获取所有权限")
-    @GetMapping(value = "/menu/getAllPermission")
+    @GetMapping(value = "/user/getAllPermission")
     public ResultBody getAllPermission(){
         List<PermissionVO> list = userService.getAllPermission();
         return new ResultBody(list);
     }
 
     @ApiOperation(value = "获取所有权限树形结构")
-    @GetMapping(value = "/menu/getAllPermissionTree")
+    @GetMapping(value = "/user/getAllPermissionTree")
     public ResultBody getAllPermissionTree(){
         List<PermissionTreeVO> list = userService.getAllPermissionTree();
         return new ResultBody(list);
