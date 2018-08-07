@@ -1,13 +1,5 @@
-package com.bon.domain.dto;/**
- * 类描述信息
- * com.bon.domain.dto
- *
- * @author pengwen
- * @create 2018/6/3 0003
- **/
+package com.bon.domain.dto;
 
-import com.bon.common.dto.BaseDTO;
-import com.bon.domain.entity.Menu;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -15,31 +7,27 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 /**
- * @program: 后台
- *
- * @description: 菜单参数类
- *
+ * @program: 后台-基础项目
+ * @description: 获取权限参数类
  * @author: Bon
- *
- * @create: 2018-06-03 17:23
+ * @create: 2018-08-07 15:10
  **/
-@ApiModel("菜单参数类")
-public class MenuDTO extends BaseDTO<Menu> {
+@ApiModel("新增及修改权限参数类")
+public class PermissionUpdateDTO {
 
-    @ApiModelProperty(value = "ID")
-    private Long menuId;
+    @ApiModelProperty(value = "权限id")
+    private Long permissionId;
 
-    @ApiModelProperty(value = "创建时间")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date gmtCreate;
+    @ApiModelProperty(value = "00:菜单权限")
+    private String type;
 
-    @ApiModelProperty(value = "最后一次更新时间")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date gmtModified;
+    @ApiModelProperty(value = "对应表id（菜单权限即为菜单id）")
+    private Long objectId;
 
     @ApiModelProperty(value = "权限标识")
     private String permissionFlag;
 
+    //菜单部分
     @ApiModelProperty(value = "菜单名称")
     private String name;
 
@@ -64,11 +52,29 @@ public class MenuDTO extends BaseDTO<Menu> {
     @ApiModelProperty(value = "00:true,01:false没有子菜单也会显示在导航中")
     private String alwaysShow;
 
-    @ApiModelProperty(value = "数据库id地址")
-    private String dataPath;
+    public Long getPermissionId() {
+        return permissionId;
+    }
 
-    @ApiModelProperty(value = "父菜单id")
-    private Long parent;
+    public void setPermissionId(Long permissionId) {
+        this.permissionId = permissionId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Long getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(Long objectId) {
+        this.objectId = objectId;
+    }
 
     public String getPermissionFlag() {
         return permissionFlag;
@@ -76,46 +82,6 @@ public class MenuDTO extends BaseDTO<Menu> {
 
     public void setPermissionFlag(String permissionFlag) {
         this.permissionFlag = permissionFlag;
-    }
-
-    public String getDataPath() {
-        return dataPath;
-    }
-
-    public void setDataPath(String dataPath) {
-        this.dataPath = dataPath;
-    }
-
-    public String getComponent() {
-        return component;
-    }
-
-    public void setComponent(String component) {
-        this.component = component;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(Long menuId) {
-        this.menuId = menuId;
-    }
-
-    public Date getGmtCreate() {
-        return gmtCreate;
-    }
-
-    public void setGmtCreate(Date gmtCreate) {
-        this.gmtCreate = gmtCreate;
-    }
-
-    public Date getGmtModified() {
-        return gmtModified;
-    }
-
-    public void setGmtModified(Date gmtModified) {
-        this.gmtModified = gmtModified;
     }
 
     public String getName() {
@@ -132,6 +98,14 @@ public class MenuDTO extends BaseDTO<Menu> {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getComponent() {
+        return component;
+    }
+
+    public void setComponent(String component) {
+        this.component = component;
     }
 
     public String getRedirect() {
@@ -174,11 +148,5 @@ public class MenuDTO extends BaseDTO<Menu> {
         this.alwaysShow = alwaysShow;
     }
 
-    public Long getParent() {
-        return parent;
-    }
 
-    public void setParent(Long parent) {
-        this.parent = parent;
-    }
 }

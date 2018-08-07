@@ -147,7 +147,6 @@
             <optional>true</optional>
         </dependency>
         <!--swagger ui 包-->
-        <!-- https://mvnrepository.com/artifact/com.github.xiaoymin/swagger-bootstrap-ui -->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>swagger-bootstrap-ui</artifactId>

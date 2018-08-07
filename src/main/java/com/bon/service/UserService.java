@@ -9,7 +9,6 @@ import com.bon.domain.entity.User;
 import com.bon.domain.vo.*;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * @program: bon-bon基础项目
@@ -44,6 +43,10 @@ public interface UserService {
     void updateMenu(MenuDTO dto);
     void deleteMenu(Long id);
     PageVO listMenu(MenuListDTO dto);
+
+    BaseVO getPermission(PermissionGetDTO dto);
+    void savePermission(PermissionUpdateDTO dto);
+    void updatePermission(PermissionUpdateDTO dto);
 
     /**
      * 获取所有菜单

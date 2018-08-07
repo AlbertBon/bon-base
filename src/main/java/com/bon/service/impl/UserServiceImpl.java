@@ -370,6 +370,82 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public BaseVO getPermission(PermissionGetDTO dto) {
+        BaseVO vo = new BaseVO();
+        Map map = new HashMap();
+        //菜单类型
+        if(PermissionType.MENU.getKey().equals(dto.getType())){
+            Menu menu = menuMapper.selectByPrimaryKey(dto.getObjectId());
+            map = MapUtil.objectToMap(menu);
+            String permissionFlag = permissionMapper.selectByPrimaryKey(dto.getPermissionId()).getPermissionFlag();
+            map.put("permissionFlag",permissionFlag);
+        }
+        vo.setMap(map);
+        return vo;
+    }
+
+    @Override
+    public void savePermission(PermissionUpdateDTO dto) {
+        //菜单类型
+        if(PermissionType.MENU.getKey().equals(dto.getType())){
+            saveMenu(dto);
+        }
+    }
+
+    @Override
+    public void updatePermission(PermissionUpdateDTO dto) {
+        //菜单类型
+        if(PermissionType.MENU.getKey().equals(dto.getType())){
+            updateMenu(dto);
+        }
+    }
+
+    private void saveMenu(PermissionUpdateDTO dto) {
+        Menu menu = new Menu();
+        BeanUtil.copyPropertys(dto, menu);
+        menu.setMenuId(null);
+        menu.setGmtCreate(new Date());
+        menu.setGmtModified(new Date());
+        menuMapper.insertSelective(menu);
+        //添加数据库id路径,如果不为空则有父节点
+        if (dto.getObjectId()!=null) {
+            Menu m = menuMapper.selectByPrimaryKey(dto.getObjectId());
+            menu.setDataPath(m.getDataPath() + "/" + menu.getMenuId());
+            menu.setParent(m.getMenuId());
+        } else {
+            menu.setDataPath(menu.getMenuId()+"");
+            menu.setParent(0L);
+        }
+        menuMapper.updateByPrimaryKey(menu);
+        //权限表中新增菜单权限记录
+        Permission permission = new Permission();
+        permission.setGmtCreate(new Date());
+        permission.setGmtModified(new Date());
+        permission.setPermissionFlag(dto.getPermissionFlag());
+        permission.setPermissionName("【" + PermissionType.MENU.getValue() + "】" + menu.getName());
+        permission.setType(PermissionType.MENU.getKey());
+        permission.setObjectId(menu.getMenuId());
+        permission.setObjectParent(menu.getParent());
+        permissionMapper.insertSelective(permission);
+    }
+
+    private void updateMenu(PermissionUpdateDTO dto) {
+        Menu menu = menuMapper.selectByPrimaryKey(dto.getObjectId());
+        if (menu == null) {
+            throw new BusinessException("获取菜单失败");
+        }
+        menu.setGmtModified(new Date());
+        BeanUtil.copyPropertys(dto, menu);
+        menuMapper.updateByPrimaryKeySelective(menu);
+        //修改权限对应信息
+        Permission permission = getPermissionByMenuId(menu.getMenuId());
+        permission.setPermissionFlag(dto.getPermissionFlag());
+        permission.setPermissionName("【" + PermissionType.MENU.getValue() + "】" + menu.getName());
+        permission.setGmtModified(new Date());
+        permissionMapper.updateByPrimaryKey(permission);
+    }
+
+    @Override
     public List<MenuVO> getAllMenu() {
         //此处sql查询会去除根菜单
         List<MenuVO> voList = userExtendMapper.getAllMenu();

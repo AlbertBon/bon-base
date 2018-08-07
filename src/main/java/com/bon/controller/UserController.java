@@ -158,17 +158,39 @@ public class UserController {
     }
 
     @ApiOperation(value = "获取所有权限")
-    @GetMapping(value = "/user/getAllPermission")
+    @GetMapping(value = "/permission/getAllPermission")
     public ResultBody getAllPermission(){
         List<PermissionVO> list = userService.getAllPermission();
         return new ResultBody(list);
     }
 
     @ApiOperation(value = "获取所有权限树形结构")
-    @GetMapping(value = "/user/getAllPermissionTree")
+    @GetMapping(value = "/permission/getAllPermissionTree")
     public ResultBody getAllPermissionTree(){
         List<PermissionTreeVO> list = userService.getAllPermissionTree();
         return new ResultBody(list);
     }
+
+    @ApiOperation(value = "根据权限类型和id查询相应信息")
+    @PostMapping(value = "/permission/getPermission")
+    public ResultBody getPermission(@RequestBody PermissionGetDTO dto){
+        BaseVO vo = userService.getPermission(dto);
+        return new ResultBody(vo.getMap());
+    }
+
+    @ApiOperation(value = "新增权限")
+    @PostMapping(value = "/permission/savePermission")
+    public ResultBody savePermission(@RequestBody PermissionUpdateDTO dto){
+        userService.savePermission(dto);
+        return new ResultBody();
+    }
+
+    @ApiOperation(value = "修改权限")
+    @PostMapping(value = "/permission/updatePermission")
+    public ResultBody updatePermission(@RequestBody PermissionUpdateDTO dto){
+        userService.updatePermission(dto);
+        return new ResultBody();
+    }
+
 
 }
