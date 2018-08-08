@@ -60,7 +60,7 @@ public class ApplicationTests {
     public void generateClass() throws Exception {
         List<SysGenerateClassDTO> dtoList = new ArrayList<>();
         SysGenerateClassDTO dto = new SysGenerateClassDTO();
-        dto.setTableName("user");
+        dto.setTableName("permission");
         dtoList.add(dto);
         sysBaseService.generateClass(dtoList);
     }

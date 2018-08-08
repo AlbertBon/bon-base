@@ -411,14 +411,19 @@ public class UserServiceImpl implements UserService {
     public void deletePermission(Long id) {
         BaseDTO dto = new BaseDTO();
         Permission permission = permissionMapper.selectByPrimaryKey(id);
-        //菜单类型
-        if(PermissionType.MENU.getKey().equals(permission.getType())){
-            permissionMapper.deleteByPrimaryKey(id);
-            menuMapper.deleteByPrimaryKey(permission.getObjectId());
+        dto.likeFind(new Permission(),"dataPath",permission.getDataPath()+"/%");
+        List<Permission> permissionList = permissionMapper.selectByExample(dto.getExample());
+        //把子树和自己放进权限数组中，循环删除权限及其子权限
+        permissionList.add(permission);
+        for(Permission permission1 :permissionList){
+            //菜单类型
+            if(PermissionType.MENU.getKey().equals(permission1.getType())){
+                permissionMapper.deleteByPrimaryKey(permission1.getPermissionId());
+                menuMapper.deleteByPrimaryKey(permission1.getObjectId());
+            }
+            dto.andFind(new RolePermission(),"permissionId",permission1.getPermissionId().toString());
+            rolePermissionMapper.deleteByExample(dto.getExample());
         }
-        dto.andFind(new RolePermission(),"permissionId",permission.getPermissionId().toString());
-        rolePermissionMapper.deleteByExample(dto.getExample());
-
     }
 
     private void saveMenu(PermissionUpdateDTO dto) {
@@ -448,6 +453,17 @@ public class UserServiceImpl implements UserService {
         permission.setObjectId(menu.getMenuId());
         permission.setObjectParent(menu.getParent());
         permissionMapper.insertSelective(permission);
+        //添加权限表的数据库id路径,如果不为空则有父节点
+        if (dto.getObjectId()!=null) {
+            BaseDTO baseDTO = new BaseDTO();
+            baseDTO.andFind(new Permission(),"objectId",menu.getParent().toString());
+            baseDTO.andFind("type",PermissionType.MENU.getKey());
+            Permission permissionParent = permissionMapper.selectOneByExample(baseDTO.getExample());
+            permission.setDataPath(permissionParent.getDataPath()+ "/" + permission.getPermissionId());
+        } else {
+            permission.setDataPath(permission.getPermissionId().toString());
+        }
+        permissionMapper.updateByPrimaryKey(permission);
     }
 
     private void updateMenu(PermissionUpdateDTO dto) {
