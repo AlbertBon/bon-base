@@ -2,18 +2,19 @@
 -- 主机:                           127.0.0.1
 -- 服务器版本:                        5.5.28 - MySQL Community Server (GPL)
 -- 服务器操作系统:                      Win32
--- HeidiSQL 版本:                  9.3.0.4984
+-- HeidiSQL 版本:                  9.5.0.5196
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET NAMES utf8mb4 */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+
 
 -- 导出 wxmanage 的数据库结构
 CREATE DATABASE IF NOT EXISTS `wxmanage` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `wxmanage`;
-
 
 -- 导出  表 wxmanage.menu 结构
 CREATE TABLE IF NOT EXISTS `menu` (
@@ -30,19 +31,20 @@ CREATE TABLE IF NOT EXISTS `menu` (
   `always_show` char(2) DEFAULT NULL COMMENT '00:true,01:false没有子菜单也会显示在导航中',
   `data_path` varchar(512) DEFAULT NULL COMMENT '数据库id地址',
   `parent` bigint(20) DEFAULT NULL COMMENT '父菜单id',
-  PRIMARY KEY (`menu_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='菜单表';
+  PRIMARY KEY (`menu_id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='菜单表';
 
--- 正在导出表  wxmanage.menu 的数据：~5 rows (大约)
+-- 正在导出表  wxmanage.menu 的数据：~6 rows (大约)
 /*!40000 ALTER TABLE `menu` DISABLE KEYS */;
 INSERT INTO `menu` (`menu_id`, `gmt_create`, `gmt_modified`, `name`, `path`, `component`, `redirect`, `title`, `icon`, `hidden`, `always_show`, `data_path`, `parent`) VALUES
 	(1, '2018-07-22 22:50:44', '2018-07-22 22:50:46', '系统管理', '/admin', '/layout/Layout', 'admin/user/list', '系统管理', 'fa fa-cogs', '', '', '1', 0),
 	(2, '2018-07-22 22:50:44', '2018-07-22 22:50:44', '用户管理', 'user/list', '/admin/UserList', '', '用户管理', 'fa fa-users', '', '', '1/2', 1),
 	(3, '2018-07-23 14:54:51', '2018-07-23 14:54:51', '角色管理', 'role/list', '/admin/RoleList', NULL, '角色管理', 'fa fa-user-circle-o', NULL, NULL, '1/3', 1),
 	(4, '2018-07-23 14:58:58', '2018-07-23 14:58:58', '菜单管理', 'menu/list', '/admin/MenuList', NULL, '菜单管理', 'fa fa-bars', NULL, NULL, '1/4', 1),
-	(5, '2018-07-24 14:18:16', '2018-07-24 14:18:16', '系统表管理', 'sysTable', '/admin/SysTable', NULL, '系统表', 'fa fa-table', NULL, NULL, '1/5', 1);
+	(5, '2018-07-24 14:18:16', '2018-07-24 14:18:16', '系统表管理', 'sysTable', '/admin/SysTable', NULL, '系统表', 'fa fa-table', NULL, NULL, '1/5', 1),
+	(6, '2018-08-06 20:14:20', '2018-08-06 20:14:20', '权限管理', 'permission', '/admin/Permission', NULL, '权限管理', 'fa fa-unlock-alt', NULL, NULL, '1/6', 1);
 /*!40000 ALTER TABLE `menu` ENABLE KEYS */;
-
 
 -- 导出  表 wxmanage.permission 结构
 CREATE TABLE IF NOT EXISTS `permission` (
@@ -54,20 +56,21 @@ CREATE TABLE IF NOT EXISTS `permission` (
   `type` char(2) DEFAULT NULL COMMENT '00:菜单权限',
   `object_id` bigint(20) DEFAULT NULL COMMENT '对应表id（菜单权限即为菜单id）',
   `object_parent` bigint(20) DEFAULT NULL COMMENT '对应表id的父id（菜单权限即为菜单id的父id）',
+  `data_path` varchar(512) DEFAULT NULL COMMENT '数据库id地址',
   PRIMARY KEY (`permission_id`),
   UNIQUE KEY `permission_flag` (`permission_flag`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='权限表';
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COMMENT='权限表';
 
--- 正在导出表  wxmanage.permission 的数据：~5 rows (大约)
+-- 正在导出表  wxmanage.permission 的数据：~6 rows (大约)
 /*!40000 ALTER TABLE `permission` DISABLE KEYS */;
-INSERT INTO `permission` (`permission_id`, `gmt_create`, `gmt_modified`, `permission_flag`, `permission_name`, `type`, `object_id`, `object_parent`) VALUES
-	(1, '2018-06-06 11:19:08', '2018-07-24 12:00:47', 'sys:menu', '【菜单】系统管理', '00', 1, 0),
-	(2, '2018-06-06 11:19:55', '2018-07-24 12:01:24', 'userList:menu', '【菜单】用户管理', '00', 2, 1),
-	(3, '2018-06-06 14:11:05', '2018-07-24 12:01:30', 'roleList:menu', '【菜单】角色管理', '00', 3, 1),
-	(4, '2018-06-06 14:12:09', '2018-07-24 12:01:38', 'menuList:menu', '【菜单】菜单管理', '00', 4, 1),
-	(5, '2018-07-24 14:18:16', '2018-07-25 11:33:29', 'sysTable:menu', '【菜单】系统表管理', '00', 5, 1);
+INSERT INTO `permission` (`permission_id`, `gmt_create`, `gmt_modified`, `permission_flag`, `permission_name`, `type`, `object_id`, `object_parent`, `data_path`) VALUES
+	(1, '2018-06-06 11:19:08', '2018-07-24 12:00:47', 'sys:menu', '【菜单】系统管理', '00', 1, 0, '1'),
+	(2, '2018-06-06 11:19:55', '2018-07-24 12:01:24', 'userList:menu', '【菜单】用户管理', '00', 2, 1, '1/2'),
+	(3, '2018-06-06 14:11:05', '2018-07-24 12:01:30', 'roleList:menu', '【菜单】角色管理', '00', 3, 1, '1/3'),
+	(4, '2018-06-06 14:12:09', '2018-07-24 12:01:38', 'menuList:menu', '【菜单】菜单管理', '00', 4, 1, '1/4'),
+	(5, '2018-07-24 14:18:16', '2018-07-25 11:33:29', 'sysTable:menu', '【菜单】系统表管理', '00', 5, 1, '1/5'),
+	(6, '2018-08-06 20:14:20', '2018-08-06 20:14:20', 'permission:menu', '【菜单】权限管理', '00', 6, 1, '1/6');
 /*!40000 ALTER TABLE `permission` ENABLE KEYS */;
-
 
 -- 导出  表 wxmanage.role 结构
 CREATE TABLE IF NOT EXISTS `role` (
@@ -83,10 +86,9 @@ CREATE TABLE IF NOT EXISTS `role` (
 -- 正在导出表  wxmanage.role 的数据：~2 rows (大约)
 /*!40000 ALTER TABLE `role` DISABLE KEYS */;
 INSERT INTO `role` (`role_id`, `gmt_create`, `gmt_modified`, `role_name`, `role_flag`) VALUES
-	(1, '2018-06-06 11:16:44', '2018-07-25 16:15:21', '系统管理员', 'admin'),
+	(1, '2018-06-06 11:16:44', '2018-08-08 21:19:51', '系统管理员', 'admin'),
 	(3, '2018-06-12 17:37:45', '2018-07-25 15:49:08', '角色1', 'js1');
 /*!40000 ALTER TABLE `role` ENABLE KEYS */;
-
 
 -- 导出  表 wxmanage.role_permission 结构
 CREATE TABLE IF NOT EXISTS `role_permission` (
@@ -96,22 +98,22 @@ CREATE TABLE IF NOT EXISTS `role_permission` (
   `permission_id` bigint(20) DEFAULT NULL COMMENT '权限id',
   `role_id` bigint(20) DEFAULT NULL COMMENT '角色id',
   PRIMARY KEY (`role_permission_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8 COMMENT='角色权限表';
+) ENGINE=InnoDB AUTO_INCREMENT=83 DEFAULT CHARSET=utf8 COMMENT='角色权限表';
 
--- 正在导出表  wxmanage.role_permission 的数据：~9 rows (大约)
+-- 正在导出表  wxmanage.role_permission 的数据：~10 rows (大约)
 /*!40000 ALTER TABLE `role_permission` DISABLE KEYS */;
 INSERT INTO `role_permission` (`role_permission_id`, `gmt_create`, `gmt_modified`, `permission_id`, `role_id`) VALUES
 	(64, '2018-07-25 15:49:08', '2018-07-25 15:49:08', 1, 3),
 	(65, '2018-07-25 15:49:08', '2018-07-25 15:49:08', 2, 3),
 	(66, '2018-07-25 15:49:08', '2018-07-25 15:49:08', 3, 3),
 	(67, '2018-07-25 15:49:08', '2018-07-25 15:49:08', 5, 3),
-	(72, '2018-07-25 16:15:21', '2018-07-25 16:15:21', 1, 1),
-	(73, '2018-07-25 16:15:21', '2018-07-25 16:15:21', 2, 1),
-	(74, '2018-07-25 16:15:21', '2018-07-25 16:15:21', 3, 1),
-	(75, '2018-07-25 16:15:21', '2018-07-25 16:15:21', 4, 1),
-	(76, '2018-07-25 16:15:21', '2018-07-25 16:15:21', 5, 1);
+	(77, '2018-08-08 21:19:51', '2018-08-08 21:19:51', 1, 1),
+	(78, '2018-08-08 21:19:51', '2018-08-08 21:19:51', 2, 1),
+	(79, '2018-08-08 21:19:51', '2018-08-08 21:19:51', 3, 1),
+	(80, '2018-08-08 21:19:51', '2018-08-08 21:19:51', 4, 1),
+	(81, '2018-08-08 21:19:51', '2018-08-08 21:19:51', 5, 1),
+	(82, '2018-08-08 21:19:51', '2018-08-08 21:19:51', 6, 1);
 /*!40000 ALTER TABLE `role_permission` ENABLE KEYS */;
-
 
 -- 导出  表 wxmanage.sys_base 结构
 CREATE TABLE IF NOT EXISTS `sys_base` (
@@ -137,7 +139,6 @@ CREATE TABLE IF NOT EXISTS `sys_base` (
 INSERT INTO `sys_base` (`sys_base_id`, `gmt_create`, `gmt_modified`, `table_name`, `table_remark`, `field_name`, `field_type`, `field_length`, `is_null`, `is_unique`, `is_unsigned`, `default_value`, `field_remark`, `is_id`) VALUES
 	(1, '2018-07-24 15:46:16', '2018-07-24 15:46:16', 'test', '123', '23', 'BIGINT', 123, 1, 0, 0, NULL, NULL, 1);
 /*!40000 ALTER TABLE `sys_base` ENABLE KEYS */;
-
 
 -- 导出  表 wxmanage.user 结构
 CREATE TABLE IF NOT EXISTS `user` (
@@ -167,7 +168,6 @@ INSERT INTO `user` (`user_id`, `gmt_create`, `gmt_modified`, `name`, `phone`, `e
 	(3, '2018-06-12 17:07:27', '2018-07-24 16:30:36', 'bon1', '', NULL, NULL, NULL, 'bon1', '589b33c3fc225c1ead2038dd1e54b76b', NULL, NULL, NULL, NULL, '51a9179e10b148b7a01a67a55586ac65');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 
-
 -- 导出  表 wxmanage.user_role 结构
 CREATE TABLE IF NOT EXISTS `user_role` (
   `user_role_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
@@ -184,6 +184,7 @@ INSERT INTO `user_role` (`user_role_id`, `gmt_create`, `gmt_modified`, `user_id`
 	(1, '2018-06-06 11:17:03', '2018-06-06 11:17:03', 2, 1),
 	(6, '2018-07-24 16:30:37', '2018-07-24 16:30:37', 3, 3);
 /*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
+
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
