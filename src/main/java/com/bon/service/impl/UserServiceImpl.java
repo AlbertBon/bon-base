@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long id) {
         userMapper.deleteByPrimaryKey(id);
         BaseDTO dto = new BaseDTO();
-        dto.andFind(new UserRole(),"userId",id+"");
+        dto.andFind(new UserRole(),"userId",id.toString());
         userRoleMapper.deleteByExample(dto.getExample());
     }
 
@@ -234,6 +234,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteRole(Long id) {
         roleMapper.deleteByPrimaryKey(id);
+        BaseDTO dto = new BaseDTO();
+        dto.andFind(new UserRole(),"roleId",id.toString());
+        userRoleMapper.deleteByExample(dto.getExample());
+        dto.andFind(new RolePermission(),"roleId",id.toString());
+        rolePermissionMapper.deleteByExample(dto.getExample());
     }
 
     @Override
@@ -345,10 +350,12 @@ public class UserServiceImpl implements UserService {
         menuMapper.deleteByPrimaryKey(menuId);
         //删除权限表对应记录
         BaseDTO dto = new BaseDTO();
-        dto.createExample(new Permission());
-        dto.andFind("type", PermissionType.MENU.getKey());
+        dto.andFind(new Permission(),"type", PermissionType.MENU.getKey());
         dto.andFind("objectId", String.valueOf(menuId));
-        permissionMapper.deleteByExample(dto.getExample());
+        Permission permission = permissionMapper.selectOneByExample(dto.getExample());
+        permissionMapper.deleteByExample(permission);
+        dto.andFind(new RolePermission(),"permissionId",permission.getPermissionId().toString());
+        rolePermissionMapper.deleteByExample(dto.getExample());
     }
 
     @Override
@@ -398,6 +405,20 @@ public class UserServiceImpl implements UserService {
         if(PermissionType.MENU.getKey().equals(dto.getType())){
             updateMenu(dto);
         }
+    }
+
+    @Override
+    public void deletePermission(Long id) {
+        BaseDTO dto = new BaseDTO();
+        Permission permission = permissionMapper.selectByPrimaryKey(id);
+        //菜单类型
+        if(PermissionType.MENU.getKey().equals(permission.getType())){
+            permissionMapper.deleteByPrimaryKey(id);
+            menuMapper.deleteByPrimaryKey(permission.getObjectId());
+        }
+        dto.andFind(new RolePermission(),"permissionId",permission.getPermissionId().toString());
+        rolePermissionMapper.deleteByExample(dto.getExample());
+
     }
 
     private void saveMenu(PermissionUpdateDTO dto) {

@@ -47,6 +47,7 @@ public interface UserService {
     BaseVO getPermission(PermissionGetDTO dto);
     void savePermission(PermissionUpdateDTO dto);
     void updatePermission(PermissionUpdateDTO dto);
+    void deletePermission(Long id);
 
     /**
      * 获取所有菜单

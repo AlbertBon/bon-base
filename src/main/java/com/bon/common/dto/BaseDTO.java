@@ -65,9 +65,7 @@ public class BaseDTO<T> implements Serializable {
 
     //根据单个字段条件创建查询模板(传入类型方式)
     public Example andFind(T t,String field,String value) {
-        if(this.example==null){
-            this.createExample(t);
-        }
+        this.createExample(t);
         //驼峰转下划线
         field = StringUtils.camel2Underline(field);
         criteria.andCondition(field+"=",value);
@@ -87,9 +85,7 @@ public class BaseDTO<T> implements Serializable {
 
     //根据单个字段条件创建模糊查询模板(传入类型方式)
     public Example likeFind(T t,String field,String value) {
-        if(this.example==null){
-            this.createExample(t);
-        }
+        this.createExample(t);
         //驼峰转下划线
         field = StringUtils.camel2Underline(field);
         criteria.andCondition(field+" like",value);

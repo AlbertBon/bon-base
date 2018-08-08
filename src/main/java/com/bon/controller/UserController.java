@@ -192,5 +192,12 @@ public class UserController {
         return new ResultBody();
     }
 
+    @ApiOperation(value = "修改权限")
+    @GetMapping(value = "/permission/deletePermission")
+    public ResultBody deletePermission(@RequestParam Long key){
+        userService.deletePermission(key);
+        return new ResultBody();
+    }
+
 
 }
