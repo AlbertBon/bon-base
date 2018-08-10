@@ -8,6 +8,7 @@ import com.bon.domain.entity.Role;
 import com.bon.domain.entity.SysBase;
 import com.bon.service.SysBaseService;
 import com.bon.util.MyLog;
+import com.bon.util.POIUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -52,21 +54,24 @@ public class ApplicationTests {
         for(Role role:roles){
             System.out.println(role);
         }
-
 	}
 
     @Test
-    //生成某几个数据表类和mapper
+    /**
+     * 生成某几个数据表类和mapper
+     */
     public void generateClass() throws Exception {
         List<SysGenerateClassDTO> dtoList = new ArrayList<>();
         SysGenerateClassDTO dto = new SysGenerateClassDTO();
-        dto.setTableName("permission");
+        dto.setTableName("user");
         dtoList.add(dto);
         sysBaseService.generateClass(dtoList);
     }
 
     @Test
-    //生成所有数据表类和mapper
+    /**
+     * 生成所有数据表类和mapper
+     */
     public void generateAllClass() throws Exception {
         List<SysBase> sysBaseList = SysBaseMapper.listTables();
         List<SysGenerateClassDTO> dtoList = new ArrayList<>();
@@ -79,6 +84,17 @@ public class ApplicationTests {
             dtoList.add(dto);
         }
         sysBaseService.generateClass(dtoList);
+    }
+
+    @Test
+    public void generateTable() {
+        sysBaseService.generateTable(new File(SysBaseService.class.getResource("/sql/generate.xls").getFile()));
+    }
+
+    @Test
+    public void generateTableSQL() throws Exception {
+        String s=sysBaseService.generateTableSQL(new File(SysBaseService.class.getResource("/sql/generate.xls").getFile()));
+        System.out.println(s);
     }
 
 

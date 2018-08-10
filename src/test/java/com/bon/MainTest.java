@@ -1,7 +1,9 @@
 package com.bon;
 
+import com.bon.service.SysBaseService;
 import com.bon.util.MD5Util;
 import com.bon.util.MyLog;
+import com.bon.util.POIUtil;
 import com.bon.util.ShiroUtil;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.crypto.hash.Md5Hash;
@@ -12,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.sound.midi.Soundbank;
+import java.io.File;
 import java.util.UUID;
 
 /**
@@ -33,6 +36,12 @@ public class MainTest {
         log.info(String.format("【测试结束】"));
     }
 
+
+    @Test
+    public void generateTableSQL() throws Exception {
+        String s = POIUtil.generateViewSql(new File(SysBaseService.class.getResource("/sql/generate.xls").getFile()).getAbsolutePath());
+        System.out.println(s);
+    }
     @Test
     public void utils() {
         System.out.println(MD5Util.encode("123123",2));

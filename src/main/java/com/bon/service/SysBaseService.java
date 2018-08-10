@@ -6,6 +6,7 @@ import com.bon.domain.dto.SysGenerateClassDTO;
 import com.bon.domain.dto.SysGenerateTableDTO;
 import com.bon.domain.vo.SysBaseVO;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -42,6 +43,24 @@ public interface SysBaseService {
      * @Date: 2018/7/12 17:23
      */
     void saveTable(SysBaseDTO dto);
+
+    /**
+     * @Author: Bon
+     * @Description: 根据excel文件创建数据库
+     * @param file
+     * @return: void
+     * @Date: 2018/8/10 9:57
+     */
+    void generateTable(File file);
+
+    /**
+     * @Author: Bon
+     * @Description: 根据excel文件创建数据库语句
+     * @param file
+     * @return: void
+     * @Date: 2018/8/10 9:57
+     */
+    String generateTableSQL(File file) throws Exception;
 
     /**
      * 根据系统表创建数据库表

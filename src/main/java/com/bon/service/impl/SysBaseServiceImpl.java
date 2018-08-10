@@ -10,6 +10,7 @@ import com.bon.domain.vo.SysBaseVO;
 import com.bon.service.SysBaseService;
 import com.bon.util.BeanUtil;
 import com.bon.util.MyLog;
+import com.bon.util.POIUtil;
 import com.bon.util.StringUtils;
 import org.apache.ibatis.javassist.runtime.DotClass;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -100,6 +101,26 @@ public class SysBaseServiceImpl implements SysBaseService {
                 sysBaseMapper.insert(sysBase);
             }
         }
+    }
+
+    @Override
+    public void generateTable(File file) {
+        try {
+            log.info("开始执行创建表语句");
+            List<String> list = POIUtil.excelSqlImport(file.getAbsolutePath());
+            for (String sql : list) {
+                generateMapper.generateTable(sql);
+            }
+            log.info("创建表完成");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String generateTableSQL(File file) throws Exception {
+        String string= POIUtil.generateViewSql(file.getAbsolutePath());
+        return string;
     }
 
     @Override
