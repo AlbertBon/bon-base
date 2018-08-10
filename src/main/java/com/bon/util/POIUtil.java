@@ -1,6 +1,6 @@
 package com.bon.util;
 
-import org.apache.commons.lang3.StringUtils;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -208,7 +208,6 @@ public class POIUtil {
         } else {
             throw new Exception("请导入xls或xlsx文档");
         }
-        List<String> list = new ArrayList<>();
         String tableName = "";//表名
         String tableComment = "";//表备注
         String nameStr = "";//字段名
@@ -232,7 +231,16 @@ public class POIUtil {
             /*从第二行开始遍历*/
             for (int j = 1; j < sheet.getPhysicalNumberOfRows(); j++) {
                 Row row = sheet.getRow(j);
-                System.out.println(tableComment + "   " + nameStr);
+                if(null == row){
+                    continue;
+                }
+                if((row.getCell(3)==null||StringUtils.isBlank(row.getCell(3).getRichStringCellValue().getString()))&&j!=sheet.getLastRowNum()){
+                    continue;
+                }
+                /*加上逗号*/
+                if (j < sheet.getLastRowNum()&&j>1) {
+                    sql += ",\n";
+                }
                 /*从第四列开始遍历*/
                 if(null != row) {
                     for (int k = 3; k < row.getLastCellNum(); k++) {
@@ -308,22 +316,19 @@ public class POIUtil {
                 if (j == 1) {
                     sql += "  `" + nameStr + "`  bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',PRIMARY KEY (`" + nameStr + "`)";
                 } else if (j == sheet.getLastRowNum()) {
-                    sql += "  `" + nameStr + "`  " + typeStr + lengthStr + isNullStr + defaultStr + commentStr + "\n) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='" + tableComment + "';\n";
+                    if(StringUtils.isBlank(nameStr)){
+                        sql += "\n) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='" + tableComment + "';\n";
+                    }else{
+                        sql += ",\n";
+                        sql += "  `" + nameStr + "`  " + typeStr + lengthStr + isNullStr + defaultStr + commentStr + "\n) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='" + tableComment + "';\n";
+                    }
                 } else {
                     sql += "  `" + nameStr + "`  " + typeStr + lengthStr + isNullStr + defaultStr + commentStr;
                 }
-                /*加上逗号*/
-                if (j < sheet.getLastRowNum()) {
-                    sql += ",\n";
-                }
+
             }
-            list.add(sql);
         }
-        String res = "";
-        for (String string:list){
-            res = string ;
-        }
-        return res;
+        return sql;
     }
 
 }
