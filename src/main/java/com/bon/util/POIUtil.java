@@ -219,83 +219,89 @@ public class POIUtil {
         String commentStr = "";//注释
         String sql = "";//sql语句
         String tempStr = "";//临时字符串
+
         /*遍历sheet*/
-        for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
+        for (int i = 1; i < workbook.getNumberOfSheets(); i++) {
             Sheet sheet = workbook.getSheetAt(i);
             /*获取表名和备注*/
             tableName = sheet.getRow(1).getCell(0).getRichStringCellValue().getString();
             tableComment = sheet.getRow(1).getCell(1).getRichStringCellValue().getString();
             /*开始写数据库语句，如果数据库中已存在表，则删除表*/
-//            sql = "\nDROP TABLE IF EXISTS `" + tableName + "`;\n";
+            sql += "\nDROP TABLE IF EXISTS `" + tableName + "`;\n";
             sql += "CREATE TABLE `" + tableName + "` ( \n";
             /*从第二行开始遍历*/
             for (int j = 1; j < sheet.getPhysicalNumberOfRows(); j++) {
                 Row row = sheet.getRow(j);
+                System.out.println(tableComment + "   " + nameStr);
                 /*从第四列开始遍历*/
-                for (int k = 3; k < row.getLastCellNum(); k++) {
-                    Cell cell = row.getCell(k);
-                    /*处理单元格的值*/
-                    if (cell == null) {
-                        tempStr = " ";
-                    } else {
-                        switch (cell.getCellType()) {
-                            case Cell.CELL_TYPE_STRING:
-                                tempStr = cell.getRichStringCellValue().getString();
+                if(null != row) {
+                    for (int k = 3; k < row.getLastCellNum(); k++) {
+                        Cell cell = row.getCell(k);
+                        /*处理单元格的值*/
+                        if (cell == null) {
+                            tempStr = " ";
+                        } else {
+                            switch (cell.getCellType()) {
+                                case Cell.CELL_TYPE_STRING:
+                                    tempStr = cell.getRichStringCellValue().getString();
+                                    break;
+                                case Cell.CELL_TYPE_NUMERIC:
+                                    if (DateUtil.isCellDateFormatted(cell)) {
+                                        tempStr = cell.getDateCellValue() + "";
+                                    } else {
+                                        tempStr = (int) cell.getNumericCellValue() + "";
+                                    }
+                                    break;
+                                case Cell.CELL_TYPE_BOOLEAN:
+                                    tempStr = cell.getBooleanCellValue() + "";
+                                    break;
+                                default:
+                                    tempStr = "";
+                            }
+                        }
+
+                        /*每一列处理，第四列开始*/
+                        switch (k) {
+                            case 3:
+                                nameStr = tempStr;
                                 break;
-                            case Cell.CELL_TYPE_NUMERIC:
-                                if (DateUtil.isCellDateFormatted(cell)) {
-                                    tempStr = cell.getDateCellValue() + "";
+                            case 4:
+                                typeStr = tempStr;
+                                break;
+                            case 5:
+                                if (StringUtils.isNotBlank(tempStr)) {
+                                    lengthStr = "(" + tempStr + ") ";
                                 } else {
-                                    tempStr = (int) cell.getNumericCellValue() + "";
+                                    lengthStr = tempStr;
                                 }
                                 break;
-                            case Cell.CELL_TYPE_BOOLEAN:
-                                tempStr = cell.getBooleanCellValue() + "";
+                            case 6:
+                                if (tempStr.equals("N")) {
+                                    isNullStr = " NOT NULL ";
+                                } else {
+                                    isNullStr = " NULL ";
+                                }
                                 break;
-                            default:
-                                tempStr = "";
+                            case 7:
+                                if (StringUtils.isNotBlank(tempStr)&& !" ".equals(tempStr)) {
+                                    defaultStr = " DEFAULT '" + tempStr + "' ";
+                                }else {
+                                    defaultStr = " ";
+                                }
+                                break;
+                            case 8:
+                                if (tempStr.equals("Y")) {
+                                    isNullStr = " unique ";
+                                } else {
+                                    isNullStr = " ";
+                                }
+                                break;
+                            case 9:
+                                if (StringUtils.isNotBlank(tempStr)) {
+                                    commentStr = " COMMENT '" + tempStr + "'";
+                                }
+                                break;
                         }
-                    }
-
-                    /*每一列处理，第四列开始*/
-                    switch (k) {
-                        case 3:
-                            nameStr = tempStr;
-                            break;
-                        case 4:
-                            typeStr = tempStr;
-                            break;
-                        case 5:
-                            if (StringUtils.isNotBlank(tempStr)) {
-                                lengthStr = "(" + tempStr + ") ";
-                            } else {
-                                lengthStr = tempStr;
-                            }
-                            break;
-                        case 6:
-                            if (tempStr.equals("N")) {
-                                isNullStr = " NOT NULL ";
-                            } else {
-                                isNullStr = " NULL ";
-                            }
-                            break;
-                        case 7:
-                            if (StringUtils.isNotBlank(tempStr)) {
-                                defaultStr = " DEFAULT '" + tempStr + "' ";
-                            }
-                            break;
-                        case 8:
-                            if (tempStr.equals("Y")) {
-                                isNullStr = " unique ";
-                            } else {
-                                isNullStr = " ";
-                            }
-                            break;
-                        case 9:
-                            if (StringUtils.isNotBlank(tempStr)) {
-                                commentStr = " COMMENT '" + tempStr + "'";
-                            }
-                            break;
                     }
                 }
                 /*根据行数填写信息*/
@@ -315,7 +321,7 @@ public class POIUtil {
         }
         String res = "";
         for (String string:list){
-            res += string + "\n";
+            res = string ;
         }
         return res;
     }

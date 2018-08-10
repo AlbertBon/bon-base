@@ -93,7 +93,7 @@ public class ApplicationTests {
 
     @Test
     public void generateTableSQL() throws Exception {
-        String s=sysBaseService.generateTableSQL(new File(SysBaseService.class.getResource("/sql/generate.xls").getFile()));
+        String s=sysBaseService.generateTableSQL(new File(SysBaseService.class.getResource("/sql/baoli.xls").getFile()));
         System.out.println(s);
     }
 
