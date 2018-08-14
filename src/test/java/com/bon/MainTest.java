@@ -39,7 +39,7 @@ public class MainTest {
 
     @Test
     public void generateTableSQL() throws Exception {
-        String tableName = "financing";
+        String tableName = "role";
         String s = POIUtil.generateViewSql(new File(SysBaseService.class.getResource("/sql/baoli.xls").getFile()).getAbsolutePath(),tableName);
         System.out.println(s);
     }

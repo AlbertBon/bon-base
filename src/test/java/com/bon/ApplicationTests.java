@@ -91,12 +91,5 @@ public class ApplicationTests {
         sysBaseService.generateTable(new File(SysBaseService.class.getResource("/sql/generate.xls").getFile()));
     }
 
-    @Test
-    public void generateTableSQL() throws Exception {
-        String tableName = "credit_line";
-        String s=sysBaseService.generateTableSQL(new File(SysBaseService.class.getResource("/sql/baoli.xls").getFile()),tableName);
-        System.out.println(s);
-    }
-
 
 }
