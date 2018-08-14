@@ -28,18 +28,19 @@ public class MainTest {
 
     @Before
     public void before() throws Exception {
-        log.info(String.format("【测试开始】"));
+//        log.info(String.format("【测试开始】"));
     }
 
     @After
     public void after() throws Exception {
-        log.info(String.format("【测试结束】"));
+//        log.info(String.format("【测试结束】"));
     }
 
 
     @Test
     public void generateTableSQL() throws Exception {
-        String s = POIUtil.generateViewSql(new File(SysBaseService.class.getResource("/sql/baoli.xls").getFile()).getAbsolutePath());
+        String tableName = "financing";
+        String s = POIUtil.generateViewSql(new File(SysBaseService.class.getResource("/sql/baoli.xls").getFile()).getAbsolutePath(),tableName);
         System.out.println(s);
     }
     @Test

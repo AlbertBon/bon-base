@@ -60,7 +60,7 @@ public interface SysBaseService {
      * @return: void
      * @Date: 2018/8/10 9:57
      */
-    String generateTableSQL(File file) throws Exception;
+    String generateTableSQL(File file,String tableName) throws Exception;
 
     /**
      * 根据系统表创建数据库表

@@ -40,12 +40,12 @@ public class ApplicationTests {
 
     @Before
     public void before() throws Exception {
-        LOG.info(String.format("【生成开始】"));
+//        LOG.info(String.format("【生成开始】"));
     }
 
     @After
     public void after() throws Exception {
-        LOG.info(String.format("【生成结束】"));
+//        LOG.info(String.format("【生成结束】"));
     }
 
 	@Test
@@ -93,7 +93,8 @@ public class ApplicationTests {
 
     @Test
     public void generateTableSQL() throws Exception {
-        String s=sysBaseService.generateTableSQL(new File(SysBaseService.class.getResource("/sql/baoli.xls").getFile()));
+        String tableName = "credit_line";
+        String s=sysBaseService.generateTableSQL(new File(SysBaseService.class.getResource("/sql/baoli.xls").getFile()),tableName);
         System.out.println(s);
     }
 

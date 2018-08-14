@@ -195,7 +195,7 @@ public class POIUtil {
         return list;
     }
 
-    public static String generateViewSql(String filePath) throws Exception {
+    public static String generateViewSql(String filePath,String table) throws Exception {
         if (StringUtils.isBlank(filePath)) {
             throw new Exception("路径不能为空");
         }
@@ -224,6 +224,9 @@ public class POIUtil {
             Sheet sheet = workbook.getSheetAt(i);
             /*获取表名和备注*/
             tableName = sheet.getRow(1).getCell(0).getRichStringCellValue().getString();
+            if(table!=null&&!tableName.equals(table)){
+                continue;
+            }
             tableComment = sheet.getRow(1).getCell(1).getRichStringCellValue().getString();
             /*开始写数据库语句，如果数据库中已存在表，则删除表*/
             sql += "\nDROP TABLE IF EXISTS `" + tableName + "`;\n";
