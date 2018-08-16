@@ -111,7 +111,6 @@ public class POIUtil {
             /*从第二行开始遍历*/
             for (int j = 1; j < sheet.getPhysicalNumberOfRows(); j++) {
                 Row row = sheet.getRow(j);
-                System.out.println(tableName+"  " + nameStr);
                 if (null == row) {
                     continue;
                 }
@@ -199,13 +198,14 @@ public class POIUtil {
                     sql += "  `" + nameStr + "`  bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',PRIMARY KEY (`" + nameStr + "`)";
                 } else if (j == sheet.getPhysicalNumberOfRows()-1) {
                     if (StringUtils.isBlank(nameStr)) {
-                        if(",".equals(sql.substring(sql.length()-1,sql.length()))){
-                            sql = sql.substring(0,sql.length()-1);
+                        //去掉最后一行前面的逗号
+                        if(",".equals(sql.substring(sql.length()-2,sql.length()-1))){
+                            sql = sql.substring(0,sql.length()-2);
                         }
                         sql += ") ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='" + tableComment + "';";
                     } else {
                         sql += ",";
-                        sql += "  `" + nameStr + "`  " + typeStr + lengthStr + isNullStr + defaultStr + commentStr + ") ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='" + tableComment + "';\n";
+                        sql += "  `" + nameStr + "`  " + typeStr + lengthStr + isNullStr + defaultStr + commentStr + ") ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='" + tableComment + "';";
                     }
                 } else {
                     sql += "  `" + nameStr + "`  " + typeStr + lengthStr + isNullStr + defaultStr + commentStr;
@@ -218,7 +218,7 @@ public class POIUtil {
         return list;
     }
 
-    public static String generateViewSql(String filePath, String table) throws Exception {
+    public static String generateViewSql(String filePath, List<String> tableList) throws Exception {
         if (StringUtils.isBlank(filePath)) {
             throw new Exception("路径不能为空");
         }
@@ -247,7 +247,7 @@ public class POIUtil {
             Sheet sheet = workbook.getSheetAt(i);
             /*获取表名和备注*/
             tableName = sheet.getRow(1).getCell(0).getRichStringCellValue().getString();
-            if (StringUtils.isNotBlank(table) && !tableName.equals(table)) {
+            if (null != tableList && !tableList.contains(tableName)) {
                 continue;
             }
             tableComment = sheet.getRow(1).getCell(1).getRichStringCellValue().getString();
@@ -259,7 +259,6 @@ public class POIUtil {
             int num1 = sheet.getLastRowNum();
             for (int j = 1; j < sheet.getPhysicalNumberOfRows(); j++) {
                 Row row = sheet.getRow(j);
-                System.out.println(tableName+"  " + nameStr);
                 if (null == row) {
                     continue;
                 }
@@ -347,6 +346,7 @@ public class POIUtil {
                     sql += "  `" + nameStr + "`  bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',PRIMARY KEY (`" + nameStr + "`)";
                 } else if (j == sheet.getPhysicalNumberOfRows()-1) {
                     if (StringUtils.isBlank(nameStr)) {
+                        //去掉最后一行前面的逗号
                         if(",".equals(sql.substring(sql.length()-2,sql.length()-1))){
                             sql = sql.substring(0,sql.length()-2);
                         }

@@ -1,14 +1,11 @@
 package com.bon;
 
-import com.bon.dao.GenerateMapper;
 import com.bon.dao.SysBaseMapper;
 import com.bon.dao.UserExtendMapper;
 import com.bon.domain.dto.SysGenerateClassDTO;
-import com.bon.domain.entity.Role;
 import com.bon.domain.entity.SysBase;
 import com.bon.service.SysBaseService;
 import com.bon.util.MyLog;
-import com.bon.util.POIUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,13 +17,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
+/**
+ * @Author: Bon
+ * @Description: 生成类信息
+ * @param null
+ * @return:
+ * @Date: 2018/8/16 16:50
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ApplicationTests {
+public class generateApplication {
 
-    private static final MyLog LOG = MyLog.getLog(ApplicationTests.class);
+    private static final MyLog LOG = MyLog.getLog(generateApplication.class);
 
     @Autowired
     private SysBaseService sysBaseService;
@@ -40,21 +43,13 @@ public class ApplicationTests {
 
     @Before
     public void before() throws Exception {
-//        LOG.info(String.format("【生成开始】"));
+        LOG.info(String.format("【生成开始】"));
     }
 
     @After
     public void after() throws Exception {
-//        LOG.info(String.format("【生成结束】"));
+        LOG.info(String.format("【生成结束】"));
     }
-
-	@Test
-	public void test() {
-        List<Role> roles = userExtendMapper.getRoleByUsername("bon");
-        for(Role role:roles){
-            System.out.println(role);
-        }
-	}
 
     @Test
     /**
@@ -87,9 +82,11 @@ public class ApplicationTests {
     }
 
     @Test
+    /**
+     * 生成数据库
+     */
     public void generateTable() {
         sysBaseService.generateTable(new File(SysBaseService.class.getResource("/sql/generate.xls").getFile()));
     }
-
 
 }

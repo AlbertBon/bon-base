@@ -118,8 +118,8 @@ public class SysBaseServiceImpl implements SysBaseService {
     }
 
     @Override
-    public String generateTableSQL(File file,String tableName) throws Exception {
-        String string= POIUtil.generateViewSql(file.getAbsolutePath(),tableName);
+    public String generateTableSQL(File file,List<String> tableList) throws Exception {
+        String string= POIUtil.generateViewSql(file.getAbsolutePath(),tableList);
         return string;
     }
 

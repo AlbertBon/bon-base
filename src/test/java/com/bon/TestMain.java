@@ -1,20 +1,12 @@
 package com.bon;
 
-import com.bon.service.SysBaseService;
 import com.bon.util.MD5Util;
 import com.bon.util.MyLog;
-import com.bon.util.POIUtil;
-import com.bon.util.ShiroUtil;
-import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.util.ByteSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.sound.midi.Soundbank;
-import java.io.File;
 import java.util.UUID;
 
 /**
@@ -23,26 +15,19 @@ import java.util.UUID;
  * @author: Bon
  * @create: 2018-07-19 11:09
  **/
-public class MainTest {
-    private static final MyLog log = MyLog.getLog(ApplicationTests.class);
+public class TestMain {
+    private static final MyLog log = MyLog.getLog(generateApplication.class);
 
     @Before
     public void before() throws Exception {
-//        log.info(String.format("【测试开始】"));
+        log.info(String.format("【测试开始】"));
     }
 
     @After
     public void after() throws Exception {
-//        log.info(String.format("【测试结束】"));
+        log.info(String.format("【测试结束】"));
     }
 
-
-    @Test
-    public void generateTableSQL() throws Exception {
-        String tableName = "role";
-        String s = POIUtil.generateViewSql(new File(SysBaseService.class.getResource("/sql/baoli.xls").getFile()).getAbsolutePath(),tableName);
-        System.out.println(s);
-    }
     @Test
     public void utils() {
         System.out.println(MD5Util.encode("123123",2));
