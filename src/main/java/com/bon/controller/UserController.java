@@ -115,48 +115,6 @@ public class UserController {
         return new ResultBody(list);
     }
 
-    @ApiOperation(value = "获取菜单")
-    @GetMapping(value = "/menu/getMenu")
-    public ResultBody getMenu(@RequestParam Long key){
-        MenuVO vo= userService.getMenu(key);
-        return new ResultBody(vo);
-    }
-
-    @ApiOperation(value = "新增菜单")
-    @PostMapping(value = "/menu/saveMenu",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResultBody saveMenu(@RequestBody MenuDTO dto){
-        userService.saveMenu(dto);
-        return new ResultBody();
-    }
-
-    @ApiOperation(value = "根据条件获取菜单列表")
-    @PostMapping(value = "/menu/listMenu",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResultBody listMenu(@RequestBody MenuListDTO dto){
-        PageVO pageVO = userService.listMenu(dto);
-        return new ResultBody(pageVO);
-    }
-
-    @ApiOperation(value = "修改菜单")
-    @PostMapping(value = "/menu/updateMenu",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResultBody updateMenu(@RequestBody MenuDTO dto){
-        userService.updateMenu(dto);
-        return new ResultBody();
-    }
-
-    @ApiOperation(value = "删除菜单")
-    @GetMapping(value = "/menu/deleteMenu")
-    public ResultBody deleteMenu(@RequestParam Long key){
-        userService.deleteMenu(key);
-        return new ResultBody();
-    }
-
-    @ApiOperation(value = "获取所有菜单")
-    @GetMapping(value = "/menu/getAllMenu")
-    public ResultBody getAllMenu(){
-        List<MenuVO> list = userService.getAllMenu();
-        return new ResultBody(list);
-    }
-
     @ApiOperation(value = "获取所有权限")
     @GetMapping(value = "/permission/getAllPermission")
     public ResultBody getAllPermission(){

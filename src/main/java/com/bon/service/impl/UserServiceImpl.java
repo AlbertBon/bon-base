@@ -97,6 +97,7 @@ public class UserServiceImpl implements UserService {
         user.setUserId(null);
         user.setGmtCreate(new Date());
         user.setGmtModified(new Date());
+        //随机生成盐
         String salt = UUID.randomUUID().toString().replace("-", "");
         user.setPassword(ShiroUtil.md5encode(dto.getPassword(), salt));
         user.setSalt(salt);
@@ -172,7 +173,7 @@ public class UserServiceImpl implements UserService {
         Role role = roleMapper.selectByPrimaryKey(id);
         RoleVO vo = new RoleVO();
         BeanUtil.copyPropertys(role, vo);
-        //获取角色权限id集合
+        //获取角色权限集合
         List<Permission> permissionList = userExtendMapper.getPermissionByRoleFlag(vo.getRoleFlag());
         //获取id数组(不含父节点)
         List<Long> permissionIds = funPermissionIds(permissionList);
@@ -268,28 +269,6 @@ public class UserServiceImpl implements UserService {
         return voList;
     }
 
-    /**
-     * 菜单
-     * @param id
-     * @return
-     */
-
-    @Override
-    public MenuVO getMenu(Long id) {
-        MenuVO vo = new MenuVO();
-        Menu menu = menuMapper.selectByPrimaryKey(id);
-        BeanUtil.copyPropertys(menu,vo);
-        //获取父菜单名称
-        Menu parentMenu = menuMapper.selectByPrimaryKey(vo.getParent());
-        if(null!=parentMenu){
-            vo.setParentName(parentMenu.getName());
-        }
-        //获取权限标识
-        String permissionFlag = getPermissionByMenuId(id).getPermissionFlag();
-        vo.setPermissionFlag(permissionFlag);
-        return vo;
-    }
-
     //根据菜单id获取权限
     public Permission getPermissionByMenuId(Long menuId){
         BaseDTO dto1 = new BaseDTO(new Permission());
@@ -297,83 +276,6 @@ public class UserServiceImpl implements UserService {
         dto1.andFind("type",PermissionType.MENU.getKey());
         Permission permission = permissionMapper.selectOneByExample(dto1.getExample());
         return permission;
-    }
-
-    @Override
-    public void saveMenu(MenuDTO dto) {
-        Menu menu = new Menu();
-        BeanUtil.copyPropertys(dto, menu);
-        menu.setMenuId(null);
-        menu.setGmtCreate(new Date());
-        menu.setGmtModified(new Date());
-        menuMapper.insertSelective(menu);
-        //添加数据库id路径,如果不为空则有父节点
-        if (dto.getMenuId() != null) {
-            Menu m = menuMapper.selectByPrimaryKey(dto.getMenuId());
-            menu.setDataPath(m.getDataPath() + "/" + menu.getMenuId());
-            menu.setParent(m.getMenuId());
-        } else {
-            menu.setDataPath(menu.getMenuId()+"");
-            menu.setParent(0L);
-        }
-        menuMapper.updateByPrimaryKey(menu);
-        //权限表中新增菜单权限记录
-        Permission permission = new Permission();
-        permission.setGmtCreate(new Date());
-        permission.setGmtModified(new Date());
-        permission.setPermissionFlag(dto.getPermissionFlag());
-        permission.setPermissionName("【" + PermissionType.MENU.getValue() + "】" + menu.getName());
-        permission.setType(PermissionType.MENU.getKey());
-        permission.setObjectId(menu.getMenuId());
-        permission.setObjectParent(menu.getParent());
-        permissionMapper.insertSelective(permission);
-    }
-
-    @Override
-    public void updateMenu(MenuDTO dto) {
-        Menu menu = menuMapper.selectByPrimaryKey(dto.getMenuId());
-        if (menu == null) {
-            throw new BusinessException("获取菜单失败");
-        }
-        menu.setGmtModified(new Date());
-        BeanUtil.copyPropertys(dto, menu);
-        menuMapper.updateByPrimaryKeySelective(menu);
-        //修改权限对应信息
-        Permission permission = getPermissionByMenuId(menu.getMenuId());
-        permission.setPermissionFlag(dto.getPermissionFlag());
-        permission.setGmtModified(new Date());
-        permissionMapper.updateByPrimaryKey(permission);
-    }
-
-    @Override
-    public void deleteMenu(Long menuId) {
-        menuMapper.deleteByPrimaryKey(menuId);
-        //删除权限表对应记录
-        BaseDTO dto = new BaseDTO();
-        dto.andFind(new Permission(),"type", PermissionType.MENU.getKey());
-        dto.andFind("objectId", String.valueOf(menuId));
-        Permission permission = permissionMapper.selectOneByExample(dto.getExample());
-        permissionMapper.deleteByExample(permission);
-        dto.andFind(new RolePermission(),"permissionId",permission.getPermissionId().toString());
-        rolePermissionMapper.deleteByExample(dto.getExample());
-    }
-
-    @Override
-    public PageVO listMenu(MenuListDTO dto) {
-        PageHelper.startPage(dto);
-        List<Menu> list = menuMapper.selectByExample(dto.createExample());
-        PageVO pageVO = new PageVO(list);
-        List<MenuVO> voList = new ArrayList<>();
-        for (Menu menu : list) {
-            MenuVO vo = new MenuVO();
-            BeanUtil.copyPropertys(menu, vo);
-            if(menu.getParent()!=0){
-                vo.setParentName(menuMapper.selectByPrimaryKey(menu.getParent()).getName());
-            }
-            voList.add(vo);
-        }
-        pageVO.setList(voList);
-        return pageVO;
     }
 
     @Override
@@ -433,15 +335,6 @@ public class UserServiceImpl implements UserService {
         menu.setGmtCreate(new Date());
         menu.setGmtModified(new Date());
         menuMapper.insertSelective(menu);
-        //添加数据库id路径,如果不为空则有父节点
-        if (dto.getObjectId()!=null) {
-            Menu m = menuMapper.selectByPrimaryKey(dto.getObjectId());
-            menu.setDataPath(m.getDataPath() + "/" + menu.getMenuId());
-            menu.setParent(m.getMenuId());
-        } else {
-            menu.setDataPath(menu.getMenuId()+"");
-            menu.setParent(0L);
-        }
         menuMapper.updateByPrimaryKey(menu);
         //权限表中新增菜单权限记录
         Permission permission = new Permission();
@@ -451,16 +344,17 @@ public class UserServiceImpl implements UserService {
         permission.setPermissionName("【" + PermissionType.MENU.getValue() + "】" + menu.getName());
         permission.setType(PermissionType.MENU.getKey());
         permission.setObjectId(menu.getMenuId());
-        permission.setObjectParent(menu.getParent());
+        permission.setObjectParent(dto.getObjectId());
         permissionMapper.insertSelective(permission);
         //添加权限表的数据库id路径,如果不为空则有父节点
         if (dto.getObjectId()!=null) {
             BaseDTO baseDTO = new BaseDTO();
-            baseDTO.andFind(new Permission(),"objectId",menu.getParent().toString());
+            baseDTO.andFind(new Permission(),"objectId",dto.getObjectId().toString());
             baseDTO.andFind("type",PermissionType.MENU.getKey());
             Permission permissionParent = permissionMapper.selectOneByExample(baseDTO.getExample());
             permission.setDataPath(permissionParent.getDataPath()+ "/" + permission.getPermissionId());
         } else {
+            permission.setObjectParent(0L);
             permission.setDataPath(permission.getPermissionId().toString());
         }
         permissionMapper.updateByPrimaryKey(permission);
@@ -480,13 +374,6 @@ public class UserServiceImpl implements UserService {
         permission.setPermissionName("【" + PermissionType.MENU.getValue() + "】" + menu.getName());
         permission.setGmtModified(new Date());
         permissionMapper.updateByPrimaryKey(permission);
-    }
-
-    @Override
-    public List<MenuVO> getAllMenu() {
-        //此处sql查询会去除根菜单
-        List<MenuVO> voList = userExtendMapper.getAllMenu();
-        return voList;
     }
 
     @Override
@@ -576,19 +463,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Long> getRolePermissionIds(Long roleId) {
-        //查找角色所有权限
-        BaseDTO dto = new BaseDTO();
-        dto.andFind(new RolePermission(), "roleId", roleId + "");
-        List<RolePermission> rolePermissionList = rolePermissionMapper.selectByExample(dto.getExample());
-        List<Long> voList = new ArrayList<>();
-        for (RolePermission rolePermission : rolePermissionList) {
-            voList.add(rolePermission.getRoleId());
-        }
-        return voList;
-    }
-
-    @Override
     public List<Role> getRoleByUsername(String username) {
         return userExtendMapper.getRoleByUsername(username);
     }
@@ -601,11 +475,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<MenuRouterVO> getMenuRouter(String username) {
         //只查询根节点菜单
-        List<Menu> menuList = userExtendMapper.getMenuByUsername(username);
-        List<MenuRouterVO> voList = funMenuChild(menuList);
+        List<Permission> permissionList = userExtendMapper.getMenuByUsername(username);
+        List<MenuRouterVO> voList = funMenuChild(permissionList);
         return voList;
     }
-
 
     /**
      * @Author: Bon
@@ -614,14 +487,15 @@ public class UserServiceImpl implements UserService {
      * @return: java.util.List<com.bon.domain.vo.MenuRouterVO>
      * @Date: 2018/6/6 15:04
      */
-    public List<MenuRouterVO> funMenuChild(List<Menu> menuList) {
+    public List<MenuRouterVO> funMenuChild(List<Permission> permissionList) {
         List<MenuRouterVO> voList = new ArrayList<>();
-        for (Menu menu : menuList) {
-            String permissionFlag = getPermissionByMenuId(menu.getMenuId()).getPermissionFlag();
+        for (Permission permission : permissionList) {
+            String permissionFlag = permission.getPermissionFlag();
             //判断是否有权限
             if(!SecurityUtils.getSubject().isPermitted(permissionFlag)){
                 continue;
             }
+            Menu menu = menuMapper.selectByPrimaryKey(permission.getObjectId());
             //转化为路由菜单
             MenuRouterVO vo = new MenuRouterVO();
             MenuRouterVO.Meta meta = vo.new Meta();
@@ -637,10 +511,11 @@ public class UserServiceImpl implements UserService {
 
             //判断如果还有子菜单就递归调用继续查找子菜单
             BaseDTO dto = new BaseDTO();
-            dto.likeFind(new Menu(), "dataPath", menu.getDataPath() + "/%");
-            List<Menu> menuList1 = menuMapper.selectByExample(dto.getExample());
-            if (menuList1.size() > 0) {
-                vo.setChildren(funMenuChild(menuList1));
+            dto.likeFind(new Permission(), "dataPath", permission.getDataPath() + "/%");
+            dto.andFind("type",PermissionType.MENU.getKey());
+            List<Permission> permissionList1 = permissionMapper.selectByExample(dto.getExample());
+            if (permissionList1.size() > 0) {
+                vo.setChildren(funMenuChild(permissionList1));
             }
             voList.add(vo);
         }

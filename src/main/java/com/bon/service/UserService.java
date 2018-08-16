@@ -38,22 +38,10 @@ public interface UserService {
     PageVO listRole(RoleListDTO dto);
     List<RoleVO> getAllRole();
 
-    MenuVO getMenu(Long id);
-    void saveMenu(MenuDTO dto);
-    void updateMenu(MenuDTO dto);
-    void deleteMenu(Long id);
-    PageVO listMenu(MenuListDTO dto);
-
     BaseVO getPermission(PermissionGetDTO dto);
     void savePermission(PermissionUpdateDTO dto);
     void updatePermission(PermissionUpdateDTO dto);
     void deletePermission(Long id);
-
-    /**
-     * 获取所有菜单
-     * @return
-     */
-    List<MenuVO> getAllMenu();
 
     /**
      * 获取所有权限
@@ -86,12 +74,6 @@ public interface UserService {
      * @param userId
      */
     void saveRolePermission(List<Long> permissionIds,Long roleId);
-    /**
-     * 获取角色权限id列表
-     * @param roleId
-     * @return
-     */
-    List<Long> getRolePermissionIds(Long roleId);
 
     /**
      * 根据用户名获取角色

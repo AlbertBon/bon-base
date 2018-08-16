@@ -45,12 +45,6 @@ public class MenuVO implements Serializable{
     @ApiModelProperty(value = "00:true,01:false没有子菜单也会显示在导航中")
     private String alwaysShow;
 
-    @ApiModelProperty(value = "数据库id地址")
-    private String dataPath;
-
-    @ApiModelProperty(value = "父菜单id")
-    private Long parent;
-
     @ApiModelProperty(value = "父菜单name")
     private String parentName;
 
@@ -134,27 +128,11 @@ public class MenuVO implements Serializable{
         this.alwaysShow = alwaysShow;
     }
 
-    public Long getParent() {
-        return parent;
-    }
-
-    public void setParent(Long parent) {
-        this.parent = parent;
-    }
-
     public String getComponent() {
         return component;
     }
 
     public void setComponent(String component) {
         this.component = component;
-    }
-
-    public String getDataPath() {
-        return dataPath;
-    }
-
-    public void setDataPath(String dataPath) {
-        this.dataPath = dataPath;
     }
 }

@@ -4,7 +4,6 @@ import com.bon.domain.entity.Menu;
 import com.bon.domain.entity.Permission;
 import com.bon.domain.entity.Role;
 import com.bon.domain.entity.User;
-import com.bon.domain.vo.MenuVO;
 import com.bon.domain.vo.PermissionTreeVO;
 import com.bon.domain.vo.PermissionVO;
 import tk.mybatis.mapper.common.Mapper;
@@ -28,24 +27,11 @@ public interface UserExtendMapper {
     List<Permission> getPermissionByRoleFlag(String roleFlag);
 
     /**
-     * 根据用户名获取所有菜单
+     * 根据用户名获取所有菜单,返回的是菜单类型的权限（只返回根节点的权限）
      * @param username
      * @return
      */
-    List<Menu> getMenuByUsername(String username);
-
-    /**
-     * 根据用户id获取所有菜单
-     * @param userId
-     * @return
-     */
-    List<Menu> getMenuByUserId(Long userId);
-
-    /**
-     * 获取所有菜单视图（不获取父菜单）
-     * @return
-     */
-    List<MenuVO> getAllMenu();
+    List<Permission> getMenuByUsername(String username);
 
     /**
      * 获取所有权限视图
