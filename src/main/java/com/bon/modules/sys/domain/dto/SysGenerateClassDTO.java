@@ -13,11 +13,22 @@ public class SysGenerateClassDTO extends BaseDTO{
     @ApiModelProperty(value = "表名")
     private String tableName;
 
+    @ApiModelProperty(value = "所属模块")
+    private String modules;
+
     public String getTableName() {
         return tableName;
     }
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
+    }
+
+    public String getModules() {
+        return modules;
+    }
+
+    public void setModules(String modules) {
+        this.modules = modules;
     }
 }

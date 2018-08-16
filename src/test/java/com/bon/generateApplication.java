@@ -59,6 +59,7 @@ public class generateApplication {
         List<SysGenerateClassDTO> dtoList = new ArrayList<>();
         SysGenerateClassDTO dto = new SysGenerateClassDTO();
         dto.setTableName("menu");
+        dto.setModules("app");
         dtoList.add(dto);
         sysBaseService.generateClass(dtoList);
     }

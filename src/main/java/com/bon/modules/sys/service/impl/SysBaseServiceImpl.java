@@ -149,7 +149,7 @@ public class SysBaseServiceImpl implements SysBaseService {
             //循环写入修改表信息到xml文件
             for(SysGenerateClassDTO dto:dtoList){
                 String domainName = StringUtils.upperCase(StringUtils.underline2Camel(dto.getTableName(), false));
-                log.info("实体类--{}--生成", domainName);
+                log.error("实体类--{}--生成", domainName);
                 //1.得到属性值标签
                 Element tableElem = doc.getRootElement().element("context").addElement("table");
                 //2.通过增加同名属性的方法，修改属性值----key相同，覆盖；不存在key，则添加
