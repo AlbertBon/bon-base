@@ -1,7 +1,7 @@
 package com.bon.common.config;
 
 import com.bon.common.interceptor.Interceptor;
-import com.bon.util.PropertyUtil;
+import com.bon.common.util.PropertyUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

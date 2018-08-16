@@ -1,11 +1,11 @@
 package com.bon;
 
-import com.bon.dao.SysBaseMapper;
-import com.bon.dao.UserExtendMapper;
-import com.bon.domain.dto.SysGenerateClassDTO;
-import com.bon.domain.entity.SysBase;
-import com.bon.service.SysBaseService;
-import com.bon.util.MyLog;
+import com.bon.modules.sys.dao.SysBaseMapper;
+import com.bon.modules.sys.dao.UserExtendMapper;
+import com.bon.modules.sys.domain.dto.SysGenerateClassDTO;
+import com.bon.modules.sys.domain.entity.SysBase;
+import com.bon.modules.sys.service.SysBaseService;
+import com.bon.common.util.MyLog;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

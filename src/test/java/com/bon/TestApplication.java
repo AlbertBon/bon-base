@@ -1,10 +1,10 @@
 package com.bon;
 
-import com.bon.dao.SysBaseMapper;
-import com.bon.dao.UserExtendMapper;
-import com.bon.domain.entity.Role;
-import com.bon.service.SysBaseService;
-import com.bon.util.MyLog;
+import com.bon.modules.sys.dao.SysBaseMapper;
+import com.bon.modules.sys.dao.UserExtendMapper;
+import com.bon.modules.sys.domain.entity.Role;
+import com.bon.modules.sys.service.SysBaseService;
+import com.bon.common.util.MyLog;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

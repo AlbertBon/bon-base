@@ -1,23 +1,13 @@
 package com.bon.common.exception;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.support.spring.FastJsonJsonView;
-import com.bon.common.enums.ExceptionType;
-import com.bon.common.vo.ResultBody;
-import com.bon.util.MyLog;
+import com.bon.common.domain.enums.ExceptionType;
+import com.bon.common.domain.vo.ResultBody;
+import com.bon.common.util.MyLog;
 import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @program: bon基础项目

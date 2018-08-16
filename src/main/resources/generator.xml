@@ -25,22 +25,22 @@
                   value="org.mybatis.generator.api.dom.DefaultXmlFormatter" />
 
         <!-- 为生成的Java模型创建一个toString方法 -->
-        <!--<plugin type="org.mybatis.generator.plugins.ToStringPlugin"></plugin>-->
+        <!--<plugin type="org.mybatis.generator.generatePlugins.ToStringPlugin"></plugin>-->
 
         <!-- 为生成的Java模型类添加序列化接口，并生成serialVersionUID字段 -->
         <plugin type="org.mybatis.generator.plugins.SerializablePlugin"></plugin>
 
         <!-- 生成一个新的selectByExample方法，这个方法可以接收offset和limit参数，主要用来实现分页 -->
-        <!--<plugin type="com.bon.common.plugins.PaginationPlugin"></plugin>-->
+        <!--<plugin type="com.bon.common.generatePluginsePlugins.PaginationPlugin"></plugin>-->
 
         <!--mybatis生成xml覆盖插件-->
-        <plugin type="com.bon.common.plugins.OverIsMergeablePlugin" />
+        <plugin type="com.bon.common.generatePlugins.OverIsMergeablePlugin" />
 
         <!-- Java模型生成equals和hashcode方法 -->
-        <!--<plugins type="org.mybatis.generator.plugins.EqualsHashCodePlugin"></plugins>-->
+        <!--<generatePlugins type="org.mybatis.generator.generatePlugins.EqualsHashCodePlugin"></generatePlugins>-->
 
         <!-- 生成的代码去掉注释 -->
-        <commentGenerator type="com.bon.common.plugins.CommentGeneratorPlugin">
+        <commentGenerator type="com.bon.common.generatePlugins.CommentGeneratorPlugin">
             <!-- 是否禁止显示日期 true：是 ： false:否 -->
             <property name="suppressDate" value="false" />
             <!-- 是否去除自动生成的所有注释 true：是 ： false:否 -->
@@ -62,7 +62,7 @@
         </javaTypeResolver>
 
         <!-- model生成 -->
-        <javaModelGenerator targetPackage="com.bon.domain.entity" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.bon.modules.sys.domain.entity" targetProject="src/main/java">
             <property name="constructorBased" value="true" />
             <property name="enableSubPackages" value="true" />
             <property name="immutable" value="false" />
@@ -76,10 +76,9 @@
         </sqlMapGenerator>
 
         <!-- Mapper接口生成 -->
-        <javaClientGenerator targetPackage="com.bon.dao"
+        <javaClientGenerator targetPackage="com.bon.modules.sys.dao"
                              type="XMLMAPPER" targetProject="src/main/java">
             <property name="enableSubPackages" value="true" />
-            <!-- <property name="rootInterface" value="com.wp.xxpay.mapper.BaseMapper" /> -->
         </javaClientGenerator>
 
         <!-- 需要映射的表 -->

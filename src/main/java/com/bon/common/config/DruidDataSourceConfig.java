@@ -32,7 +32,7 @@ import java.util.Properties;
  */
 @Configuration
 @EnableTransactionManagement
-@MapperScan(value = "com.bon.dao")
+@MapperScan(value = "com.bon.modules.*.dao")
 public class DruidDataSourceConfig implements EnvironmentAware {
 
     private Environment environment;

@@ -1,7 +1,7 @@
 package com.bon;
 
-import com.bon.util.MD5Util;
-import com.bon.util.MyLog;
+import com.bon.common.util.MD5Util;
+import com.bon.common.util.MyLog;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.junit.After;
 import org.junit.Before;

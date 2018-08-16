@@ -1,7 +1,7 @@
 package com.bon;
 
-import com.bon.service.SysBaseService;
-import com.bon.util.POIUtil;
+import com.bon.modules.sys.service.SysBaseService;
+import com.bon.common.util.POIUtil;
 import org.junit.Test;
 
 import java.io.File;

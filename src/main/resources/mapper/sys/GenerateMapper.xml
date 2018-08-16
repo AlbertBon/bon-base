@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bon.modules.sys.dao.GenerateMapper">
+  <update id="generateTable">
+    ${sql}
+  </update>
+  <select id="findTable" resultType="java.lang.Integer">
+    SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_NAME=#{tableName,jdbcType=VARCHAR} and TABLE_SCHEMA=#{schema,jdbcType=VARCHAR};
+  </select>
+</mapper>

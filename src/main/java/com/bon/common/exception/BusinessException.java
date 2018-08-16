@@ -2,7 +2,7 @@
 package com.bon.common.exception;
 
 
-import com.bon.common.enums.ExceptionType;
+import com.bon.common.domain.enums.ExceptionType;
 
 /**
  * 业务异常（common包中的暂不使用）
