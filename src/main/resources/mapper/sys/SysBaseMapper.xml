@@ -24,12 +24,12 @@
     field_length, is_null, is_unique, is_unsigned, default_value, field_remark, is_id
   </sql>
   <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from sys_base
     where sys_base_id = #{sysBaseId,jdbcType=BIGINT}
   </select>
-  <select id="listTables" resultMap="BaseResultMap">
+  <select id="listTables" resultType="com.bon.modules.sys.domain.entity.SysBase">
     select
     <include refid="Base_Column_List" />
     from sys_base

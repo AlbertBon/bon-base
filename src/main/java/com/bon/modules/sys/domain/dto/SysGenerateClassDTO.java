@@ -3,6 +3,8 @@ package com.bon.modules.sys.domain.dto;
 import com.bon.common.domain.dto.BaseDTO;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
+
 /**
  * @program: bon基础项目
  * @description: 系统创建数据表参数
@@ -11,17 +13,17 @@ import io.swagger.annotations.ApiModelProperty;
  **/
 public class SysGenerateClassDTO extends BaseDTO{
     @ApiModelProperty(value = "表名")
-    private String tableName;
+    private List<String> tableNameList;
 
     @ApiModelProperty(value = "所属模块")
     private String modules;
 
-    public String getTableName() {
-        return tableName;
+    public List<String> getTableNameList() {
+        return tableNameList;
     }
 
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
+    public void setTableNameList(List<String> tableNameList) {
+        this.tableNameList = tableNameList;
     }
 
     public String getModules() {

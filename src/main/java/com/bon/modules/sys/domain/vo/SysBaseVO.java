@@ -56,6 +56,17 @@ public class SysBaseVO {
     @ApiModelProperty(value = "1:是，0：否；是否为id")
     private Byte isId;
 
+    @ApiModelProperty(value = "模块名称")
+    private String modules;
+
+    public String getModules() {
+        return modules;
+    }
+
+    public void setModules(String modules) {
+        this.modules = modules;
+    }
+
     public Long getSysBaseId() {
         return sysBaseId;
     }

@@ -19,6 +19,9 @@ public class SysBaseDTO extends BaseDTO<SysBase> {
     @ApiModelProperty(value = "表备注")
     private String tableRemark;
 
+    @ApiModelProperty(value = "模块名称")
+    private String modules;
+
     @ApiModelProperty(value = "字段信息列表")
     List<SysBaseFieldDTO> fieldList;
 
@@ -44,5 +47,13 @@ public class SysBaseDTO extends BaseDTO<SysBase> {
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
+    }
+
+    public String getModules() {
+        return modules;
+    }
+
+    public void setModules(String modules) {
+        this.modules = modules;
     }
 }

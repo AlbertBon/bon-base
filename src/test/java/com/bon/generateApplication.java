@@ -1,5 +1,6 @@
 package com.bon;
 
+import com.bon.modules.sys.dao.SysBaseExtendMapper;
 import com.bon.modules.sys.dao.SysBaseMapper;
 import com.bon.modules.sys.dao.UserExtendMapper;
 import com.bon.modules.sys.domain.dto.SysGenerateClassDTO;
@@ -16,7 +17,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: Bon
@@ -36,6 +39,9 @@ public class generateApplication {
 
     @Autowired
     private SysBaseMapper SysBaseMapper;
+
+    @Autowired
+    SysBaseExtendMapper sysBaseExtendMapper;
 
     @Autowired
     private UserExtendMapper userExtendMapper;
@@ -58,7 +64,9 @@ public class generateApplication {
     public void generateClass() throws Exception {
         List<SysGenerateClassDTO> dtoList = new ArrayList<>();
         SysGenerateClassDTO dto = new SysGenerateClassDTO();
-        dto.setTableName("menu");
+        List<String> tableNameList = new ArrayList<>();
+        tableNameList.add("menu");
+        dto.setTableNameList(tableNameList);
         dto.setModules("app");
         dtoList.add(dto);
         sysBaseService.generateClass(dtoList);
@@ -69,14 +77,28 @@ public class generateApplication {
      * 生成所有数据表类和mapper
      */
     public void generateAllClass() throws Exception {
-        List<SysBase> sysBaseList = SysBaseMapper.listTables();
+        List<SysBase> sysBaseList = sysBaseExtendMapper.listTables();
         List<SysGenerateClassDTO> dtoList = new ArrayList<>();
+        Map<String,List<String>> modulesMap = new HashMap<>();
+        //遍历生成按照modules分组的map
         for(SysBase sysBase:sysBaseList){
             if("sys_base".equals(sysBase.getTableName())){
                 continue;
             }
+            List<String> tableNameList = modulesMap.get(sysBase.getModules());
+            if(null!=tableNameList){
+                tableNameList.add(sysBase.getTableName());
+            }else {
+                tableNameList = new ArrayList<>();
+                tableNameList.add(sysBase.getTableName());
+                modulesMap.put(sysBase.getModules(),tableNameList);
+            }
+        }
+        //循环取出map放入list
+        for(Map.Entry<String,List<String>> entry:modulesMap.entrySet()){
             SysGenerateClassDTO dto = new SysGenerateClassDTO();
-            dto.setTableName(sysBase.getTableName());
+            dto.setModules(entry.getKey());
+            dto.setTableNameList(entry.getValue());
             dtoList.add(dto);
         }
         sysBaseService.generateClass(dtoList);
