@@ -30,4 +30,10 @@
         p.*
         from permission p
     </select>
+
+    <select id="getByUsername" resultType="com.bon.modules.sys.domain.entity.User">
+        select
+        *
+        from user where username = #{username}
+    </select>
 </mapper>

@@ -488,11 +488,12 @@ public class UserServiceImpl implements UserService {
      * @Date: 2018/6/6 15:04
      */
     public List<MenuRouterVO> funMenuChild(List<Permission> permissionList) {
+        User user = userExtendMapper.getByUsername(SecurityUtils.getSubject().getPrincipal().toString());
         List<MenuRouterVO> voList = new ArrayList<>();
         for (Permission permission : permissionList) {
             String permissionFlag = permission.getPermissionFlag();
             //判断是否有权限
-            if(!SecurityUtils.getSubject().isPermitted(permissionFlag)){
+            if(!SecurityUtils.getSubject().isPermitted(permissionFlag) && !StringUtils.isByteTrue(user.getIsAdmin())){
                 continue;
             }
             Menu menu = menuMapper.selectByPrimaryKey(permission.getObjectId());

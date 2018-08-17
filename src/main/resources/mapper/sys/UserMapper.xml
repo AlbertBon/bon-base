@@ -18,11 +18,12 @@
       <arg column="app_id" javaType="java.lang.String" jdbcType="CHAR" />
       <arg column="secret_key" javaType="java.lang.String" jdbcType="CHAR" />
       <arg column="salt" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="is_admin" javaType="java.lang.Byte" jdbcType="TINYINT" />
     </constructor>
   </resultMap>
   <sql id="Base_Column_List">
     user_id, gmt_create, gmt_modified, name, phone, email, telephone, address, username, 
-    password, remark, wx_openid, app_id, secret_key, salt
+    password, remark, wx_openid, app_id, secret_key, salt, is_admin
   </sql>
   <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 

@@ -163,7 +163,7 @@ public class SysBaseServiceImpl implements SysBaseService {
                 //修改生成文件的包路径
                 String packagePath = PropertyUtil.getProperty("basePackage")+".modules."+modules;
                 Element modelElement = doc.getRootElement().element("context").element("javaModelGenerator");
-                modelElement.attribute("targetPackage").setValue(packagePath+".entity");
+                modelElement.attribute("targetPackage").setValue(packagePath+".domain.entity");
                 Element mapperXmlMap = doc.getRootElement().element("context").element("sqlMapGenerator");
                 mapperXmlMap.attribute("targetPackage").setValue("mapper."+modules);
                 Element mapperElement = doc.getRootElement().element("context").element("javaClientGenerator");

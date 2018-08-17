@@ -129,13 +129,14 @@ CREATE TABLE IF NOT EXISTS `sys_base` (
   `default_value` varchar(128) DEFAULT NULL COMMENT '默认值',
   `field_remark` varchar(255) DEFAULT NULL COMMENT '字段备注',
   `is_id` tinyint(4) DEFAULT NULL COMMENT '1:是，0：否；是否为id',
+  `modules` varchar(50) DEFAULT NULL COMMENT '模块名称',
   PRIMARY KEY (`sys_base_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='数据库基础表，包含所有数据库信息';
 
 -- 正在导出表  wxmanage.sys_base 的数据：~1 rows (大约)
 /*!40000 ALTER TABLE `sys_base` DISABLE KEYS */;
-INSERT INTO `sys_base` (`sys_base_id`, `gmt_create`, `gmt_modified`, `table_name`, `table_remark`, `field_name`, `field_type`, `field_length`, `is_null`, `is_unique`, `is_unsigned`, `default_value`, `field_remark`, `is_id`) VALUES
-	(1, '2018-07-24 15:46:16', '2018-07-24 15:46:16', 'test', '123', '23', 'BIGINT', 123, 1, 0, 0, NULL, NULL, 1);
+INSERT INTO `sys_base` (`sys_base_id`, `gmt_create`, `gmt_modified`, `table_name`, `table_remark`, `field_name`, `field_type`, `field_length`, `is_null`, `is_unique`, `is_unsigned`, `default_value`, `field_remark`, `is_id`, `modules`) VALUES
+	(1, '2018-07-24 15:46:16', '2018-08-17 10:45:38', 'test', '123', 'test', 'BIGINT', 20, 0, 0, 0, 'ID', NULL, 1, 'app');
 /*!40000 ALTER TABLE `sys_base` ENABLE KEYS */;
 
 
@@ -143,8 +144,8 @@ INSERT INTO `sys_base` (`sys_base_id`, `gmt_create`, `gmt_modified`, `table_name
 CREATE TABLE IF NOT EXISTS `test` (
   `gmt_create` datetime DEFAULT NULL COMMENT '创建时间',
   `gmt_modified` datetime DEFAULT NULL COMMENT '最后一次更新时间',
-  `23` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  PRIMARY KEY (`23`)
+  `test` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  PRIMARY KEY (`test`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='123';
 
 -- 正在导出表  wxmanage.test 的数据：~0 rows (大约)
@@ -169,15 +170,16 @@ CREATE TABLE IF NOT EXISTS `user` (
   `app_id` char(32) DEFAULT NULL COMMENT '应用id',
   `secret_key` char(64) DEFAULT NULL COMMENT '密钥',
   `salt` varchar(32) NOT NULL COMMENT '密码盐',
+  `is_admin` tinyint(4) NOT NULL COMMENT '是否是管理员',
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 -- 正在导出表  wxmanage.user 的数据：~2 rows (大约)
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` (`user_id`, `gmt_create`, `gmt_modified`, `name`, `phone`, `email`, `telephone`, `address`, `username`, `password`, `remark`, `wx_openid`, `app_id`, `secret_key`, `salt`) VALUES
-	(1, '2018-06-06 11:02:58', '2018-08-16 16:20:10', 'Albert', '15814371650', 'string', 'string', '天空之城', 'bon', '589b33c3fc225c1ead2038dd1e54b76b', 'string', 'string', 'string', 'string', '51a9179e10b148b7a01a67a55586ac65'),
-	(2, '2018-06-12 17:07:27', '2018-07-24 16:30:36', 'bon1', '', NULL, NULL, NULL, 'bon1', '589b33c3fc225c1ead2038dd1e54b76b', NULL, NULL, NULL, NULL, '51a9179e10b148b7a01a67a55586ac65');
+INSERT INTO `user` (`user_id`, `gmt_create`, `gmt_modified`, `name`, `phone`, `email`, `telephone`, `address`, `username`, `password`, `remark`, `wx_openid`, `app_id`, `secret_key`, `salt`, `is_admin`) VALUES
+	(1, '2018-06-06 11:02:58', '2018-08-17 12:01:43', 'Albert', '15814371650', 'string', 'string', '天空之城', 'bon', '589b33c3fc225c1ead2038dd1e54b76b', 'string', 'string', 'string', 'string', '51a9179e10b148b7a01a67a55586ac65', 1),
+	(2, '2018-06-12 17:07:27', '2018-08-17 13:00:46', 'bon1', '', NULL, NULL, NULL, 'bon1', '589b33c3fc225c1ead2038dd1e54b76b', NULL, NULL, NULL, NULL, '51a9179e10b148b7a01a67a55586ac65', 0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 
 
@@ -189,13 +191,14 @@ CREATE TABLE IF NOT EXISTS `user_role` (
   `user_id` bigint(20) DEFAULT NULL COMMENT '用户id',
   `role_id` bigint(20) DEFAULT NULL COMMENT '角色id',
   PRIMARY KEY (`user_role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COMMENT='用户角色映射表';
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COMMENT='用户角色映射表';
 
 -- 正在导出表  wxmanage.user_role 的数据：~2 rows (大约)
 /*!40000 ALTER TABLE `user_role` DISABLE KEYS */;
 INSERT INTO `user_role` (`user_role_id`, `gmt_create`, `gmt_modified`, `user_id`, `role_id`) VALUES
-	(9, '2018-08-16 16:20:10', '2018-08-16 16:20:10', 1, 1),
-	(10, '2018-08-16 16:20:10', '2018-08-16 16:20:10', 1, 2);
+	(19, '2018-08-17 12:01:43', '2018-08-17 12:01:43', 1, 1),
+	(20, '2018-08-17 12:01:43', '2018-08-17 12:01:43', 1, 2),
+	(23, '2018-08-17 13:00:46', '2018-08-17 13:00:46', 2, 2);
 /*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;

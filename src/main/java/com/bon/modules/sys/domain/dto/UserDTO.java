@@ -53,6 +53,17 @@ public class UserDTO extends BaseDTO<User> {
     @ApiModelProperty(value = "角色id组，','分隔")
     private List<Long> roleIds;
 
+    @ApiModelProperty(value = "是否是管理员")
+    private Byte isAdmin;
+
+    public Byte getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(Byte isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+
     public List<Long> getRoleIds() {
         return roleIds;
     }

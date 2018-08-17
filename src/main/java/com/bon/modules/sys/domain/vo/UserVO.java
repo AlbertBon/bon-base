@@ -35,6 +35,16 @@ public class UserVO implements Serializable{
 
     private List<Long> roleIds;
 
+    private Byte isAdmin;
+
+    public Byte getIsAdmin() {
+        return isAdmin;
+    }
+
+    public void setIsAdmin(Byte isAdmin) {
+        this.isAdmin = isAdmin;
+    }
+
     public List<Long> getRoleIds() {
         return roleIds;
     }

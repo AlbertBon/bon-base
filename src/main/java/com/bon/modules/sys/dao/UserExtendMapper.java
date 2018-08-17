@@ -6,6 +6,7 @@ import com.bon.modules.sys.domain.entity.Role;
 import com.bon.modules.sys.domain.entity.User;
 import com.bon.modules.sys.domain.vo.PermissionTreeVO;
 import com.bon.modules.sys.domain.vo.PermissionVO;
+import com.bon.modules.sys.domain.vo.UserVO;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;
@@ -38,4 +39,11 @@ public interface UserExtendMapper {
      * @return
      */
     List<PermissionVO> getAllPermission();
+
+    /**
+     * 根据用户名获取用户
+     * @param username
+     * @return
+     */
+    User getByUsername(String username);
 }
