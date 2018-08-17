@@ -4,7 +4,7 @@
 <generatorConfiguration>
 
     <!-- 配置文件 -->
-    <properties resource="generator.properties"></properties>
+    <properties resource="constant.properties"></properties>
 
     <!-- 驱动包 -->
     <!--<classPathEntry location="${classPathEntry}"/>-->

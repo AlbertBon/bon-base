@@ -1,5 +1,6 @@
 package com.bon;
 
+import com.bon.common.util.GenerateUtil;
 import com.bon.common.util.MD5Util;
 import com.bon.common.util.MyLog;
 import org.apache.shiro.crypto.hash.SimpleHash;
@@ -7,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -44,5 +46,12 @@ public class TestMain {
         String encodedPassword = hash.toHex();
         System.out.println(encodedPassword);
         System.out.println(UUID.randomUUID().toString().replace("-",""));
+    }
+    @Test
+    public void generate() throws Exception {
+        GenerateUtil generateUtil = new GenerateUtil();
+        List<String> tables = generateUtil.getTables();
+        System.out.println(tables);
+        generateUtil.createListDTOClass("user","app");
     }
 }
