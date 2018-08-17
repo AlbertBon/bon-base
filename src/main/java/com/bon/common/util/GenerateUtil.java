@@ -206,7 +206,7 @@ public class GenerateUtil {
      * @param table
      * @throws Exception
      */
-    public void createVOClass(String table, String modules) throws Exception {
+    public static void createVOClass(String table, String modules) throws Exception {
         String tableConstantName = getTableConstantName(table);
 
         String className = getClassName(tableConstantName);
@@ -278,7 +278,7 @@ public class GenerateUtil {
      * @param table
      * @throws Exception
      */
-    public void createDTOClass(String table, String modules) throws Exception {
+    public static void createDTOClass(String table, String modules) throws Exception {
         String tableConstantName = getTableConstantName(table);
 
         String className = getClassName(tableConstantName);
@@ -289,7 +289,9 @@ public class GenerateUtil {
         sb.append("import java.util.*;\n");
         sb.append("import java.io.Serializable;\n" +
                 "import io.swagger.annotations.ApiModel;\n" +
-                "import io.swagger.annotations.ApiModelProperty;");
+                "import io.swagger.annotations.ApiModelProperty;\n" +
+                "import com.bon.common.domain.dto.BaseDTO;\n" +
+                "import com.bon.modules." + modules + ".domain.entity." + className + ";");
         sb.append(ENTER);
         sb.append(ENTER);
         sb.append("/**\n * @Created：" + NOW_DATE + "\n * @Author " + AUTHOR + "\n");
@@ -353,7 +355,7 @@ public class GenerateUtil {
      * @param table
      * @throws Exception
      */
-    public void createListDTOClass(String table, String modules) throws Exception {
+    public static void createListDTOClass(String table, String modules) throws Exception {
         String tableConstantName = getTableConstantName(table);
 
         String className = getClassName(tableConstantName);
@@ -371,7 +373,7 @@ public class GenerateUtil {
         sb.append(" * @Description:").append(className).append("列表参数类").append(ENTER);
         sb.append(" * @Email:").append(myEmail).append("\n*/");
         sb.append(ENTER);
-        sb.append("public class " + className + "DTO extends PageDTO<" + className + "> implements Serializable{");
+        sb.append("public class " + className + "ListDTO extends PageDTO<" + className + "> implements Serializable{");
         sb.append(ENTER);
         sb.append(TAB);
         sb.append("private static final long serialVersionUID = 1L;");
@@ -543,7 +545,7 @@ public class GenerateUtil {
      * createServiceClass
      * @param table
      */
-    public void createServiceClass(String table, String modules) {
+    public static void createServiceClass(String table, String modules) {
 
         String className = getClassName(getTableConstantName(table));
         String objectName = StringUtils.uncapitalize(className);
@@ -571,7 +573,7 @@ public class GenerateUtil {
         sb.append(ENTER).append(TAB);
 
         sb.append("/**查询单个*/").append(ENTER).append(TAB);
-        sb.append(" public void get" + className + "(Long id);").append(ENTER).append(TAB);
+        sb.append(" public " + className + "VO get" + className + "(Long id);").append(ENTER).append(TAB);
 
         sb.append("/**查询列表*/").append(ENTER).append(TAB);
         sb.append(" public PageVO list" + className + "(" + className + "ListDTO dto);").append(ENTER).append(TAB);
@@ -599,7 +601,7 @@ public class GenerateUtil {
      * createServiceImplClass
      * @param table
      */
-    public void createServiceImplClass(String table, String modules) {
+    public static void createServiceImplClass(String table, String modules) {
 
         String className = getClassName(getTableConstantName(table));
 
@@ -612,7 +614,11 @@ public class GenerateUtil {
         sb.append(ENTER);
 
         sb.append("import java.io.Serializable;").append(ENTER);
-        sb.append("import java.util.List;").append(ENTER);
+        sb.append("import java.util.*;\n" +
+                "import com.bon.common.domain.vo.PageVO;\n" +
+                "import com.bon.common.exception.BusinessException;\n" +
+                "import com.bon.common.util.BeanUtil;\n" +
+                "import com.github.pagehelper.PageHelper;").append(ENTER);
         sb.append("import com.bon.modules." + modules + ".domain.dto.*;").append(ENTER);
         sb.append("import com.bon.modules." + modules + ".domain.vo.*;").append(ENTER);
         sb.append("import com.bon.modules." + modules + ".domain.entity.*;").append(ENTER);
@@ -629,13 +635,13 @@ public class GenerateUtil {
         sb.append(" * @Description:").append(className).append(ENTER);
         sb.append(" * @Email:").append(myEmail).append("\n*/");
         sb.append(ENTER);
-        sb.append("@Service");
-        sb.append("@Transactional");
+        sb.append("@Service").append(ENTER);
+        sb.append("@Transactional").append(ENTER);
         sb.append("public class " + className + "ServiceImpl implements " + className + "Service {").append(ENTER);
         sb.append(ENTER).append(TAB);
 
         sb.append("@Autowired").append(ENTER).append(TAB);
-        sb.append("private " + className + "Dao " + objectName + "Dao;").append(ENTER);
+        sb.append("private " + className + "Mapper " + objectName + "Mapper;").append(ENTER);
         sb.append(ENTER).append(TAB);
 
         sb.append("/**查询单个*/").append(ENTER).append(TAB);
@@ -706,28 +712,26 @@ public class GenerateUtil {
      * 创建控制层类Controller
      * @param table
      */
-    public void createControllerClass(String table) {
+    public static void createControllerClass(String table, String modules) {
         //类名
         String className = getClassName(getTableConstantName(table));
         //通过 org.apache.commons.lang3.StringUtils的uncapitalize方法把类名第一个字母转换成小写
         String objectName = StringUtils.uncapitalize(className);
 
-        //通过 org.apache.commons.lang3.StringUtils的lowerCase方法把类名整个单词转化成小写然后为springmvc的路径返回jsp请求.
-        String BASE_PATH = "modules/" + StringUtils.lowerCase(className) + "/";//modules+模块名
-
         StringBuilder sb = new StringBuilder();
         /*******处理这个导入需要的类*********/
-        sb.append("import java.util.List;").append(ENTER);
-        sb.append("import javax.servlet.http.HttpServletRequest;").append(ENTER);
-        sb.append("import javax.servlet.http.HttpServletResponse;").append(ENTER);
-        sb.append("import org.springframework.beans.factory.annotation.Autowired;").append(ENTER);
-        sb.append("import org.springframework.stereotype.Controller;").append(ENTER);
-        sb.append("import org.springframework.web.bind.annotation.RequestMapping;").append(ENTER);
-        sb.append("import com.flong.commons.persistence.bean.SimplePage;").append(ENTER);
-        sb.append("import com.flong.commons.web.BaseController;").append(ENTER);
-        sb.append("import com.flong.modules.pojo." + className + ";").append(ENTER);
-        sb.append("import com.flong.modules.service." + className + "Service;").append(ENTER);
-
+        sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".controller;\n"+
+                "import com.bon.common.domain.vo.PageVO;\n" +
+                "import com.bon.common.domain.vo.ResultBody;\n" +
+                "import com.bon.modules." + modules + ".domain.dto.*;\n" +
+                "import com.bon.modules." + modules + ".domain.vo.*;\n" +
+                "import com.bon.modules." + modules + ".service." + className + "Service;\n" +
+                "import io.swagger.annotations.Api;\n" +
+                "import io.swagger.annotations.ApiOperation;\n" +
+                "import io.swagger.annotations.ApiResponse;\n" +
+                "import org.springframework.beans.factory.annotation.Autowired;\n" +
+                "import org.springframework.http.MediaType;\n" +
+                "import org.springframework.web.bind.annotation.*;").append(ENTER);
         sb.append(ENTER);
         sb.append(ENTER);
         sb.append("/**\n * @Created：" + NOW_DATE + "\n * @Author " + AUTHOR + "\n");
@@ -735,37 +739,63 @@ public class GenerateUtil {
         sb.append(" * @Description:").append(className).append(ENTER);
         sb.append(" * @Email:").append(myEmail).append("\n*/");
         sb.append(ENTER);
+        sb.append("@Api(\"" + className + "模块\")\n" +
+                "@RestController").append(ENTER);
+        sb.append("@RequestMapping(\"/" + objectName + "\")\n");
+        sb.append("public class " + className + "Controller {");
         sb.append(ENTER);
-        sb.append("@Controller").append(ENTER);
-        sb.append("@RequestMapping(\"" + StringUtils.lowerCase(className) + "\")");
         sb.append(ENTER);
-        sb.append("public class " + className + "Controller extends BaseController {");
+        sb.append("    @Autowired\n" +
+                "    private " + className + "Service " + objectName + "Service; ");//注入Service层的接口Name
         sb.append(ENTER);
-        sb.append(ENTER);
-        sb.append(" @Autowired " + className + "Service " + className + "Service");//注入Service层的接口Name
         sb.append(ENTER);
 
-        //创建一个默认的查询..
-        sb.append(ENTER);
-        sb.append("   @RequestMapping(value=\"list\")").append(ENTER);
-        sb.append("   public String list(" + className + " " + objectName + ",SimplePage simplePage ,HttpServletRequest request ,HttpServletResponse response){");
-        sb.append(ENTER);
-        sb.append("         List<" + className + "> list = " + className + "Service.list(simplePage, " + objectName + ");");
-        sb.append(ENTER);
-        sb.append("	     request.setAttribute(\"" + objectName + "\", object);");
-        sb.append(ENTER);
-        sb.append("		 request.setAttribute(\"page\", simplePage);");
-        sb.append(ENTER);
-        sb.append("		 request.setAttribute(\"list\", list);");
-        sb.append(ENTER);
-        sb.append("		 return \"" + BASE_PATH + "list\";");
-        sb.append(ENTER);
-        sb.append("   }");
 
+        sb.append("    @ApiOperation(value = \"根据条件获取" + className + "列表\")\n" +
+                "    @PostMapping(value = \"/list\",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)\n" +
+                "    public ResultBody list" + className + "(@RequestBody " + className + "ListDTO listDTO){\n" +
+                "        PageVO pageVO = " + objectName + "Service.list" + className + "(listDTO);\n" +
+                "        return new ResultBody(pageVO);\n" +
+                "    }").append(ENTER);
         sb.append(ENTER);
+
+        //创建单个查询
+        sb.append("    @ApiOperation(value = \"获取" + className + "\")\n" +
+                "    @GetMapping(value = \"/get" + className + "\")\n" +
+                "    public ResultBody get(@RequestParam Long key){\n" +
+                "        " + className + "VO vo= " + objectName + "Service.get" + className + "(key);\n" +
+                "        return new ResultBody(vo);\n" +
+                "    }").append(ENTER);
+        sb.append(ENTER);
+
+        sb.append("    @ApiOperation(value = \"新增" + className + "\")\n" +
+                "    @PostMapping(value = \"/save\",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)\n" +
+                "    public ResultBody save" + className + "(@RequestBody " + className + "DTO dto){\n" +
+                "        " + objectName + "Service.save" + className + "(dto);\n" +
+                "        return new ResultBody();\n" +
+                "    }").append(ENTER);
+        sb.append(ENTER);
+
+        sb.append("    @ApiOperation(value = \"修改" + className + "\")\n" +
+                "    @PostMapping(value = \"/update\",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)\n" +
+                "    public ResultBody update" + className + "(@RequestBody " + className + "DTO dto){\n" +
+                "        " + objectName + "Service.update" + className + "(dto);\n" +
+                "        return new ResultBody();\n" +
+                "    }").append(ENTER);
+        sb.append(ENTER);
+
+        sb.append("    @ApiOperation(value = \"删除" + className + "\")\n" +
+                "    @GetMapping(value = \"/delete\")\n" +
+                "    public ResultBody delete" + className + "(@RequestParam Long key){\n" +
+                "        " + objectName + "Service.delete" + className + "(key);\n" +
+                "        return new ResultBody();\n" +
+                "    }").append(ENTER);
+        sb.append(ENTER);
+
         sb.append("}");
         sb.append(ENTER);
-        FileUtils.save("output-code/" + ROOT_PACKAGE.replaceAll("\\.", "/") + "/controller/" + className + "Controller.java", sb.toString());
+        String filePath = ROOT_PACKAGE + ".modules." + modules + ".controller";
+        FileUtils.save("src/main/java/" + filePath.replaceAll("\\.", "/") + "/" + className + "Controller.java", sb.toString());
 
 
     }
@@ -957,7 +987,7 @@ public class GenerateUtil {
      * @return
      * @throws Exception
      */
-    private List<Map<String, Object>> getCols(String table) throws Exception {
+    private static List<Map<String, Object>> getCols(String table) throws Exception {
         List<Map<String, Object>> cols = new ArrayList<Map<String, Object>>();
         ResultSetMetaData md = DBHelperUtils.query("select * from " + table + " where 1 = 2", null).getMetaData();
         for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -1093,7 +1123,7 @@ public class GenerateUtil {
      * @param table
      * @return
      */
-    private String getTableConstantName(String table) {
+    private static String getTableConstantName(String table) {
         String tableConstantName = table.toUpperCase();
         for (String item : IGNORE_TABLE_PREFIX) {
             tableConstantName = tableConstantName.replaceAll("^" + item.toUpperCase(), "");
@@ -1106,7 +1136,7 @@ public class GenerateUtil {
      * @param name
      * @return
      */
-    private String getClassName(String name) {
+    private static String getClassName(String name) {
         String[] names = name.split("_");
         StringBuilder sb = new StringBuilder();
         for (String n : names) {
@@ -1190,25 +1220,12 @@ public class GenerateUtil {
         return queryForList(conn, sql, limit);
     }
 
-
-    public static void main(String[] args) throws Exception {
-        String sql = "select * from SYS_MENU ";
-        //List<Map> queryForList = queryForList(sql, 1000);
-		/*for(Map m:queryForList){
-			System.out.println("======"+m);
-		}*/
-
-        String tableName = "SYS_MENU";//表名
-
-        List<Map<String, Object>> tableRemarks = getTableRemarks(tableName);
-        int i = 0;
-        for (Map<String, Object> col : getTableRemarks(tableName)) {
-            Set<String> keySet = col.keySet();
-            for (Object str : keySet) {
-                System.out.println(str);
-            }
-        }
-
-        //new CodeGenerator().createJspView("sup_email");
+    public static void generate(String tableName,String modules) throws Exception {
+        createDTOClass(tableName,modules);
+        createVOClass(tableName,modules);
+        createListDTOClass(tableName,modules);
+        createServiceClass(tableName,modules);
+        createServiceImplClass(tableName,modules);
+        createControllerClass(tableName,modules);
     }
 }

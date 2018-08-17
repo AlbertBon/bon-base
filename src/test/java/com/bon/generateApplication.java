@@ -66,10 +66,10 @@ public class generateApplication {
         SysGenerateClassDTO dto = new SysGenerateClassDTO();
         List<String> tableNameList = new ArrayList<>();
         //表名
-        tableNameList.add("user");
+        tableNameList.add("test");
         dto.setTableNameList(tableNameList);
         //模块
-        dto.setModules("sys");
+        dto.setModules("app");
         dtoList.add(dto);
         sysBaseService.generateClass(dtoList);
     }

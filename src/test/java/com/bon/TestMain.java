@@ -52,12 +52,6 @@ public class TestMain {
     @Test
     public void generate() throws Exception {
         GenerateUtil generateUtil = new GenerateUtil();
-        List<String> tables = generateUtil.getTables();
-        System.out.println(tables);
-        generateUtil.createDTOClass("user","app");
-        generateUtil.createVOClass("user","app");
-        generateUtil.createListDTOClass("user","app");
-        generateUtil.createServiceClass("user","app");
-        generateUtil.createServiceImplClass("user","app");
+
     }
 }
