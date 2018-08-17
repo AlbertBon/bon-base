@@ -761,8 +761,8 @@ public class GenerateUtil {
 
         //创建单个查询
         sb.append("    @ApiOperation(value = \"获取" + className + "\")\n" +
-                "    @GetMapping(value = \"/get" + className + "\")\n" +
-                "    public ResultBody get(@RequestParam Long key){\n" +
+                "    @GetMapping(value = \"/get\")\n" +
+                "    public ResultBody get" + className + "(@RequestParam Long key){\n" +
                 "        " + className + "VO vo= " + objectName + "Service.get" + className + "(key);\n" +
                 "        return new ResultBody(vo);\n" +
                 "    }").append(ENTER);
