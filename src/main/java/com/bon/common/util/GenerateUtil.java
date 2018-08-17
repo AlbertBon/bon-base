@@ -1,6 +1,9 @@
 package com.bon.common.util;
 
 
+import com.bon.Application;
+
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -203,15 +206,15 @@ public class GenerateUtil {
      * @param table
      * @throws Exception
      */
-    public void createVOClass(String table,String modules) throws Exception {
+    public void createVOClass(String table, String modules) throws Exception {
         String tableConstantName = getTableConstantName(table);
 
         String className = getClassName(tableConstantName);
         StringBuilder sb = new StringBuilder();
-        sb.append("package " + ROOT_PACKAGE + ".vo;");
+        sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".domain.vo;");
         sb.append(ENTER);
         sb.append(ENTER);
-        sb.append("import java.util.*;");
+        sb.append("import java.util.*;\n");
         sb.append("import java.io.Serializable;");
         sb.append(ENTER);
         sb.append(ENTER);
@@ -265,24 +268,101 @@ public class GenerateUtil {
         }
         sb.append("}");
         sb.append(ENTER);
-        FileUtils.save("output-code/" + ROOT_PACKAGE.replaceAll("\\.", "/") + "/entity/" + className + "VO.java", sb.toString());
+        String filePath = ROOT_PACKAGE + ".modules." + modules + ".domain.vo";
+        FileUtils.save("src/main/java/" + filePath.replaceAll("\\.", "/") + "/" + className + "VO.java", sb.toString());
     }
 
+
     /***
-     * 生成视图类的代码
+     * 生成参数类的代码
      * @param table
      * @throws Exception
      */
-    public void createListDTOClass(String table,String modules) throws Exception {
+    public void createDTOClass(String table, String modules) throws Exception {
         String tableConstantName = getTableConstantName(table);
 
         String className = getClassName(tableConstantName);
         StringBuilder sb = new StringBuilder();
-        sb.append("package " + ROOT_PACKAGE + ".dto;");
+        sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".domain.dto;");
+        sb.append(ENTER);
+        sb.append(ENTER);
+        sb.append("import java.util.*;\n");
+        sb.append("import java.io.Serializable;\n" +
+                "import io.swagger.annotations.ApiModel;\n" +
+                "import io.swagger.annotations.ApiModelProperty;");
+        sb.append(ENTER);
+        sb.append(ENTER);
+        sb.append("/**\n * @Created：" + NOW_DATE + "\n * @Author " + AUTHOR + "\n");
+        sb.append(" * @Version:").append(Version).append(ENTER);
+        sb.append(" * @Description:").append(className).append("视图类").append(ENTER);
+        sb.append(" * @Email:").append(myEmail).append("\n*/");
+        sb.append(ENTER);
+        sb.append("@ApiModel(value =\"" + className + "\")");
+        sb.append(ENTER);
+        sb.append("public class " + className + "DTO extends BaseDTO<" + className + "> implements Serializable{");
+        sb.append(ENTER);
+        sb.append(TAB);
+        sb.append("private static final long serialVersionUID = 1L;");
+        sb.append(ENTER);
+        for (Map<String, Object> col : getCols(table)) {
+            sb.append(ENTER).append(TAB);
+            sb.append("@ApiModelProperty(value = \"" + col.get(REMARKS) + "\")").append(ENTER).append(TAB);
+            sb.append("private ");
+            if (Class.forName(col.get(CLASS).toString()).isAssignableFrom(Date.class) || Class.forName(col.get(CLASS).toString()) == Timestamp.class) {
+                sb.append("Date");
+            } else if (col.get(TYPE).toString().equalsIgnoreCase("TINYINT")) {
+                sb.append("Byte");
+            } else if (getClassName(col.get(NAME).toString()).equals(Class.forName(col.get(CLASS).toString()).getSimpleName())) {
+                sb.append(col.get(CLASS));
+            } else {
+                sb.append(Class.forName(col.get(CLASS).toString()).getSimpleName());
+            }
+            sb.append(" " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";");
+            sb.append(ENTER);
+        }
+        sb.append(ENTER);
+        for (Map<String, Object> col : getCols(table)) {
+            String type = "";
+            if (Class.forName(col.get(CLASS).toString()).isAssignableFrom(Date.class) || Class.forName(col.get(CLASS).toString()) == Timestamp.class) {
+                type = "Date";
+            } else if (col.get(TYPE).toString().equalsIgnoreCase("TINYINT")) {
+                type = "Byte";
+            } else if (getClassName(col.get(NAME).toString()).equals(Class.forName(col.get(CLASS).toString()).getSimpleName())) {
+                type = col.get(CLASS).toString();
+            } else {
+                type = Class.forName(col.get(CLASS).toString()).getSimpleName();
+            }
+            sb.append(TAB);
+            sb.append("public " + type + " get" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "() {\n" +
+                    "        return " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";\n" +
+                    "    }\n" +
+                    "\n" +
+                    "    public void set" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "(" + type + " " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ") {\n" +
+                    "        this." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + " = " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";\n" +
+                    "    }").append(ENTER).append(TAB);
+            sb.append(ENTER);
+        }
+        sb.append("}");
+        sb.append(ENTER);
+        String filePath = ROOT_PACKAGE + ".modules." + modules + ".domain.dto";
+        FileUtils.save("src/main/java/" + filePath.replaceAll("\\.", "/") + "/" + className + "DTO.java", sb.toString());
+    }
+
+    /***
+     * 生成列表参数类的代码
+     * @param table
+     * @throws Exception
+     */
+    public void createListDTOClass(String table, String modules) throws Exception {
+        String tableConstantName = getTableConstantName(table);
+
+        String className = getClassName(tableConstantName);
+        StringBuilder sb = new StringBuilder();
+        sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".domain.dto;");
         sb.append(ENTER);
         sb.append(ENTER);
         sb.append("import com.bon.common.domain.dto.PageDTO;\n" +
-                "import com.bon.modules.sys.domain.entity.User;\n");
+                "import com.bon.modules." + modules + ".domain.entity." + className + ";\n");
         sb.append("import java.io.Serializable;");
         sb.append(ENTER);
         sb.append(ENTER);
@@ -291,7 +371,7 @@ public class GenerateUtil {
         sb.append(" * @Description:").append(className).append("列表参数类").append(ENTER);
         sb.append(" * @Email:").append(myEmail).append("\n*/");
         sb.append(ENTER);
-        sb.append("public class " + className + "DTO extends PageDTO<User> implements Serializable{");
+        sb.append("public class " + className + "DTO extends PageDTO<" + className + "> implements Serializable{");
         sb.append(ENTER);
         sb.append(TAB);
         sb.append("private static final long serialVersionUID = 1L;");
@@ -299,7 +379,8 @@ public class GenerateUtil {
 
         sb.append("}");
         sb.append(ENTER);
-        FileUtils.save("output-code/" + ROOT_PACKAGE.replaceAll("\\.", "/") + "/entity/" + className + "DTO.java", sb.toString());
+        String filePath = ROOT_PACKAGE + ".modules." + modules + ".domain.dto";
+        FileUtils.save("src/main/java/" + filePath.replaceAll("\\.", "/") + "/" + className + "ListDTO.java", sb.toString());
     }
 
 //    /***
@@ -469,7 +550,7 @@ public class GenerateUtil {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("package " + ROOT_PACKAGE + ".service;");
+        sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".service;");
         sb.append(ENTER);
         sb.append(ENTER);
 
@@ -508,7 +589,8 @@ public class GenerateUtil {
         sb.append(ENTER);
         sb.append("}");
         sb.append(ENTER);
-        FileUtils.save("output-code/" + ROOT_PACKAGE.replaceAll("\\.", "/") + "/service/" + className + "Service.java", sb.toString());
+        String filePath = ROOT_PACKAGE + ".modules." + modules + ".service";
+        FileUtils.save("src/main/java/" + filePath.replaceAll("\\.", "/") + "/" + className + "Service.java", sb.toString());
 
     }
 
@@ -525,7 +607,7 @@ public class GenerateUtil {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append("package " + ROOT_PACKAGE + ".service.impl;");
+        sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".service.impl;");
         sb.append(ENTER);
         sb.append(ENTER);
 
@@ -571,7 +653,7 @@ public class GenerateUtil {
                 "        PageHelper.startPage(dto);\n" +
                 "        List<" + className + "> list = " + objectName + "Mapper.selectByExample(dto.createExample());\n" +
                 "        PageVO pageVO = new PageVO(list);\n" +
-                "        List<RoleVO> voList = new ArrayList<>();for (" + className + " " + objectName + " : list) {\n" +
+                "        List<" + className + "VO> voList = new ArrayList<>();for (" + className + " " + objectName + " : list) {\n" +
                 "            " + className + "VO vo = new " + className + "VO();\n" +
                 "            BeanUtil.copyPropertys(" + objectName + ", vo);\n" +
                 "            voList.add(vo);\n" +
@@ -614,7 +696,8 @@ public class GenerateUtil {
         sb.append(ENTER);
         sb.append("}");
         sb.append(ENTER);
-        FileUtils.save("output-code/" + ROOT_PACKAGE.replaceAll("\\.", "/") + "/service/impl/" + className + "ServiceImpl.java", sb.toString());
+        String filePath = ROOT_PACKAGE + ".modules." + modules + ".service.impl";
+        FileUtils.save("src/main/java/" + filePath.replaceAll("\\.", "/") + "/" + className + "ServiceImpl.java", sb.toString());
 
     }
 
@@ -877,22 +960,16 @@ public class GenerateUtil {
     private List<Map<String, Object>> getCols(String table) throws Exception {
         List<Map<String, Object>> cols = new ArrayList<Map<String, Object>>();
         ResultSetMetaData md = DBHelperUtils.query("select * from " + table + " where 1 = 2", null).getMetaData();
-
         for (int i = 1; i <= md.getColumnCount(); i++) {
             Map<String, Object> col = new HashMap<String, Object>();
             cols.add(col);
             col.put(NAME, md.getColumnName(i));
             col.put(CLASS, md.getColumnClassName(i));
             col.put(SIZE, md.getColumnDisplaySize(i));
-            col.put(REMARKS, md.getColumnName(i));
-		/*	System.out.println("1"+ md.getCatalogName(i));
-			System.out.println("2"+ md.getColumnClassName(i));
-			System.out.println("3"+ md.getColumnDisplaySize(i));
-			System.out.println("4"+ md.getColumnType(i));
-			System.out.println("5"+ md.getSchemaName(i));
-			System.out.println("6"+ md.getPrecision(i));
-			System.out.println("7"+ md.getScale(i));*/
-
+            ResultSet rs = DBHelperUtils.query("show full columns from " + table + " where field = '" + md.getColumnName(i) + "'", null);
+            while (rs.next()) {
+                col.put(REMARKS, rs.getString("Comment"));
+            }
             String _type = null;
             String type = md.getColumnTypeName(i);
             if (type.equals("INT")) {
