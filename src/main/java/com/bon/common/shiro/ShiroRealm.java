@@ -4,6 +4,7 @@ import com.bon.common.service.RedisService;
 import com.bon.modules.sys.domain.entity.SysPermission;
 import com.bon.modules.sys.domain.entity.SysRole;
 import com.bon.modules.sys.domain.entity.SysUser;
+import com.bon.modules.sys.service.ShiroService;
 import com.bon.modules.sys.service.UserService;
 import com.bon.common.util.MyLog;
 import org.apache.shiro.authc.*;
@@ -25,7 +26,7 @@ import java.util.List;
 public class ShiroRealm extends AuthorizingRealm {
     public static final MyLog log = MyLog.getLog(ShiroRealm.class);
     @Autowired
-    private UserService userService;
+    private ShiroService shiroService;
 
     @Autowired
     private RedisService redisService;
@@ -36,10 +37,10 @@ public class ShiroRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
 //        User user = (User) principals.getPrimaryPrincipal();
         String username = principals.getPrimaryPrincipal().toString();
-        List<SysRole> roleList = userService.getRoleByUsername(username);
+        List<SysRole> roleList = shiroService.getRoleByUsername(username);
         for(SysRole role:roleList){
             authorizationInfo.addRole(role.getRoleFlag());
-            List<SysPermission> permissionList = userService.getPermissionByRoleFlag(role.getRoleFlag());
+            List<SysPermission> permissionList = shiroService.getPermissionByRoleFlag(role.getRoleFlag());
             for(SysPermission permission:permissionList){
                 authorizationInfo.addStringPermission(permission.getPermissionFlag());
             }
@@ -58,7 +59,7 @@ public class ShiroRealm extends AuthorizingRealm {
         String username = (String) token.getPrincipal();
         //通过username从数据库中查找 User对象，如果找到，没找到.
         //实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
-        SysUser user = userService.getUserByUsername(username);
+        SysUser user = shiroService.getUserByUsername(username);
         if (user == null) {
             return null;
         }

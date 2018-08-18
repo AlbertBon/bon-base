@@ -464,16 +464,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<SysRole> getRoleByUsername(String username) {
-        return userExtendMapper.getRoleByUsername(username);
-    }
-
-    @Override
-    public List<SysPermission> getPermissionByRoleFlag(String roleFlag) {
-        return userExtendMapper.getPermissionByRoleFlag(roleFlag);
-    }
-
-    @Override
     public List<MenuRouterVO> getMenuRouter(String username) {
         //只查询根节点菜单
         List<SysPermission> permissionList = userExtendMapper.getMenuByUsername(username);

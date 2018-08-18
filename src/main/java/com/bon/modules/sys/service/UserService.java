@@ -76,20 +76,6 @@ public interface UserService {
     void saveRolePermission(List<Long> permissionIds,Long roleId);
 
     /**
-     * 根据用户名获取角色
-     * @param username
-     * @return
-     */
-    List<SysRole> getRoleByUsername(String username);
-
-    /**
-     * 根据角色标识获取
-     * @param roleFlag
-     * @return
-     */
-    List<SysPermission> getPermissionByRoleFlag(String roleFlag);
-
-    /**
      * 根据用户名获取菜单，并组装前端路由格式json
      * @param userId
      * @return
