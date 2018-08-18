@@ -1,7 +1,7 @@
 package com.bon.modules.sys.domain.dto;
 
 import com.bon.common.domain.dto.BaseDTO;
-import com.bon.modules.sys.domain.entity.User;
+import com.bon.modules.sys.domain.entity.SysUser;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -14,9 +14,9 @@ import java.util.List;
  * @create: 2018-05-03 18:36
  **/
 @ApiModel(value ="UserDTO")
-public class UserDTO extends BaseDTO<User> {
+public class UserDTO extends BaseDTO<SysUser> {
     @ApiModelProperty(value = "ID")
-    private Long userId;
+    private Long sysUserId;
     @ApiModelProperty(value = "姓名")
     private String name;
 
@@ -81,11 +81,11 @@ public class UserDTO extends BaseDTO<User> {
     }
 
     public Long getUserId() {
-        return userId;
+        return sysUserId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUserId(Long sysUserId) {
+        this.sysUserId = sysUserId;
     }
 
     public String getName() {

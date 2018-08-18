@@ -1,9 +1,9 @@
 package com.bon.common.shiro;
 
 import com.bon.common.service.RedisService;
-import com.bon.modules.sys.domain.entity.Permission;
-import com.bon.modules.sys.domain.entity.Role;
-import com.bon.modules.sys.domain.entity.User;
+import com.bon.modules.sys.domain.entity.SysPermission;
+import com.bon.modules.sys.domain.entity.SysRole;
+import com.bon.modules.sys.domain.entity.SysUser;
 import com.bon.modules.sys.service.UserService;
 import com.bon.common.util.MyLog;
 import org.apache.shiro.authc.*;
@@ -36,11 +36,11 @@ public class ShiroRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
 //        User user = (User) principals.getPrimaryPrincipal();
         String username = principals.getPrimaryPrincipal().toString();
-        List<Role> roleList = userService.getRoleByUsername(username);
-        for(Role role:roleList){
+        List<SysRole> roleList = userService.getRoleByUsername(username);
+        for(SysRole role:roleList){
             authorizationInfo.addRole(role.getRoleFlag());
-            List<Permission> permissionList = userService.getPermissionByRoleFlag(role.getRoleFlag());
-            for(Permission permission:permissionList){
+            List<SysPermission> permissionList = userService.getPermissionByRoleFlag(role.getRoleFlag());
+            for(SysPermission permission:permissionList){
                 authorizationInfo.addStringPermission(permission.getPermissionFlag());
             }
         }
@@ -58,7 +58,7 @@ public class ShiroRealm extends AuthorizingRealm {
         String username = (String) token.getPrincipal();
         //通过username从数据库中查找 User对象，如果找到，没找到.
         //实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
-        User user = userService.getUserByUsername(username);
+        SysUser user = userService.getUserByUsername(username);
         if (user == null) {
             return null;
         }

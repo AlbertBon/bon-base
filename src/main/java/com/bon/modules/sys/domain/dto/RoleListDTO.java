@@ -1,7 +1,7 @@
 package com.bon.modules.sys.domain.dto;
 
 import com.bon.common.domain.dto.PageDTO;
-import com.bon.modules.sys.domain.entity.Role;
+import com.bon.modules.sys.domain.entity.SysRole;
 
 /**
  * @program: bon基础项目
@@ -9,5 +9,5 @@ import com.bon.modules.sys.domain.entity.Role;
  * @author: Bon
  * @create: 2018-05-11 15:42
  **/
-public class RoleListDTO extends PageDTO<Role> {
+public class RoleListDTO extends PageDTO<SysRole> {
 }

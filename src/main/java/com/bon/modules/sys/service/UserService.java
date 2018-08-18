@@ -3,9 +3,9 @@ package com.bon.modules.sys.service;
 
 import com.bon.common.domain.vo.PageVO;
 import com.bon.modules.sys.domain.dto.*;
-import com.bon.modules.sys.domain.entity.Permission;
-import com.bon.modules.sys.domain.entity.Role;
-import com.bon.modules.sys.domain.entity.User;
+import com.bon.modules.sys.domain.entity.SysPermission;
+import com.bon.modules.sys.domain.entity.SysRole;
+import com.bon.modules.sys.domain.entity.SysUser;
 import com.bon.modules.sys.domain.vo.*;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public interface UserService {
      * @param username
      * @return
      */
-    User getUserByUsername(String username);
+    SysUser getUserByUsername(String username);
     void saveUser(UserDTO userDTO);
     void updateUser(UserDTO userDTO);
     void deleteUser(Long id);
@@ -80,14 +80,14 @@ public interface UserService {
      * @param username
      * @return
      */
-    List<Role> getRoleByUsername(String username);
+    List<SysRole> getRoleByUsername(String username);
 
     /**
      * 根据角色标识获取
      * @param roleFlag
      * @return
      */
-    List<Permission> getPermissionByRoleFlag(String roleFlag);
+    List<SysPermission> getPermissionByRoleFlag(String roleFlag);
 
     /**
      * 根据用户名获取菜单，并组装前端路由格式json

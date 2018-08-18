@@ -13,7 +13,7 @@ import io.swagger.annotations.ApiModelProperty;
 public class PermissionGetDTO {
 
     @ApiModelProperty(value = "权限id")
-    private Long permissionId;
+    private Long sysPermissionId;
 
     @ApiModelProperty(value = "00:菜单权限")
     private String type;
@@ -22,11 +22,11 @@ public class PermissionGetDTO {
     private Long objectId;
 
     public Long getPermissionId() {
-        return permissionId;
+        return sysPermissionId;
     }
 
-    public void setPermissionId(Long permissionId) {
-        this.permissionId = permissionId;
+    public void setPermissionId(Long sysPermissionId) {
+        this.sysPermissionId = sysPermissionId;
     }
 
     public Long getObjectId() {

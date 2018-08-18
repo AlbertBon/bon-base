@@ -2,7 +2,7 @@ package com.bon;
 
 import com.bon.modules.sys.dao.SysBaseExtendMapper;
 import com.bon.modules.sys.dao.SysBaseMapper;
-import com.bon.modules.sys.dao.UserExtendMapper;
+import com.bon.modules.sys.dao.SysUserExtendMapper;
 import com.bon.modules.sys.domain.dto.SysGenerateClassDTO;
 import com.bon.modules.sys.domain.entity.SysBase;
 import com.bon.modules.sys.service.SysBaseService;
@@ -44,7 +44,7 @@ public class generateApplication {
     SysBaseExtendMapper sysBaseExtendMapper;
 
     @Autowired
-    private UserExtendMapper userExtendMapper;
+    private SysUserExtendMapper sysUserExtendMapper;
 
 
     @Before

@@ -1,7 +1,7 @@
 package com.bon.modules.sys.domain.dto;
 
 import com.bon.common.domain.dto.BaseDTO;
-import com.bon.modules.sys.domain.entity.Role;
+import com.bon.modules.sys.domain.entity.SysRole;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -14,9 +14,9 @@ import java.util.List;
  * @date 2018-05-25 15:57:59
  */
 @ApiModel(value ="Role")
-public class RoleDTO extends BaseDTO<Role> {
+public class RoleDTO extends BaseDTO<SysRole> {
     @ApiModelProperty(value = "ID")
-    private Long roleId;
+    private Long sysRoleId;
 
     @ApiModelProperty(value = "角色名称")
     private String roleName;
@@ -36,11 +36,11 @@ public class RoleDTO extends BaseDTO<Role> {
     }
 
     public Long getRoleId() {
-        return roleId;
+        return sysRoleId;
     }
 
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
+    public void setRoleId(Long sysRoleId) {
+        this.sysRoleId = sysRoleId;
     }
 
     public String getRoleName() {

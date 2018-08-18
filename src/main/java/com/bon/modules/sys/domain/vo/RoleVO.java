@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class RoleVO implements Serializable {
 
-    private Long roleId;
+    private Long sysRoleId;
 
     private Date gmtCreate;
 
@@ -22,22 +22,22 @@ public class RoleVO implements Serializable {
 
     private String roleFlag;
 
-    private List<Long> permissionIds;
+    private List<Long> sysPermissionIds;
 
     public List<Long> getPermissionIds() {
-        return permissionIds;
+        return sysPermissionIds;
     }
 
-    public void setPermissionIds(List<Long> permissionIds) {
-        this.permissionIds = permissionIds;
+    public void setPermissionIds(List<Long> sysPermissionIds) {
+        this.sysPermissionIds = sysPermissionIds;
     }
 
     public Long getRoleId() {
-        return roleId;
+        return sysRoleId;
     }
 
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
+    public void setRoleId(Long sysRoleId) {
+        this.sysRoleId = sysRoleId;
     }
 
     public String getRoleName() {

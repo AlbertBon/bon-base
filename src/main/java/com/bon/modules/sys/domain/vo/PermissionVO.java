@@ -15,7 +15,7 @@ import java.io.Serializable;
 public class PermissionVO implements Serializable {
     @Id
     @ApiModelProperty(value = "ID")
-    private Long permissionId;
+    private Long sysPermissionId;
 
     @ApiModelProperty(value = "权限名称")
     private String permissionName;
@@ -38,11 +38,11 @@ public class PermissionVO implements Serializable {
     }
 
     public Long getPermissionId() {
-        return permissionId;
+        return sysPermissionId;
     }
 
-    public void setPermissionId(Long permissionId) {
-        this.permissionId = permissionId;
+    public void setPermissionId(Long sysPermissionId) {
+        this.sysPermissionId = sysPermissionId;
     }
 
     public String getPermissionName() {

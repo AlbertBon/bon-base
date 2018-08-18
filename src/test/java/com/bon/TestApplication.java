@@ -1,8 +1,8 @@
 package com.bon;
 
 import com.bon.modules.sys.dao.SysBaseMapper;
-import com.bon.modules.sys.dao.UserExtendMapper;
-import com.bon.modules.sys.domain.entity.Role;
+import com.bon.modules.sys.dao.SysUserExtendMapper;
+import com.bon.modules.sys.domain.entity.SysUser;
 import com.bon.modules.sys.service.SysBaseService;
 import com.bon.common.util.MyLog;
 import org.junit.After;
@@ -12,8 +12,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -28,7 +26,7 @@ public class TestApplication {
     private SysBaseMapper SysBaseMapper;
 
     @Autowired
-    private UserExtendMapper userExtendMapper;
+    private SysUserExtendMapper sysUserExtendMapper;
 
 
     @Before
@@ -43,10 +41,12 @@ public class TestApplication {
 
 	@Test
 	public void test() {
-        List<Role> roles = userExtendMapper.getRoleByUsername("bon");
-        for(Role role:roles){
-            System.out.println(role);
-        }
+//        List<Role> roles = userExtendMapper.getRoleByUsername("bon");
+//        for(Role role:roles){
+//            System.out.println(role);
+//        }
+//        SysUser user = .(1L);
+//        System.out.println(user.getSysUserId());
 	}
 
 }

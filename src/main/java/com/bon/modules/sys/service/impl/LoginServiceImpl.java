@@ -7,10 +7,10 @@ import com.bon.common.domain.dto.BaseDTO;
 import com.bon.common.domain.enums.ExceptionType;
 import com.bon.common.exception.BusinessException;
 import com.bon.common.service.RedisService;
-import com.bon.modules.sys.dao.UserMapper;
+import com.bon.modules.sys.dao.SysUserMapper;
 import com.bon.modules.sys.domain.dto.LoginDTO;
 import com.bon.modules.sys.domain.dto.TokenDTO;
-import com.bon.modules.sys.domain.entity.User;
+import com.bon.modules.sys.domain.entity.SysUser;
 import com.bon.modules.sys.domain.vo.LoginVO;
 import com.bon.modules.sys.domain.vo.MenuRouterVO;
 import com.bon.modules.sys.domain.vo.TokenVO;
@@ -40,7 +40,7 @@ public class LoginServiceImpl implements LoginService {
     private static final MyLog LOG = MyLog.getLog(LoginServiceImpl.class);
 
     @Autowired
-    private UserMapper userMapper;
+    private SysUserMapper userMapper;
 
     @Autowired
     private RedisService redisService;
@@ -67,9 +67,9 @@ public class LoginServiceImpl implements LoginService {
         subject.login(token);
 
         String username = subject.getPrincipals().getPrimaryPrincipal().toString();
-        BaseDTO dto = new BaseDTO(new User());
-        dto.andFind("username",username);
-        User user = userMapper.selectOneByExample(dto.getExample());
+        BaseDTO dto = new BaseDTO();
+        dto.andFind(new SysUser(),"username",username);
+        SysUser user = userMapper.selectOneByExample(dto.getExample());
         String loginToken= MessageFormat.format(Constants.RedisKey.LOGIN_USERNAME_SESSION_ID,user.getUsername(),sessionId);
 
         LoginVO loginVO = new LoginVO();
@@ -88,8 +88,8 @@ public class LoginServiceImpl implements LoginService {
         // 使用 uuid 作为源 token
         String token = UUID.randomUUID().toString().replace("-", "");
         if(StringUtils.isNotBlank(dto.getWxOpenid())){
-            dto.andFind(new User(),"wxOpenid",dto.getWxOpenid());
-            User user = userMapper.selectOneByExample(dto.getExample());
+            dto.andFind(new SysUser(),"wxOpenid",dto.getWxOpenid());
+            SysUser user = userMapper.selectOneByExample(dto.getExample());
             if(user==null){
                 throw new BusinessException(ExceptionType.USERNAME_NULL_PASSWORD_ERROR);
             }
