@@ -18,7 +18,7 @@ public class SysMenu implements Serializable {
     @Id
     @GeneratedValue(generator = "JDBC")
     @ApiModelProperty(value = "ID")
-    private Long sysMenuId;
+    private Long menuId;
 
     @ApiModelProperty(value = "创建时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -54,8 +54,8 @@ public class SysMenu implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public SysMenu(Long sysMenuId, Date gmtCreate, Date gmtModified, String name, String path, String component, String redirect, String title, String icon, String hidden, String alwaysShow) {
-        this.sysMenuId = sysMenuId;
+    public SysMenu(Long menuId, Date gmtCreate, Date gmtModified, String name, String path, String component, String redirect, String title, String icon, String hidden, String alwaysShow) {
+        this.menuId = menuId;
         this.gmtCreate = gmtCreate;
         this.gmtModified = gmtModified;
         this.name = name;
@@ -72,12 +72,12 @@ public class SysMenu implements Serializable {
         super();
     }
 
-    public Long getSysMenuId() {
-        return sysMenuId;
+    public Long getMenuId() {
+        return menuId;
     }
 
-    public void setSysMenuId(Long sysMenuId) {
-        this.sysMenuId = sysMenuId;
+    public void setMenuId(Long menuId) {
+        this.menuId = menuId;
     }
 
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")

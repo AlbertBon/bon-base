@@ -66,10 +66,16 @@ public class generateApplication {
         SysGenerateClassDTO dto = new SysGenerateClassDTO();
         List<String> tableNameList = new ArrayList<>();
         //表名
-        tableNameList.add("test");
+//        tableNameList.add("sys_user");
+//        tableNameList.add("sys_user_role");
+//        tableNameList.add("sys_role");
+//        tableNameList.add("sys_role_permission");
+//        tableNameList.add("sys_permission");
+//        tableNameList.add("sys_menu");
+        tableNameList.add("sys_base");
         dto.setTableNameList(tableNameList);
         //模块
-        dto.setModules("app");
+        dto.setModules("sys");
         //是否生成扩展类
         dto.setIsExtend((byte) 0);
         dtoList.add(dto);

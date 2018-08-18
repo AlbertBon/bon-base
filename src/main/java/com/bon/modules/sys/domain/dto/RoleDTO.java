@@ -16,7 +16,7 @@ import java.util.List;
 @ApiModel(value ="Role")
 public class RoleDTO extends BaseDTO<SysRole> {
     @ApiModelProperty(value = "ID")
-    private Long sysRoleId;
+    private Long roleId;
 
     @ApiModelProperty(value = "角色名称")
     private String roleName;
@@ -36,11 +36,11 @@ public class RoleDTO extends BaseDTO<SysRole> {
     }
 
     public Long getRoleId() {
-        return sysRoleId;
+        return roleId;
     }
 
-    public void setRoleId(Long sysRoleId) {
-        this.sysRoleId = sysRoleId;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 
     public String getRoleName() {

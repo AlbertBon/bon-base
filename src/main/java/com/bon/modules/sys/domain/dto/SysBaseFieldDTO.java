@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
  **/
 public class SysBaseFieldDTO {
     @ApiModelProperty(value = "ID")
-    private Long sysBaseId;
+    private Long baseId;
 
     @ApiModelProperty(value = "字段名")
     private String fieldName;
@@ -39,12 +39,12 @@ public class SysBaseFieldDTO {
     @ApiModelProperty(value = "1:是，0：否；是否为id")
     private Byte isId;
 
-    public Long getSysBaseId() {
-        return sysBaseId;
+    public Long getBaseId() {
+        return baseId;
     }
 
-    public void setSysBaseId(Long sysBaseId) {
-        this.sysBaseId = sysBaseId;
+    public void setBaseId(Long baseId) {
+        this.baseId = baseId;
     }
 
     public String getFieldName() {

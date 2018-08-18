@@ -46,7 +46,7 @@ public class TestApplication {
 //            System.out.println(role);
 //        }
 //        SysUser user = .(1L);
-//        System.out.println(user.getSysUserId());
+//        System.out.println(user.getUserId());
 	}
 
 }

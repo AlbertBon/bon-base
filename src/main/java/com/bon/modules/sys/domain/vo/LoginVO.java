@@ -10,7 +10,7 @@ import java.util.List;
  * @create: 2018-05-16 14:06
  **/
 public class LoginVO implements Serializable{
-    private Long sysUserId;
+    private Long userId;
 
     private String name;
 
@@ -45,11 +45,11 @@ public class LoginVO implements Serializable{
     }
 
     public Long getUserId() {
-        return sysUserId;
+        return userId;
     }
 
-    public void setUserId(Long sysUserId) {
-        this.sysUserId = sysUserId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getName() {

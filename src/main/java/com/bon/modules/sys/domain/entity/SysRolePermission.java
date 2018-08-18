@@ -18,7 +18,7 @@ public class SysRolePermission implements Serializable {
     @Id
     @GeneratedValue(generator = "JDBC")
     @ApiModelProperty(value = "ID")
-    private Long sysRolePermissionId;
+    private Long rolePermissionId;
 
     @ApiModelProperty(value = "创建时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -29,31 +29,31 @@ public class SysRolePermission implements Serializable {
     private Date gmtModified;
 
     @ApiModelProperty(value = "权限id")
-    private Long sysPermissionId;
+    private Long permissionId;
 
     @ApiModelProperty(value = "角色id")
-    private Long sysRoleId;
+    private Long roleId;
 
     private static final long serialVersionUID = 1L;
 
-    public SysRolePermission(Long sysRolePermissionId, Date gmtCreate, Date gmtModified, Long sysPermissionId, Long sysRoleId) {
-        this.sysRolePermissionId = sysRolePermissionId;
+    public SysRolePermission(Long rolePermissionId, Date gmtCreate, Date gmtModified, Long permissionId, Long roleId) {
+        this.rolePermissionId = rolePermissionId;
         this.gmtCreate = gmtCreate;
         this.gmtModified = gmtModified;
-        this.sysPermissionId = sysPermissionId;
-        this.sysRoleId = sysRoleId;
+        this.permissionId = permissionId;
+        this.roleId = roleId;
     }
 
     public SysRolePermission() {
         super();
     }
 
-    public Long getSysRolePermissionId() {
-        return sysRolePermissionId;
+    public Long getRolePermissionId() {
+        return rolePermissionId;
     }
 
-    public void setSysRolePermissionId(Long sysRolePermissionId) {
-        this.sysRolePermissionId = sysRolePermissionId;
+    public void setRolePermissionId(Long rolePermissionId) {
+        this.rolePermissionId = rolePermissionId;
     }
 
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
@@ -74,19 +74,19 @@ public class SysRolePermission implements Serializable {
         this.gmtModified = gmtModified;
     }
 
-    public Long getSysPermissionId() {
-        return sysPermissionId;
+    public Long getPermissionId() {
+        return permissionId;
     }
 
-    public void setSysPermissionId(Long sysPermissionId) {
-        this.sysPermissionId = sysPermissionId;
+    public void setPermissionId(Long permissionId) {
+        this.permissionId = permissionId;
     }
 
-    public Long getSysRoleId() {
-        return sysRoleId;
+    public Long getRoleId() {
+        return roleId;
     }
 
-    public void setSysRoleId(Long sysRoleId) {
-        this.sysRoleId = sysRoleId;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 }

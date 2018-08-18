@@ -4,5 +4,5 @@ import com.bon.modules.sys.domain.entity.SysUser;
 import tk.mybatis.mapper.common.Mapper;
 
 public interface SysUserMapper extends Mapper<SysUser> {
-    SysUser getById(Long sysUserId);
+    SysUser getById(Long userId);
 }

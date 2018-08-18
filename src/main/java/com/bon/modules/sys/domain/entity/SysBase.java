@@ -18,7 +18,7 @@ public class SysBase implements Serializable {
     @Id
     @GeneratedValue(generator = "JDBC")
     @ApiModelProperty(value = "ID")
-    private Long sysBaseId;
+    private Long baseId;
 
     @ApiModelProperty(value = "创建时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -66,8 +66,8 @@ public class SysBase implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public SysBase(Long sysBaseId, Date gmtCreate, Date gmtModified, String tableName, String tableRemark, String fieldName, String fieldType, Integer fieldLength, Byte isNull, Byte isUnique, Byte isUnsigned, String defaultValue, String fieldRemark, Byte isId, String modules) {
-        this.sysBaseId = sysBaseId;
+    public SysBase(Long baseId, Date gmtCreate, Date gmtModified, String tableName, String tableRemark, String fieldName, String fieldType, Integer fieldLength, Byte isNull, Byte isUnique, Byte isUnsigned, String defaultValue, String fieldRemark, Byte isId, String modules) {
+        this.baseId = baseId;
         this.gmtCreate = gmtCreate;
         this.gmtModified = gmtModified;
         this.tableName = tableName;
@@ -88,12 +88,12 @@ public class SysBase implements Serializable {
         super();
     }
 
-    public Long getSysBaseId() {
-        return sysBaseId;
+    public Long getBaseId() {
+        return baseId;
     }
 
-    public void setSysBaseId(Long sysBaseId) {
-        this.sysBaseId = sysBaseId;
+    public void setBaseId(Long baseId) {
+        this.baseId = baseId;
     }
 
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")

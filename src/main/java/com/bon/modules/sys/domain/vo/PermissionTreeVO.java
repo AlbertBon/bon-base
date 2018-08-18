@@ -15,7 +15,7 @@ import java.util.List;
 public class PermissionTreeVO implements Serializable {
     @Id
     @ApiModelProperty(value = "ID")
-    private Long sysPermissionId;
+    private Long permissionId;
 
     @ApiModelProperty(value = "权限标识")
     private String permissionFlag;
@@ -49,11 +49,11 @@ public class PermissionTreeVO implements Serializable {
     }
 
     public Long getPermissionId() {
-        return sysPermissionId;
+        return permissionId;
     }
 
-    public void setPermissionId(Long sysPermissionId) {
-        this.sysPermissionId = sysPermissionId;
+    public void setPermissionId(Long permissionId) {
+        this.permissionId = permissionId;
     }
 
     public String getPermissionName() {

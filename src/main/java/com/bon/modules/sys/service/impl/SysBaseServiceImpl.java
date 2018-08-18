@@ -101,7 +101,7 @@ public class SysBaseServiceImpl implements SysBaseService {
                 sysBase.setIsNull((byte) 0);
             }
             //判断系统表id是否为空，不为空即修改
-            if(null!=field.getSysBaseId()&&field.getSysBaseId()>0){
+            if(null!=field.getBaseId()&&field.getBaseId()>0){
                 sysBase.setGmtModified(new Date());
                 sysBaseMapper.updateByPrimaryKeySelective(sysBase);
             }else{
@@ -220,7 +220,7 @@ public class SysBaseServiceImpl implements SysBaseService {
 
     @Override
     public void deleteField(SysBaseDeleteDTO dto) {
-        sysBaseMapper.deleteByPrimaryKey(dto.getSysBaseId());
+        sysBaseMapper.deleteByPrimaryKey(dto.getBaseId());
     }
 
     @Override

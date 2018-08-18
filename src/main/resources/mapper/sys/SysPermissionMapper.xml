@@ -3,7 +3,7 @@
 <mapper namespace="com.bon.modules.sys.dao.SysPermissionMapper">
   <resultMap id="BaseResultMap" type="com.bon.modules.sys.domain.entity.SysPermission">
     <constructor>
-      <idArg column="sys_permission_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <idArg column="permission_id" javaType="java.lang.Long" jdbcType="BIGINT" />
       <arg column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="gmt_modified" javaType="java.util.Date" jdbcType="TIMESTAMP" />
       <arg column="permission_flag" javaType="java.lang.String" jdbcType="VARCHAR" />
@@ -15,13 +15,13 @@
     </constructor>
   </resultMap>
   <sql id="Base_Column_List">
-    sys_permission_id, gmt_create, gmt_modified, permission_flag, permission_name, type, 
+    permission_id, gmt_create, gmt_modified, permission_flag, permission_name, type, 
     object_id, object_parent, data_path
   </sql>
   <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from sys_permission
-    where sys_permission_id = #{sysPermissionId,jdbcType=BIGINT}
+    where permission_id = #{permissionId,jdbcType=BIGINT}
   </select>
 </mapper>

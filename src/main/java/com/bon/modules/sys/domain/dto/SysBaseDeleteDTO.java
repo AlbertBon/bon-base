@@ -11,7 +11,7 @@ import io.swagger.annotations.ApiModelProperty;
  **/
 public class SysBaseDeleteDTO extends BaseDTO {
     @ApiModelProperty(value = "ID")
-    private Long sysBaseId;
+    private Long baseId;
 
     @ApiModelProperty(value = "表名")
     private String tableName;
@@ -24,11 +24,11 @@ public class SysBaseDeleteDTO extends BaseDTO {
         this.tableName = tableName;
     }
 
-    public Long getSysBaseId() {
-        return sysBaseId;
+    public Long getBaseId() {
+        return baseId;
     }
 
-    public void setSysBaseId(Long sysBaseId) {
-        this.sysBaseId = sysBaseId;
+    public void setBaseId(Long baseId) {
+        this.baseId = baseId;
     }
 }

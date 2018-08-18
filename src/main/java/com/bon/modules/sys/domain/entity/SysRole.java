@@ -18,7 +18,7 @@ public class SysRole implements Serializable {
     @Id
     @GeneratedValue(generator = "JDBC")
     @ApiModelProperty(value = "ID")
-    private Long sysRoleId;
+    private Long roleId;
 
     @ApiModelProperty(value = "创建时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -36,8 +36,8 @@ public class SysRole implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public SysRole(Long sysRoleId, Date gmtCreate, Date gmtModified, String roleName, String roleFlag) {
-        this.sysRoleId = sysRoleId;
+    public SysRole(Long roleId, Date gmtCreate, Date gmtModified, String roleName, String roleFlag) {
+        this.roleId = roleId;
         this.gmtCreate = gmtCreate;
         this.gmtModified = gmtModified;
         this.roleName = roleName;
@@ -48,12 +48,12 @@ public class SysRole implements Serializable {
         super();
     }
 
-    public Long getSysRoleId() {
-        return sysRoleId;
+    public Long getRoleId() {
+        return roleId;
     }
 
-    public void setSysRoleId(Long sysRoleId) {
-        this.sysRoleId = sysRoleId;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")

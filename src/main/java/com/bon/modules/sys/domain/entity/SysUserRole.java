@@ -18,7 +18,7 @@ public class SysUserRole implements Serializable {
     @Id
     @GeneratedValue(generator = "JDBC")
     @ApiModelProperty(value = "ID")
-    private Long sysUserRoleId;
+    private Long userRoleId;
 
     @ApiModelProperty(value = "创建时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -29,31 +29,31 @@ public class SysUserRole implements Serializable {
     private Date gmtModified;
 
     @ApiModelProperty(value = "用户id")
-    private Long sysUserId;
+    private Long userId;
 
     @ApiModelProperty(value = "角色id")
-    private Long sysRoleId;
+    private Long roleId;
 
     private static final long serialVersionUID = 1L;
 
-    public SysUserRole(Long sysUserRoleId, Date gmtCreate, Date gmtModified, Long sysUserId, Long sysRoleId) {
-        this.sysUserRoleId = sysUserRoleId;
+    public SysUserRole(Long userRoleId, Date gmtCreate, Date gmtModified, Long userId, Long roleId) {
+        this.userRoleId = userRoleId;
         this.gmtCreate = gmtCreate;
         this.gmtModified = gmtModified;
-        this.sysUserId = sysUserId;
-        this.sysRoleId = sysRoleId;
+        this.userId = userId;
+        this.roleId = roleId;
     }
 
     public SysUserRole() {
         super();
     }
 
-    public Long getSysUserRoleId() {
-        return sysUserRoleId;
+    public Long getUserRoleId() {
+        return userRoleId;
     }
 
-    public void setSysUserRoleId(Long sysUserRoleId) {
-        this.sysUserRoleId = sysUserRoleId;
+    public void setUserRoleId(Long userRoleId) {
+        this.userRoleId = userRoleId;
     }
 
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
@@ -74,19 +74,19 @@ public class SysUserRole implements Serializable {
         this.gmtModified = gmtModified;
     }
 
-    public Long getSysUserId() {
-        return sysUserId;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setSysUserId(Long sysUserId) {
-        this.sysUserId = sysUserId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
-    public Long getSysRoleId() {
-        return sysRoleId;
+    public Long getRoleId() {
+        return roleId;
     }
 
-    public void setSysRoleId(Long sysRoleId) {
-        this.sysRoleId = sysRoleId;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 }

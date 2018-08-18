@@ -15,7 +15,7 @@ import java.util.Date;
  **/
 public class SysBaseVO {
     @ApiModelProperty(value = "ID")
-    private Long sysBaseId;
+    private Long baseId;
 
     @ApiModelProperty(value = "创建时间")
     private Date gmtCreate;
@@ -67,12 +67,12 @@ public class SysBaseVO {
         this.modules = modules;
     }
 
-    public Long getSysBaseId() {
-        return sysBaseId;
+    public Long getBaseId() {
+        return baseId;
     }
 
-    public void setSysBaseId(Long sysBaseId) {
-        this.sysBaseId = sysBaseId;
+    public void setBaseId(Long baseId) {
+        this.baseId = baseId;
     }
 
     public Date getGmtCreate() {

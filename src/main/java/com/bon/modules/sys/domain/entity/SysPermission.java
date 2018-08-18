@@ -18,7 +18,7 @@ public class SysPermission implements Serializable {
     @Id
     @GeneratedValue(generator = "JDBC")
     @ApiModelProperty(value = "ID")
-    private Long sysPermissionId;
+    private Long permissionId;
 
     @ApiModelProperty(value = "创建时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -48,8 +48,8 @@ public class SysPermission implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public SysPermission(Long sysPermissionId, Date gmtCreate, Date gmtModified, String permissionFlag, String permissionName, String type, Long objectId, Long objectParent, String dataPath) {
-        this.sysPermissionId = sysPermissionId;
+    public SysPermission(Long permissionId, Date gmtCreate, Date gmtModified, String permissionFlag, String permissionName, String type, Long objectId, Long objectParent, String dataPath) {
+        this.permissionId = permissionId;
         this.gmtCreate = gmtCreate;
         this.gmtModified = gmtModified;
         this.permissionFlag = permissionFlag;
@@ -64,12 +64,12 @@ public class SysPermission implements Serializable {
         super();
     }
 
-    public Long getSysPermissionId() {
-        return sysPermissionId;
+    public Long getPermissionId() {
+        return permissionId;
     }
 
-    public void setSysPermissionId(Long sysPermissionId) {
-        this.sysPermissionId = sysPermissionId;
+    public void setPermissionId(Long permissionId) {
+        this.permissionId = permissionId;
     }
 
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")

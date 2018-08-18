@@ -16,7 +16,7 @@ import java.util.List;
 @ApiModel(value ="UserDTO")
 public class UserDTO extends BaseDTO<SysUser> {
     @ApiModelProperty(value = "ID")
-    private Long sysUserId;
+    private Long userId;
     @ApiModelProperty(value = "姓名")
     private String name;
 
@@ -81,11 +81,11 @@ public class UserDTO extends BaseDTO<SysUser> {
     }
 
     public Long getUserId() {
-        return sysUserId;
+        return userId;
     }
 
-    public void setUserId(Long sysUserId) {
-        this.sysUserId = sysUserId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getName() {

@@ -18,7 +18,7 @@ public class SysUser implements Serializable {
     @Id
     @GeneratedValue(generator = "JDBC")
     @ApiModelProperty(value = "ID")
-    private Long sysUserId;
+    private Long userId;
 
     @ApiModelProperty(value = "创建时间")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -69,8 +69,8 @@ public class SysUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public SysUser(Long sysUserId, Date gmtCreate, Date gmtModified, String name, String phone, String email, String telephone, String address, String username, String password, String remark, String wxOpenid, String appId, String secretKey, String salt, Byte isAdmin) {
-        this.sysUserId = sysUserId;
+    public SysUser(Long userId, Date gmtCreate, Date gmtModified, String name, String phone, String email, String telephone, String address, String username, String password, String remark, String wxOpenid, String appId, String secretKey, String salt, Byte isAdmin) {
+        this.userId = userId;
         this.gmtCreate = gmtCreate;
         this.gmtModified = gmtModified;
         this.name = name;
@@ -92,12 +92,12 @@ public class SysUser implements Serializable {
         super();
     }
 
-    public Long getSysUserId() {
-        return sysUserId;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setSysUserId(Long sysUserId) {
-        this.sysUserId = sysUserId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
