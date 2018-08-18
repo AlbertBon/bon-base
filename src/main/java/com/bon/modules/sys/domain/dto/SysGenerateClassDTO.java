@@ -18,6 +18,17 @@ public class SysGenerateClassDTO extends BaseDTO{
     @ApiModelProperty(value = "所属模块")
     private String modules;
 
+    @ApiModelProperty(value = "是否开启生成service、controller、dto、vo，1是0否")
+    private Byte isExtend;
+
+    public Byte getIsExtend() {
+        return isExtend;
+    }
+
+    public void setIsExtend(Byte isExtend) {
+        this.isExtend = isExtend;
+    }
+
     public List<String> getTableNameList() {
         return tableNameList;
     }

@@ -70,6 +70,8 @@ public class generateApplication {
         dto.setTableNameList(tableNameList);
         //模块
         dto.setModules("app");
+        //是否生成扩展类
+        dto.setIsExtend((byte) 0);
         dtoList.add(dto);
         sysBaseService.generateClass(dtoList);
     }
@@ -101,6 +103,7 @@ public class generateApplication {
             SysGenerateClassDTO dto = new SysGenerateClassDTO();
             dto.setModules(entry.getKey());
             dto.setTableNameList(entry.getValue());
+            dto.setIsExtend((byte) 0);
             dtoList.add(dto);
         }
         sysBaseService.generateClass(dtoList);

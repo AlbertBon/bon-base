@@ -183,7 +183,9 @@ public class SysBaseServiceImpl implements SysBaseService {
                             .addAttribute("enableUpdateByPrimaryKey", "false").addAttribute("enableInsert", "false")
                             .addAttribute("enableDeleteByPrimaryKey", "false");
                     tableElem.addElement("property").addAttribute("name", "useActualColumnNames").addAttribute("value", "false");
-                    GenerateUtil.generate(tableName,modules);
+                    if(dto.getIsExtend()==1){
+                        GenerateUtil.generate(tableName,modules);
+                    }
                 }
 
                 //指定文件输出的位置
