@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bon.modules.sys.dao.SysUserMapper">
+  <resultMap id="BaseResultMap" type="com.bon.modules.sys.domain.entity.SysUser">
+    <constructor>
+      <idArg column="sys_user_id" javaType="java.lang.Long" jdbcType="BIGINT" />
+      <arg column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="gmt_modified" javaType="java.util.Date" jdbcType="TIMESTAMP" />
+      <arg column="name" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="phone" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="email" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="telephone" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="address" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="username" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="password" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="remark" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="wx_openid" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="app_id" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="secret_key" javaType="java.lang.String" jdbcType="CHAR" />
+      <arg column="salt" javaType="java.lang.String" jdbcType="VARCHAR" />
+      <arg column="is_admin" javaType="java.lang.Byte" jdbcType="TINYINT" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List">
+    sys_user_id, gmt_create, gmt_modified, name, phone, email, telephone, address, username, 
+    password, remark, wx_openid, app_id, secret_key, salt, is_admin
+  </sql>
+  <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sys_user
+    where sys_user_id = #{sysUserId,jdbcType=BIGINT}
+  </select>
+</mapper>
