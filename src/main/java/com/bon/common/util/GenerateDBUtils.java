@@ -9,14 +9,14 @@ import java.util.List;
  * @author: Bon
  * @create: 2018-08-17 15:13
  **/
-public class DBHelperUtils {
+public class GenerateDBUtils {
     private static final Connection conn;
-    private static final String driverClass = PropertiesHelper.getValueByKey("generator.jdbc.driver");
-    private static final String connectionUrl = PropertiesHelper.getValueByKey("generator.jdbc.url");
-    private static final String username = PropertiesHelper.getValueByKey("generator.jdbc.username");
-    private static final String password = PropertiesHelper.getValueByKey("generator.jdbc.password");
+    private static final String driverClass = GeneratePropertiesUtils.getValueByKey("generator.jdbc.driver");
+    private static final String connectionUrl = GeneratePropertiesUtils.getValueByKey("generator.jdbc.url");
+    private static final String username = GeneratePropertiesUtils.getValueByKey("generator.jdbc.username");
+    private static final String password = GeneratePropertiesUtils.getValueByKey("generator.jdbc.password");
 
-    private static DBHelperUtils instance = null;
+    private static GenerateDBUtils instance = null;
     /**
      * 定义代码块.
      */
@@ -33,10 +33,10 @@ public class DBHelperUtils {
      * Single
      * @return
      */
-    public static DBHelperUtils getInstance() {
+    public static GenerateDBUtils getInstance() {
         if (instance == null) {
-            synchronized (DBHelperUtils.class) {
-                instance = new DBHelperUtils();
+            synchronized (GenerateDBUtils.class) {
+                instance = new GenerateDBUtils();
             }
         }
         return instance;

@@ -9,7 +9,7 @@ import java.io.FileWriter;
  * @author: Bon
  * @create: 2018-08-17 14:34
  **/
-public class FileUtils {
+public class GenerateFileUtils {
     /**
      * 把生成的文件都保存.
      *

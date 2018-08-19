@@ -184,7 +184,7 @@ public class SysBaseServiceImpl implements SysBaseService {
                             .addAttribute("enableDeleteByPrimaryKey", "false");
                     tableElem.addElement("property").addAttribute("name", "useActualColumnNames").addAttribute("value", "false");
                     if(dto.getIsExtend()==1){
-                        GenerateUtil.generate(tableName,modules);
+                        GenerateCoreUtil.generate(tableName,modules);
                     }
                 }
 

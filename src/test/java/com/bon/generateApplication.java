@@ -66,18 +66,25 @@ public class generateApplication {
         SysGenerateClassDTO dto = new SysGenerateClassDTO();
         List<String> tableNameList = new ArrayList<>();
         //表名
-//        tableNameList.add("sys_user");
-//        tableNameList.add("sys_user_role");
-//        tableNameList.add("sys_role");
-//        tableNameList.add("sys_role_permission");
-//        tableNameList.add("sys_permission");
-//        tableNameList.add("sys_menu");
-        tableNameList.add("sys_base");
+        /*
+        tableNameList.add("sys_user");//基础表
+        tableNameList.add("sys_user_role");//基础表
+        tableNameList.add("sys_role");//基础表
+        tableNameList.add("sys_role_permission");//基础表
+        tableNameList.add("sys_permission");//基础表
+        tableNameList.add("sys_menu");//基础表
+        tableNameList.add("sys_base");//基础表
+        */
+        tableNameList.add("test");
         dto.setTableNameList(tableNameList);
         //模块
-        dto.setModules("sys");
-        //是否生成扩展类
-        dto.setIsExtend((byte) 0);
+        dto.setModules("app");
+        //是否生成扩展类（service、controller、dto、vo等信息）
+        if("sys".equals(dto.getModules())){//固定系统模块不生成扩展类
+            dto.setIsExtend((byte) 0);
+        }
+        //dto.setIsExtend((byte) 0);//否
+        dto.setIsExtend((byte) 1);//是
         dtoList.add(dto);
         sysBaseService.generateClass(dtoList);
     }

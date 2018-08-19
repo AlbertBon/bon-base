@@ -1,14 +1,12 @@
 package com.bon;
 
-import com.bon.common.util.GenerateUtil;
-import com.bon.common.util.MD5Util;
+import com.bon.common.util.GenerateCoreUtil;
 import com.bon.common.util.MyLog;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -51,7 +49,7 @@ public class TestMain {
     }
     @Test
     public void generate() throws Exception {
-        GenerateUtil generateUtil = new GenerateUtil();
+        GenerateCoreUtil generateCoreUtil = new GenerateCoreUtil();
 
     }
 }

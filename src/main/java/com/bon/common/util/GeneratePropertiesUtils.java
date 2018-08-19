@@ -11,13 +11,13 @@ import java.util.Properties;
  * @author: Bon
  * @create: 2018-08-17 14:37
  **/
-public class PropertiesHelper {
+public class GeneratePropertiesUtils {
     private static final Map<String, String> properties = new HashMap<String, String>();
 
     static {
         try {
             Properties pps = new Properties();
-            pps.load(PropertiesHelper.class.getClassLoader().getResourceAsStream("constant.properties"));
+            pps.load(GeneratePropertiesUtils.class.getClassLoader().getResourceAsStream("constant.properties"));
             //处理重复的值.
             for (Map.Entry<Object, Object> entry : pps.entrySet()) {
                 properties.put(entry.getKey().toString().trim(), entry.getValue().toString().trim());
