@@ -183,6 +183,17 @@ INSERT INTO `sys_user_role` (`user_role_id`, `gmt_create`, `gmt_modified`, `user
 	(3, '2018-08-17 13:00:46', '2018-08-17 13:00:46', 2, 2),
 /*!40000 ALTER TABLE `sys_user_role` ENABLE KEYS */;
 
+-- 导出  表 bon_base.sys_url 结构
+CREATE TABLE IF NOT EXISTS `sys_url` (
+  `url_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `gmt_create` datetime DEFAULT NULL COMMENT '创建时间',
+  `gmt_modified` datetime DEFAULT NULL COMMENT '最后一次更新时间',
+  `url_name` varchar(64) DEFAULT NULL COMMENT '路径名称',
+  `url_path` varchar(128) DEFAULT NULL COMMENT '路径地址',
+  `url_remark` varchar(255) DEFAULT NULL COMMENT '路径备注',
+  PRIMARY KEY (`url_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统接口路径表';
+
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
