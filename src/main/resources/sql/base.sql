@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS `sys_permission` (
   `gmt_modified` datetime DEFAULT NULL COMMENT '最后一次更新时间',
   `permission_flag` varchar(50) DEFAULT NULL COMMENT '权限标识',
   `permission_name` varchar(32) DEFAULT NULL COMMENT '权限名称',
-  `type` char(2) DEFAULT NULL COMMENT '00:菜单权限',
+  `type` char(2) DEFAULT NULL COMMENT '00:菜单权限；01：接口url权限',
   `object_id` bigint(20) DEFAULT NULL COMMENT '对应表id（菜单权限即为菜单id）',
   `object_parent` bigint(20) DEFAULT NULL COMMENT '对应表id的父id（菜单权限即为菜单id的父id）',
   `data_path` varchar(512) DEFAULT NULL COMMENT '数据库id地址',

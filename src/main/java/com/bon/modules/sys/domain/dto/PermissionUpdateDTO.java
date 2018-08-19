@@ -1,5 +1,8 @@
 package com.bon.modules.sys.domain.dto;
 
+import com.bon.modules.sys.domain.entity.SysMenu;
+import com.bon.modules.sys.domain.entity.SysUrl;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,7 +21,7 @@ public class PermissionUpdateDTO {
     @ApiModelProperty(value = "权限id")
     private Long permissionId;
 
-    @ApiModelProperty(value = "00:菜单权限")
+    @ApiModelProperty(value = "00:菜单权限；01：接口url权限")
     private String type;
 
     @ApiModelProperty(value = "对应表id（菜单权限即为菜单id）")
@@ -27,30 +30,27 @@ public class PermissionUpdateDTO {
     @ApiModelProperty(value = "权限标识")
     private String permissionFlag;
 
-    //菜单部分
-    @ApiModelProperty(value = "菜单名称")
-    private String name;
+    @ApiModelProperty(value = "菜单")
+    private SysMenu menu;
 
-    @ApiModelProperty(value = "菜单地址")
-    private String path;
+    @ApiModelProperty(value = "接口url")
+    private SysUrl url;
 
-    @ApiModelProperty(value = "视图文件路径")
-    private String component;
+    public SysUrl getUrl() {
+        return url;
+    }
 
-    @ApiModelProperty(value = "跳转地址（如果设置为noredirect会在面包屑导航中无连接）")
-    private String redirect;
+    public void setUrl(SysUrl url) {
+        this.url = url;
+    }
 
-    @ApiModelProperty(value = "菜单显示名称")
-    private String title;
+    public SysMenu getMenu() {
+        return menu;
+    }
 
-    @ApiModelProperty(value = "菜单图标")
-    private String icon;
-
-    @ApiModelProperty(value = "00:true,01:false如果设置true，会在导航中隐藏")
-    private String hidden;
-
-    @ApiModelProperty(value = "00:true,01:false没有子菜单也会显示在导航中")
-    private String alwaysShow;
+    public void setMenu(SysMenu menu) {
+        this.menu = menu;
+    }
 
     public Long getPermissionId() {
         return permissionId;
@@ -83,70 +83,5 @@ public class PermissionUpdateDTO {
     public void setPermissionFlag(String permissionFlag) {
         this.permissionFlag = permissionFlag;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getComponent() {
-        return component;
-    }
-
-    public void setComponent(String component) {
-        this.component = component;
-    }
-
-    public String getRedirect() {
-        return redirect;
-    }
-
-    public void setRedirect(String redirect) {
-        this.redirect = redirect;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public void setIcon(String icon) {
-        this.icon = icon;
-    }
-
-    public String getHidden() {
-        return hidden;
-    }
-
-    public void setHidden(String hidden) {
-        this.hidden = hidden;
-    }
-
-    public String getAlwaysShow() {
-        return alwaysShow;
-    }
-
-    public void setAlwaysShow(String alwaysShow) {
-        this.alwaysShow = alwaysShow;
-    }
-
 
 }

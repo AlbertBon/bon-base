@@ -47,9 +47,5 @@ public class TestMain {
         System.out.println(encodedPassword);
         System.out.println(UUID.randomUUID().toString().replace("-",""));
     }
-    @Test
-    public void generate() throws Exception {
-        GenerateCoreUtil generateCoreUtil = new GenerateCoreUtil();
 
-    }
 }

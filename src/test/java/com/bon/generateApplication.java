@@ -75,16 +75,17 @@ public class generateApplication {
         tableNameList.add("sys_menu");//基础表
         tableNameList.add("sys_base");//基础表
         */
-        tableNameList.add("test");
+        tableNameList.add("sys_url");
         dto.setTableNameList(tableNameList);
         //模块
-        dto.setModules("app");
+        dto.setModules("sys");
         //是否生成扩展类（service、controller、dto、vo等信息）
         if("sys".equals(dto.getModules())){//固定系统模块不生成扩展类
             dto.setIsExtend((byte) 0);
+        }else {
+            //dto.setIsExtend((byte) 0);//否
+            dto.setIsExtend((byte) 1);//是
         }
-        //dto.setIsExtend((byte) 0);//否
-        dto.setIsExtend((byte) 1);//是
         dtoList.add(dto);
         sysBaseService.generateClass(dtoList);
     }

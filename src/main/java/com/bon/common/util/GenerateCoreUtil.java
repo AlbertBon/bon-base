@@ -166,7 +166,7 @@ public class GenerateCoreUtil {
                 " * @Email: " + myEmail + "\n" +
                 "*/");
         sb.append(ENTER);
-        sb.append("@ApiModel(value =\"" + className + "\")\n\n" +
+        sb.append("@ApiModel(value =\"" + className + "DTO\")\n" +
                 "public class " + className + "DTO extends BaseDTO<" + className + "> implements Serializable{");
         sb.append(ENTER).append(TAB);
 

@@ -56,6 +56,13 @@ public interface UserService {
     List<PermissionTreeVO> getAllPermissionTree();
 
     /**
+     * 根据用户名获取菜单，并组装前端路由格式json
+     * @param userId
+     * @return
+     */
+    List<MenuRouterVO> getMenuRouter(String username);
+
+    /**
      * 保存用户角色
      * @param roleIds
      * @param userId
@@ -74,13 +81,6 @@ public interface UserService {
      * @param userId
      */
     void saveRolePermission(List<Long> permissionIds,Long roleId);
-
-    /**
-     * 根据用户名获取菜单，并组装前端路由格式json
-     * @param userId
-     * @return
-     */
-    List<MenuRouterVO> getMenuRouter(String username);
 
 
 }

@@ -5,7 +5,8 @@ package com.bon.modules.sys.domain.enums;
  */
 public enum PermissionType {
     MENU("00", "菜单"),
-    OTHER("01", ""),;
+    URL("01","接口"),
+    OTHER("99", "其他"),;
 
     private String key;
     private String value;

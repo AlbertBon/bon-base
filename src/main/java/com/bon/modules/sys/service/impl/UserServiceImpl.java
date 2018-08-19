@@ -13,13 +13,16 @@ import com.bon.modules.sys.domain.vo.*;
 import com.bon.modules.sys.service.UserService;
 import com.bon.common.util.*;
 import com.github.pagehelper.PageHelper;
+import org.apache.ibatis.javassist.runtime.DotClass;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * @program: bon-bon基础项目
@@ -53,6 +56,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private SysRolePermissionMapper rolePermissionMapper;
+
+    @Autowired
+    private SysUrlMapper urlMapper;
 
     /**
      * 用户
@@ -271,10 +277,10 @@ public class UserServiceImpl implements UserService {
     }
 
     //根据菜单id获取权限
-    public SysPermission getPermissionByMenuId(Long menuId){
+    public SysPermission getPermissionByObjectId(Long objectId,PermissionType permissionType){
         BaseDTO dto1 = new BaseDTO(new SysPermission());
-        dto1.andFind("objectId",menuId.toString());
-        dto1.andFind("type",PermissionType.MENU.getKey());
+        dto1.andFind("objectId",objectId.toString());
+        dto1.andFind("type",permissionType.getKey());
         SysPermission permission = permissionMapper.selectOneByExample(dto1.getExample());
         return permission;
     }
@@ -283,30 +289,118 @@ public class UserServiceImpl implements UserService {
     public BaseVO getPermission(PermissionGetDTO dto) {
         BaseVO vo = new BaseVO();
         Map map = new HashMap();
+        map.put("menu",new SysMenu());
+        map.put("url",new SysUrl());
         //菜单类型
         if(PermissionType.MENU.getKey().equals(dto.getType())){
             SysMenu menu = menuMapper.selectByPrimaryKey(dto.getObjectId());
-            map = MapUtil.objectToMap(menu);
-            String permissionFlag = permissionMapper.selectByPrimaryKey(dto.getPermissionId()).getPermissionFlag();
-            map.put("permissionFlag",permissionFlag);
+            map.put("menu",menu);
+            map.put("permissionType",PermissionType.MENU.getKey());
+        }else if(PermissionType.URL.getKey().equals(dto.getType())){
+            //菜单类型
+            SysUrl url = urlMapper.selectByPrimaryKey(dto.getObjectId());
+            map.put("url",url);
+            map.put("permissionType",PermissionType.URL.getKey());
         }
+        String permissionFlag = permissionMapper.selectByPrimaryKey(dto.getPermissionId()).getPermissionFlag();
+        map.put("permissionFlag",permissionFlag);
         vo.setMap(map);
         return vo;
     }
 
     @Override
     public void savePermission(PermissionUpdateDTO dto) {
-        //菜单类型
+        SysPermission permission = new SysPermission();
+        PermissionType permissionType = null;
         if(PermissionType.MENU.getKey().equals(dto.getType())){
-            saveMenu(dto);
+            //菜单类型
+            permissionType = PermissionType.MENU;
+            SysMenu menu = dto.getMenu();
+            menu.setMenuId(null);
+            menu.setGmtCreate(new Date());
+            menu.setGmtModified(new Date());
+            menuMapper.insertSelective(menu);
+            //权限表中新增菜单权限记录
+            permission.setPermissionName("【" + permissionType.getValue() + "】" + menu.getName());
+            permission.setObjectId(menu.getMenuId());
+            savePermissionByType(dto,permissionType,permission);
+        }else if(PermissionType.URL.getKey().equals(dto.getType())){
+            //接口url类型
+            permissionType = PermissionType.URL;
+            SysUrl url = dto.getUrl();
+            url.setUrlId(null);
+            url.setGmtCreate(new Date());
+            url.setGmtModified(new Date());
+            urlMapper.insertSelective(url);
+            permission.setPermissionName("【" + permissionType.getValue() + "】" + url.getUrlName());
+            permission.setObjectId(url.getUrlId());
+            savePermissionByType(dto,permissionType,permission);
         }
+    }
+
+    /**
+     * 权限表中新增菜单权限记录
+     * @param dto
+     * @param permissionType
+     * @param permission
+     */
+    private void savePermissionByType(PermissionUpdateDTO dto,PermissionType permissionType,SysPermission permission) {
+        permission.setGmtCreate(new Date());
+        permission.setGmtModified(new Date());
+        permission.setPermissionFlag(dto.getPermissionFlag());
+        permission.setType(permissionType.getKey());
+        permission.setObjectParent(dto.getObjectId());
+        permissionMapper.insertSelective(permission);
+        //添加权限表的数据库id路径,如果不为空则有父节点
+        if (dto.getObjectId()!=null) {
+            BaseDTO baseDTO = new BaseDTO();
+            baseDTO.andFind(new SysPermission(),"objectId",dto.getObjectId().toString());
+            baseDTO.andFind("type",permissionType.getKey());
+            SysPermission permissionParent = permissionMapper.selectOneByExample(baseDTO.getExample());
+            permission.setDataPath(permissionParent.getDataPath()+ "/" + permission.getPermissionId());
+        } else {
+            permission.setObjectParent(0L);
+            permission.setDataPath(permission.getPermissionId().toString());
+        }
+        permissionMapper.updateByPrimaryKey(permission);
     }
 
     @Override
     public void updatePermission(PermissionUpdateDTO dto) {
-        //菜单类型
+        SysPermission permission = new SysPermission();
+        PermissionType permissionType = null;
         if(PermissionType.MENU.getKey().equals(dto.getType())){
-            updateMenu(dto);
+            //菜单类型
+            permissionType = PermissionType.MENU;
+            SysMenu menu = menuMapper.selectByPrimaryKey(dto.getObjectId());
+            if (menu == null) {
+                throw new BusinessException("获取菜单失败");
+            }
+            menu.setGmtModified(new Date());
+            BeanUtil.copyPropertys(dto.getMenu(), menu);
+            menuMapper.updateByPrimaryKeySelective(menu);
+            //修改权限对应信息
+            permission = getPermissionByObjectId(menu.getMenuId(),permissionType);
+            permission.setPermissionName("【" + permissionType.getValue() + "】" + menu.getName());
+            permission.setPermissionFlag(dto.getPermissionFlag());
+            permission.setGmtModified(new Date());
+            permissionMapper.updateByPrimaryKey(permission);
+        }else if(PermissionType.URL.getKey().equals(dto.getType())){
+            //接口url类型
+            permissionType = PermissionType.URL;
+            SysUrl url = urlMapper.selectByPrimaryKey(dto.getObjectId());
+            if(null == url){
+                throw new BusinessException("获取接口url信息失败");
+            }
+            url.setGmtModified(new Date());
+            BeanUtil.copyPropertys(dto.getUrl(),url);
+            urlMapper.updateByPrimaryKeySelective(url);
+            //修改权限对应信息
+            permission = getPermissionByObjectId(url.getUrlId(),permissionType);
+            permission.setPermissionName("【" + permissionType.getValue() + "】" + url.getUrlName());
+            permission.setPermissionFlag(dto.getPermissionFlag());
+            permission.setGmtModified(new Date());
+            permissionMapper.updateByPrimaryKey(permission);
         }
     }
 
@@ -319,63 +413,20 @@ public class UserServiceImpl implements UserService {
         //把子树和自己放进权限数组中，循环删除权限及其子权限
         permissionList.add(permission);
         for(SysPermission permission1 :permissionList){
-            //菜单类型
             if(PermissionType.MENU.getKey().equals(permission1.getType())){
+                //菜单类型
                 permissionMapper.deleteByPrimaryKey(permission1.getPermissionId());
                 menuMapper.deleteByPrimaryKey(permission1.getObjectId());
+            }else if(PermissionType.URL.getKey().equals(permission1.getType())){
+                //接口url类型
+                permissionMapper.deleteByPrimaryKey(permission1.getPermissionId());
+                urlMapper.deleteByPrimaryKey(permission1.getObjectId());
             }
             dto.andFind(new SysRolePermission(),"permissionId",permission1.getPermissionId().toString());
             rolePermissionMapper.deleteByExample(dto.getExample());
         }
     }
 
-    private void saveMenu(PermissionUpdateDTO dto) {
-        SysMenu menu = new SysMenu();
-        BeanUtil.copyPropertys(dto, menu);
-        menu.setMenuId(null);
-        menu.setGmtCreate(new Date());
-        menu.setGmtModified(new Date());
-        menuMapper.insertSelective(menu);
-        menuMapper.updateByPrimaryKey(menu);
-        //权限表中新增菜单权限记录
-        SysPermission permission = new SysPermission();
-        permission.setGmtCreate(new Date());
-        permission.setGmtModified(new Date());
-        permission.setPermissionFlag(dto.getPermissionFlag());
-        permission.setPermissionName("【" + PermissionType.MENU.getValue() + "】" + menu.getName());
-        permission.setType(PermissionType.MENU.getKey());
-        permission.setObjectId(menu.getMenuId());
-        permission.setObjectParent(dto.getObjectId());
-        permissionMapper.insertSelective(permission);
-        //添加权限表的数据库id路径,如果不为空则有父节点
-        if (dto.getObjectId()!=null) {
-            BaseDTO baseDTO = new BaseDTO();
-            baseDTO.andFind(new SysPermission(),"objectId",dto.getObjectId().toString());
-            baseDTO.andFind("type",PermissionType.MENU.getKey());
-            SysPermission permissionParent = permissionMapper.selectOneByExample(baseDTO.getExample());
-            permission.setDataPath(permissionParent.getDataPath()+ "/" + permission.getPermissionId());
-        } else {
-            permission.setObjectParent(0L);
-            permission.setDataPath(permission.getPermissionId().toString());
-        }
-        permissionMapper.updateByPrimaryKey(permission);
-    }
-
-    private void updateMenu(PermissionUpdateDTO dto) {
-        SysMenu menu = menuMapper.selectByPrimaryKey(dto.getObjectId());
-        if (menu == null) {
-            throw new BusinessException("获取菜单失败");
-        }
-        menu.setGmtModified(new Date());
-        BeanUtil.copyPropertys(dto, menu);
-        menuMapper.updateByPrimaryKeySelective(menu);
-        //修改权限对应信息
-        SysPermission permission = getPermissionByMenuId(menu.getMenuId());
-        permission.setPermissionFlag(dto.getPermissionFlag());
-        permission.setPermissionName("【" + PermissionType.MENU.getValue() + "】" + menu.getName());
-        permission.setGmtModified(new Date());
-        permissionMapper.updateByPrimaryKey(permission);
-    }
 
     @Override
     public List<PermissionVO> getAllPermission() {
@@ -414,53 +465,6 @@ public class UserServiceImpl implements UserService {
             voList.add(vo);
         }
         return voList;
-    }
-
-    @Override
-    public void saveUserRole(List<Long> roleIds, Long userId) {
-        //删除用户角色
-        BaseDTO<SysUserRole> dto = new BaseDTO();
-        dto.andFind(new SysUserRole(), "userId", userId + "");
-        userRoleMapper.deleteByExample(dto.getExample());
-        //插入角色
-        for (Long roleId : roleIds) {
-            SysUserRole userRole = new SysUserRole();
-            userRole.setUserId(userId);
-            userRole.setRoleId(roleId);
-            userRole.setGmtCreate(new Date());
-            userRole.setGmtModified(new Date());
-            userRoleMapper.insertSelective(userRole);
-        }
-    }
-
-    @Override
-    public List<Long> getUserRoleIds(Long userId) {
-        //查找用户所有角色
-        BaseDTO dto = new BaseDTO();
-        dto.andFind(new SysUserRole(), "userId", userId + "");
-        List<SysUserRole> userRoleList = userRoleMapper.selectByExample(dto.getExample());
-        List<Long> voList = new ArrayList<>();
-        for (SysUserRole userRole : userRoleList) {
-            voList.add(userRole.getRoleId());
-        }
-        return voList;
-    }
-
-    @Override
-    public void saveRolePermission(List<Long> permissionIds, Long roleId) {
-        //删除角色权限
-        BaseDTO dto = new BaseDTO();
-        dto.andFind(new SysRolePermission(), "roleId", roleId + "");
-        rolePermissionMapper.deleteByExample(dto.getExample());
-        //插入角色权限
-        for (Long permissionId : permissionIds) {
-            SysRolePermission rolePermission = new SysRolePermission();
-            rolePermission.setPermissionId(permissionId);
-            rolePermission.setRoleId(roleId);
-            rolePermission.setGmtCreate(new Date());
-            rolePermission.setGmtModified(new Date());
-            rolePermissionMapper.insertSelective(rolePermission);
-        }
     }
 
     @Override
@@ -514,5 +518,51 @@ public class UserServiceImpl implements UserService {
         return voList;
     }
 
+    @Override
+    public void saveUserRole(List<Long> roleIds, Long userId) {
+        //删除用户角色
+        BaseDTO<SysUserRole> dto = new BaseDTO();
+        dto.andFind(new SysUserRole(), "userId", userId + "");
+        userRoleMapper.deleteByExample(dto.getExample());
+        //插入角色
+        for (Long roleId : roleIds) {
+            SysUserRole userRole = new SysUserRole();
+            userRole.setUserId(userId);
+            userRole.setRoleId(roleId);
+            userRole.setGmtCreate(new Date());
+            userRole.setGmtModified(new Date());
+            userRoleMapper.insertSelective(userRole);
+        }
+    }
+
+    @Override
+    public List<Long> getUserRoleIds(Long userId) {
+        //查找用户所有角色
+        BaseDTO dto = new BaseDTO();
+        dto.andFind(new SysUserRole(), "userId", userId + "");
+        List<SysUserRole> userRoleList = userRoleMapper.selectByExample(dto.getExample());
+        List<Long> voList = new ArrayList<>();
+        for (SysUserRole userRole : userRoleList) {
+            voList.add(userRole.getRoleId());
+        }
+        return voList;
+    }
+
+    @Override
+    public void saveRolePermission(List<Long> permissionIds, Long roleId) {
+        //删除角色权限
+        BaseDTO dto = new BaseDTO();
+        dto.andFind(new SysRolePermission(), "roleId", roleId + "");
+        rolePermissionMapper.deleteByExample(dto.getExample());
+        //插入角色权限
+        for (Long permissionId : permissionIds) {
+            SysRolePermission rolePermission = new SysRolePermission();
+            rolePermission.setPermissionId(permissionId);
+            rolePermission.setRoleId(roleId);
+            rolePermission.setGmtCreate(new Date());
+            rolePermission.setGmtModified(new Date());
+            rolePermissionMapper.insertSelective(rolePermission);
+        }
+    }
 
 }
