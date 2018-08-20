@@ -3,26 +3,27 @@ package com.bon.modules.sys.service.impl;
 
 import com.bon.common.domain.dto.BaseDTO;
 import com.bon.common.domain.enums.ExceptionType;
-import com.bon.common.exception.BusinessException;
 import com.bon.common.domain.vo.PageVO;
+import com.bon.common.exception.BusinessException;
+import com.bon.common.util.BeanUtil;
+import com.bon.common.util.MyLog;
+import com.bon.common.util.ShiroUtil;
+import com.bon.common.util.StringUtils;
 import com.bon.modules.sys.dao.*;
 import com.bon.modules.sys.domain.dto.*;
 import com.bon.modules.sys.domain.entity.*;
 import com.bon.modules.sys.domain.enums.PermissionType;
 import com.bon.modules.sys.domain.vo.*;
+import com.bon.modules.sys.service.RoleService;
 import com.bon.modules.sys.service.UserService;
-import com.bon.common.util.*;
 import com.github.pagehelper.PageHelper;
-import org.apache.ibatis.javassist.runtime.DotClass;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * @program: bon-bon基础项目
@@ -32,9 +33,9 @@ import java.util.List;
  **/
 @Service
 @Transactional
-public class UserServiceImpl implements UserService {
+public class RoleServiceImpl implements RoleService {
 
-    private static final MyLog log = MyLog.getLog(UserServiceImpl.class);
+    private static final MyLog log = MyLog.getLog(RoleServiceImpl.class);
 
     @Autowired
     private SysUserMapper userMapper;
@@ -355,7 +356,9 @@ public class UserServiceImpl implements UserService {
         //添加权限表的数据库id路径,如果不为空则有父节点
         BaseDTO baseDTO = new BaseDTO();
         if (dto.getObjectId()!=null) {
-            SysPermission permissionParent = permissionMapper.selectByPrimaryKey(dto.getObjectId());
+            baseDTO.andFind(new SysPermission(),"objectId",dto.getObjectId().toString());
+            baseDTO.andFind("type",permissionType.getKey());
+            SysPermission permissionParent = permissionMapper.selectOneByExample(baseDTO.getExample());
             permission.setDataPath(permissionParent.getDataPath()+ "/" + permission.getPermissionId());
         } else {
             permission.setObjectParent(0L);

@@ -1,10 +1,13 @@
 package com.bon.common.config;
 
+import com.bon.common.domain.dto.BaseDTO;
 import com.bon.common.util.MyLog;
 import com.bon.common.util.SpringUtil;
 import com.bon.common.util.StringUtils;
+import com.bon.modules.sys.dao.SysPermissionMapper;
 import com.bon.modules.sys.dao.SysUserExtendMapper;
 import com.bon.modules.sys.domain.dto.PermissionUpdateDTO;
+import com.bon.modules.sys.domain.entity.SysPermission;
 import com.bon.modules.sys.domain.entity.SysUrl;
 import com.bon.modules.sys.domain.enums.PermissionType;
 import com.bon.modules.sys.service.UserService;
@@ -12,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,12 +31,14 @@ import java.util.Map;
  * @author: Bon
  * @create: 2018-08-20 17:50
  **/
+@Transactional
 public class OperateInitConfig {
     private static MyLog log = MyLog.getLog(OperateInitConfig.class);
 
     public void init() throws ClassNotFoundException {
         UserService userService = SpringUtil.getBean(UserService.class);
         SysUserExtendMapper userExtendMapper = SpringUtil.getBean(SysUserExtendMapper.class);
+        SysPermissionMapper permissionMapper = SpringUtil.getBean(SysPermissionMapper.class);
 
         List<String> permissionFlagList = userExtendMapper.getPermissionFlag();
 
@@ -45,31 +51,44 @@ public class OperateInitConfig {
 
             Class<?> clazz = Class.forName(s[0]);
 
-            String remarkParent = "";
+            String parentRemark = "";
+            String parentName = "";
             Long parentId = 0L;
+            String parentPath = "";
             Api api = clazz.getAnnotation(Api.class);
             if(api!=null){
-                remarkParent = api.value();
+                parentName = api.value();
+                parentRemark = api.description();
+            }else {
+                continue;
             }
+            RequestMapping parentRequestMapping = clazz.getAnnotation(RequestMapping.class);
+            if(parentRequestMapping != null){
+                parentPath = parentRequestMapping.value()[0];
+            }
+            //根据权限标识查询出父权限
+            BaseDTO baseDTO = new BaseDTO();
+            baseDTO.andFind(new SysPermission(),"permissionFlag",parentName);
+            SysPermission parentPermission = permissionMapper.selectOneByExample(baseDTO.getExample());
             for (Method method : clazz.getMethods()) {
                 String remark = "";
+                String name = "";
                 String path = "";
                 String permissionFlag = "";
-
+                //先判断是否有权限配置，没有则跳至下一个method
                 RequiresPermissions requiresPermissions = method.getAnnotation(RequiresPermissions.class);
                 if (requiresPermissions != null) {
                     permissionFlag = requiresPermissions.value()[0];
                 }
-
                 if(StringUtils.isBlank(permissionFlag)){
                     continue;
                 }
-
-                if(permissionFlagList.contains(remark)){
+                if(permissionFlagList.contains(name)){
                     log.info("权限名{}重复",permissionFlag);
                     continue;
                 }
 
+                //生成url地址
                 GetMapping getMapping = method.getAnnotation(GetMapping.class);
                 PostMapping postMapping = method.getAnnotation(PostMapping.class);
                 RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
@@ -80,33 +99,51 @@ public class OperateInitConfig {
                 }else if(requestMapping!=null){
                     path = requestMapping.value()[0];
                 }
+                //加上父路径
+                path = parentPath + path;
 
                 ApiOperation apiOperation = method.getAnnotation(ApiOperation.class);
                 if(apiOperation!=null){
-                    remark = apiOperation.value();
+                    name = apiOperation.value();
+                    remark = apiOperation.notes();
                 }
 
-                if(0 == parentId){
+                //如果父id为0以及根据标识查出的父权限为空时，则需要先增加父id
+                if(0 == parentId && null == parentPermission ){
+                    PermissionUpdateDTO parentDTO = new PermissionUpdateDTO();
+                    parentDTO.setType(PermissionType.URL.getKey());
+                    parentDTO.setPermissionFlag(parentName);
+                    SysUrl parentSysUrl = new SysUrl();
+                    parentSysUrl.setUrlName(parentName);
+                    parentSysUrl.setUrlPath(parentPath);
+                    parentSysUrl.setUrlRemark(parentRemark);
+                    parentDTO.setUrl(parentSysUrl);
+                    parentId = userService.savePermission(parentDTO);
+
                     PermissionUpdateDTO dto = new PermissionUpdateDTO();
                     dto.setType(PermissionType.URL.getKey());
                     dto.setPermissionFlag(permissionFlag);
                     SysUrl sysUrl = new SysUrl();
-                    sysUrl.setUrlName(remark);
+                    sysUrl.setUrlName(name);
                     sysUrl.setUrlPath(path);
                     sysUrl.setUrlRemark(remark);
                     dto.setUrl(sysUrl);
+                    dto.setObjectId(parentId);
+                    userService.savePermission(dto);
+                }else {
+                    PermissionUpdateDTO dto = new PermissionUpdateDTO();
+                    dto.setType(PermissionType.URL.getKey());
+                    dto.setPermissionFlag(permissionFlag);
+                    SysUrl sysUrl = new SysUrl();
+                    sysUrl.setUrlName(name);
+                    sysUrl.setUrlPath(path);
+                    sysUrl.setUrlRemark(remark);
+                    dto.setUrl(sysUrl);
+                    dto.setObjectId(parentId);
                     userService.savePermission(dto);
                 }
 
-                PermissionUpdateDTO dto = new PermissionUpdateDTO();
-                dto.setType(PermissionType.URL.getKey());
-                dto.setPermissionFlag(permissionFlag);
-                SysUrl sysUrl = new SysUrl();
-                sysUrl.setUrlName(remark);
-                sysUrl.setUrlPath(path);
-                sysUrl.setUrlRemark(remark);
-                dto.setUrl(sysUrl);
-                userService.savePermission(dto);
+
                 log.info("权限{}写入数据库，接口url为{}，接口名为{}",permissionFlag,path,remark);
 
             }

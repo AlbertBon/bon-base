@@ -180,7 +180,7 @@ CREATE TABLE IF NOT EXISTS `sys_user_role` (
 INSERT INTO `sys_user_role` (`user_role_id`, `gmt_create`, `gmt_modified`, `user_id`, `role_id`) VALUES
 	(1, '2018-08-17 12:01:43', '2018-08-17 12:01:43', 1, 1),
 	(2, '2018-08-17 12:01:43', '2018-08-17 12:01:43', 1, 2),
-	(3, '2018-08-17 13:00:46', '2018-08-17 13:00:46', 2, 2),
+	(3, '2018-08-17 13:00:46', '2018-08-17 13:00:46', 2, 2);
 /*!40000 ALTER TABLE `sys_user_role` ENABLE KEYS */;
 
 -- 导出  表 bon_base.sys_url 结构
