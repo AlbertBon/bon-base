@@ -79,7 +79,7 @@ public class RoleServiceImpl implements RoleService {
         List<Long> permissionIds = new ArrayList<>();
         for(SysPermission permission:permissionList){
             BaseDTO dto = new BaseDTO(new SysPermission());
-            dto.andFind("objectParent",permission.getObjectId().toString());
+            dto.andFind("objectParent",permission.getPermissionId().toString());
             dto.andFind("type",permission.getType());
             List<SysPermission> permissionList1 = permissionMapper.selectByExample(dto.getExample());
             if(permissionList1.size() <= 0){
