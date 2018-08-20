@@ -24,35 +24,12 @@ public interface UserService {
     PageVO listUser(UserListDTO userListDTO);
     List<UserVO> getAllUser();
 
-    RoleVO getRole(Long id);
-    void saveRole(RoleDTO dto);
-    void updateRole(RoleDTO dto);
-    void deleteRole(Long id);
-    PageVO listRole(RoleListDTO dto);
-    List<RoleVO> getAllRole();
-
-    BaseVO getPermission(PermissionGetDTO dto);
-    Long savePermission(PermissionUpdateDTO dto);
-    void updatePermission(PermissionUpdateDTO dto);
-    void deletePermission(Long id);
-
     /**
      * 根据用户名获取用户
      * @param username
      * @return
      */
     SysUser getUserByUsername(String username);
-    /**
-     * 获取所有权限
-     * @return
-     */
-    List<PermissionVO> getAllPermission();
-
-    /**
-     * 获取所有权限
-     * @return
-     */
-    List<PermissionTreeVO> getAllPermissionTree();
 
     /**
      * 根据用户名获取菜单，并组装前端路由格式json
@@ -73,13 +50,5 @@ public interface UserService {
      * @return
      */
     List<Long> getUserRoleIds(Long userId);
-
-    /**
-     * 保存角色权限
-     * @param roleIds
-     * @param userId
-     */
-    void saveRolePermission(List<Long> permissionIds,Long roleId);
-
 
 }

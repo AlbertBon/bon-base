@@ -5,6 +5,7 @@ import com.bon.common.domain.vo.PageVO;
 import com.bon.common.domain.vo.ResultBody;
 import com.bon.modules.sys.domain.dto.*;
 import com.bon.modules.sys.domain.vo.*;
+import com.bon.modules.sys.service.RoleService;
 import com.bon.modules.sys.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,13 +29,13 @@ import java.util.List;
 public class RoleController {
 
     @Autowired
-    private UserService userService;
+    private RoleService roleService;
 
     @ApiOperation(value = "获取角色",notes = "")
     @GetMapping(value = "/getRole")
     @RequiresPermissions({"url:user:getRole"})
     public ResultBody getRole(@RequestParam Long key){
-        RoleVO vo= userService.getRole(key);
+        RoleVO vo= roleService.getRole(key);
         return new ResultBody(vo);
     }
 
@@ -42,7 +43,7 @@ public class RoleController {
     @PostMapping(value = "/saveRole",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @RequiresPermissions({"url:user:saveRole"})
     public ResultBody saveRole(@RequestBody RoleDTO dto){
-        userService.saveRole(dto);
+        roleService.saveRole(dto);
         return new ResultBody();
     }
 
@@ -50,7 +51,7 @@ public class RoleController {
     @PostMapping(value = "/listRole",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @RequiresPermissions({"url:user:listRole"})
     public ResultBody listRole(@RequestBody RoleListDTO dto){
-        PageVO pageVO = userService.listRole(dto);
+        PageVO pageVO = roleService.listRole(dto);
         return new ResultBody(pageVO);
     }
 
@@ -59,7 +60,7 @@ public class RoleController {
     @PostMapping(value = "/updateRole",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @RequiresPermissions({"url:user:updateRole"})
     public ResultBody updateRole(@RequestBody RoleDTO dto){
-        userService.updateRole(dto);
+        roleService.updateRole(dto);
         return new ResultBody();
     }
 
@@ -67,7 +68,7 @@ public class RoleController {
     @GetMapping(value = "/deleteRole")
     @RequiresPermissions({"url:user:deleteRole"})
     public ResultBody deleteRole(@RequestParam Long key){
-        userService.deleteRole(key);
+        roleService.deleteRole(key);
         return new ResultBody();
     }
 
@@ -75,7 +76,7 @@ public class RoleController {
     @GetMapping(value = "/getAllRole")
     @RequiresPermissions({"url:user:getAllRole"})
     public ResultBody getAllRole(){
-        List<RoleVO> list = userService.getAllRole();
+        List<RoleVO> list = roleService.getAllRole();
         return new ResultBody(list);
     }
 }

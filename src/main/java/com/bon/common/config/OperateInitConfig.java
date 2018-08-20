@@ -10,6 +10,7 @@ import com.bon.modules.sys.domain.dto.PermissionUpdateDTO;
 import com.bon.modules.sys.domain.entity.SysPermission;
 import com.bon.modules.sys.domain.entity.SysUrl;
 import com.bon.modules.sys.domain.enums.PermissionType;
+import com.bon.modules.sys.service.PermissionService;
 import com.bon.modules.sys.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,7 +37,7 @@ public class OperateInitConfig {
     private static MyLog log = MyLog.getLog(OperateInitConfig.class);
 
     public void init() throws ClassNotFoundException {
-        UserService userService = SpringUtil.getBean(UserService.class);
+        PermissionService permissionService = SpringUtil.getBean(PermissionService.class);
         SysUserExtendMapper userExtendMapper = SpringUtil.getBean(SysUserExtendMapper.class);
         SysPermissionMapper permissionMapper = SpringUtil.getBean(SysPermissionMapper.class);
 
@@ -83,8 +84,8 @@ public class OperateInitConfig {
                 if(StringUtils.isBlank(permissionFlag)){
                     continue;
                 }
-                if(permissionFlagList.contains(name)){
-                    log.info("权限名{}重复",permissionFlag);
+                if(permissionFlagList.contains(permissionFlag)){
+                    log.info("权限名{}已存在,不添加",permissionFlag);
                     continue;
                 }
 
@@ -118,7 +119,7 @@ public class OperateInitConfig {
                     parentSysUrl.setUrlPath(parentPath);
                     parentSysUrl.setUrlRemark(parentRemark);
                     parentDTO.setUrl(parentSysUrl);
-                    parentId = userService.savePermission(parentDTO);
+                    parentId = permissionService.savePermission(parentDTO);
 
                     PermissionUpdateDTO dto = new PermissionUpdateDTO();
                     dto.setType(PermissionType.URL.getKey());
@@ -129,7 +130,7 @@ public class OperateInitConfig {
                     sysUrl.setUrlRemark(remark);
                     dto.setUrl(sysUrl);
                     dto.setObjectId(parentId);
-                    userService.savePermission(dto);
+                    permissionService.savePermission(dto);
                 }else {
                     PermissionUpdateDTO dto = new PermissionUpdateDTO();
                     dto.setType(PermissionType.URL.getKey());
@@ -140,7 +141,7 @@ public class OperateInitConfig {
                     sysUrl.setUrlRemark(remark);
                     dto.setUrl(sysUrl);
                     dto.setObjectId(parentId);
-                    userService.savePermission(dto);
+                    permissionService.savePermission(dto);
                 }
 
 

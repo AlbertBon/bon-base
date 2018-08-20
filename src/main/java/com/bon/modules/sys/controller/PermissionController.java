@@ -5,11 +5,13 @@ import com.bon.common.domain.vo.PageVO;
 import com.bon.common.domain.vo.ResultBody;
 import com.bon.modules.sys.domain.dto.*;
 import com.bon.modules.sys.domain.vo.*;
+import com.bon.modules.sys.service.PermissionService;
 import com.bon.modules.sys.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -28,13 +30,13 @@ import java.util.List;
 public class PermissionController {
 
     @Autowired
-    private UserService userService;
+    private PermissionService permissionService;
 
     @ApiOperation(value = "获取所有权限(列表)",notes = "获取所有权限，返回结果是普通视图列表树形结构")
     @GetMapping(value = "/getAllPermission")
     @RequiresPermissions({"url:user:getAllPermission"})
     public ResultBody getAllPermission(){
-        List<PermissionVO> list = userService.getAllPermission();
+        List<PermissionVO> list = permissionService.getAllPermission();
         return new ResultBody(list);
     }
 
@@ -42,7 +44,7 @@ public class PermissionController {
     @GetMapping(value = "/getAllPermissionTree")
     @RequiresPermissions({"url:user:getAllPermissionTree"})
     public ResultBody getAllPermissionTree(){
-        List<PermissionTreeVO> list = userService.getAllPermissionTree();
+        List<PermissionTreeVO> list = permissionService.getAllPermissionTree();
         return new ResultBody(list);
     }
 
@@ -50,7 +52,7 @@ public class PermissionController {
     @PostMapping(value = "/getPermission")
     @RequiresPermissions({"url:user:getPermission"})
     public ResultBody getPermission(@RequestBody PermissionGetDTO dto){
-        BaseVO vo = userService.getPermission(dto);
+        BaseVO vo = permissionService.getPermission(dto);
         return new ResultBody(vo.getMap());
     }
 
@@ -58,7 +60,7 @@ public class PermissionController {
     @PostMapping(value = "/savePermission")
     @RequiresPermissions({"url:user:savePermission"})
     public ResultBody savePermission(@RequestBody PermissionUpdateDTO dto){
-        userService.savePermission(dto);
+        permissionService.savePermission(dto);
         return new ResultBody();
     }
 
@@ -66,7 +68,7 @@ public class PermissionController {
     @PostMapping(value = "/updatePermission")
     @RequiresPermissions({"url:user:updatePermission"})
     public ResultBody updatePermission(@RequestBody PermissionUpdateDTO dto){
-        userService.updatePermission(dto);
+        permissionService.updatePermission(dto);
         return new ResultBody();
     }
 
@@ -74,14 +76,14 @@ public class PermissionController {
     @GetMapping(value = "/deletePermission")
     @RequiresPermissions({"url:user:deletePermission"})
     public ResultBody deletePermission(@RequestParam Long key){
-        userService.deletePermission(key);
+        permissionService.deletePermission(key);
         return new ResultBody();
     }
 
     @ApiOperation(value = "初始化",notes = "权限配置初始化，会根据controller生成对应权限，并自动分配给admin角色")
     @GetMapping(value = "/initPermission")
-//    @RequiresPermissions({"url:user:initPermission"})
-    public ResultBody initPermission(@RequestParam Long key) throws Exception {
+    @RequiresRoles({"admin"})
+    public ResultBody initPermission() throws Exception {
         OperateInitConfig config = new OperateInitConfig();
         config.init();
         return new ResultBody();
