@@ -352,8 +352,8 @@ public class UserServiceImpl implements UserService {
         permission.setObjectParent(dto.getObjectId());
         permissionMapper.insertSelective(permission);
         //添加权限表的数据库id路径,如果不为空则有父节点
+        BaseDTO baseDTO = new BaseDTO();
         if (dto.getObjectId()!=null) {
-            BaseDTO baseDTO = new BaseDTO();
             baseDTO.andFind(new SysPermission(),"objectId",dto.getObjectId().toString());
             baseDTO.andFind("type",permissionType.getKey());
             SysPermission permissionParent = permissionMapper.selectOneByExample(baseDTO.getExample());
@@ -363,6 +363,15 @@ public class UserServiceImpl implements UserService {
             permission.setDataPath(permission.getPermissionId().toString());
         }
         permissionMapper.updateByPrimaryKey(permission);
+        //每次新增权限都添加到管理员角色中
+        baseDTO.andFind(new SysRole(),"roleFlag","admin");
+        SysRole adminRole = roleMapper.selectOneByExample(baseDTO.getExample());
+        SysRolePermission rolePermission = new SysRolePermission();
+        rolePermission.setGmtCreate(new Date());
+        rolePermission.setGmtModified(new Date());
+        rolePermission.setRoleId(adminRole.getRoleId());
+        rolePermission.setPermissionId(permission.getPermissionId());
+        rolePermissionMapper.insert(rolePermission);
     }
 
     @Override

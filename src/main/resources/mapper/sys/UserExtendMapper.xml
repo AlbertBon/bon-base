@@ -36,4 +36,10 @@
         *
         from sys_user where username = #{username}
     </select>
+
+    <select id="getPermissionFlag" resultType="java.lang.String">
+        select
+        p.permission_flag
+        from sys_permission p
+    </select>
 </mapper>

@@ -45,4 +45,10 @@ public interface SysUserExtendMapper {
      * @return
      */
     SysUser getByUsername(String username);
+
+    /**
+     * 获取所有权限标识
+     * @return
+     */
+    List<String> getPermissionFlag();
 }
