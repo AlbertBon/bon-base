@@ -150,7 +150,7 @@ public class GenerateCoreUtil {
         sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".domain.dto;");
         sb.append(ENTER);
         sb.append(ENTER);
-        sb.append("import java.util.*;\n"+
+        sb.append("import java.util.*;\n" +
                 "import java.io.Serializable;\n" +
                 "import io.swagger.annotations.ApiModel;\n" +
                 "import io.swagger.annotations.ApiModelProperty;\n" +
@@ -232,7 +232,7 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
         sb.append(ENTER);
         sb.append("import com.bon.common.domain.dto.PageDTO;\n" +
-                "import com.bon.modules." + modules + ".domain.entity." + className + ";\n"+
+                "import com.bon.modules." + modules + ".domain.entity." + className + ";\n" +
                 "import java.io.Serializable;");
         sb.append(ENTER);
         sb.append(ENTER);
@@ -444,7 +444,7 @@ public class GenerateCoreUtil {
 
         StringBuilder sb = new StringBuilder();
         /*******处理这个导入需要的类*********/
-        sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".controller;\n"+
+        sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".controller;\n" +
                 "import com.bon.common.domain.vo.PageVO;\n" +
                 "import com.bon.common.domain.vo.ResultBody;\n" +
                 "import com.bon.modules." + modules + ".domain.dto.*;\n" +
@@ -468,7 +468,7 @@ public class GenerateCoreUtil {
                 "*/");
         sb.append(ENTER);
 
-        sb.append("@Api(\"" + className + "模块\")\n" +
+        sb.append("@Api(value = \"" + className + "\",description = \"" + className + "\")\n" +
                 "@RestController\n" +
                 "@RequestMapping(\"/" + objectName + "\")\n" +
                 "public class " + className + "Controller {");
@@ -482,6 +482,7 @@ public class GenerateCoreUtil {
 
 
         sb.append("    @ApiOperation(value = \"根据条件获取" + className + "列表\")\n" +
+                "    @RequiresPermissions({\"url:" + objectName + ":list" + className + "\"})\n" +
                 "    @PostMapping(value = \"/list\",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)\n" +
                 "    public ResultBody list" + className + "(@RequestBody " + className + "ListDTO listDTO){\n" +
                 "        PageVO pageVO = " + objectName + "Service.list" + className + "(listDTO);\n" +
@@ -492,6 +493,7 @@ public class GenerateCoreUtil {
         //创建单个查询
         sb.append("    @ApiOperation(value = \"获取" + className + "\")\n" +
                 "    @GetMapping(value = \"/get\")\n" +
+                "    @RequiresPermissions({\"url:"+objectName+":get"+className+"\"})\n" +
                 "    public ResultBody get" + className + "(@RequestParam Long key){\n" +
                 "        " + className + "VO vo= " + objectName + "Service.get" + className + "(key);\n" +
                 "        return new ResultBody(vo);\n" +
@@ -499,6 +501,7 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
 
         sb.append("    @ApiOperation(value = \"新增" + className + "\")\n" +
+                "    @RequiresPermissions({\"url:"+objectName+":save"+className+"\"})\n" +
                 "    @PostMapping(value = \"/save\",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)\n" +
                 "    public ResultBody save" + className + "(@RequestBody " + className + "DTO dto){\n" +
                 "        " + objectName + "Service.save" + className + "(dto);\n" +
@@ -507,6 +510,7 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
 
         sb.append("    @ApiOperation(value = \"修改" + className + "\")\n" +
+                "    @RequiresPermissions({\"url:"+objectName+":update"+className+"\"})\n" +
                 "    @PostMapping(value = \"/update\",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)\n" +
                 "    public ResultBody update" + className + "(@RequestBody " + className + "DTO dto){\n" +
                 "        " + objectName + "Service.update" + className + "(dto);\n" +
@@ -515,6 +519,7 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
 
         sb.append("    @ApiOperation(value = \"删除" + className + "\")\n" +
+                "    @RequiresPermissions({\"url:"+objectName+":delete"+className+"\"})\n" +
                 "    @GetMapping(value = \"/delete\")\n" +
                 "    public ResultBody delete" + className + "(@RequestParam Long key){\n" +
                 "        " + objectName + "Service.delete" + className + "(key);\n" +
@@ -588,7 +593,6 @@ public class GenerateCoreUtil {
         }
         return cols;
     }
-
 
 
     /***
@@ -694,12 +698,12 @@ public class GenerateCoreUtil {
     }
 
     //生成所有文件
-    public static void generate(String tableName,String modules) throws Exception {
-        createDTOClass(tableName,modules);
-        createVOClass(tableName,modules);
-        createListDTOClass(tableName,modules);
-        createServiceClass(tableName,modules);
-        createServiceImplClass(tableName,modules);
-        createControllerClass(tableName,modules);
+    public static void generate(String tableName, String modules) throws Exception {
+        createDTOClass(tableName, modules);
+        createVOClass(tableName, modules);
+        createListDTOClass(tableName, modules);
+        createServiceClass(tableName, modules);
+        createServiceImplClass(tableName, modules);
+        createControllerClass(tableName, modules);
     }
 }

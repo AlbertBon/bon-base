@@ -62,31 +62,10 @@ public class RoleServiceImpl implements RoleService {
         SysRole role = roleMapper.selectByPrimaryKey(id);
         RoleVO vo = new RoleVO();
         BeanUtil.copyPropertys(role, vo);
-        //获取角色权限集合
-        List<SysPermission> permissionList = userExtendMapper.getPermissionByRoleFlag(vo.getRoleFlag());
         //获取id数组(不含父节点)
-        List<Long> permissionIds = funPermissionIds(permissionList);
+        List<Long> permissionIds = userExtendMapper.getPermissionIdsByRoleFlag(vo.getRoleFlag());
         vo.setPermissionIds(permissionIds);
         return vo;
-    }
-
-    /**
-     * 通过递归方法获取权限子节点权限id（因前端不可包含有子节点的父节点id）
-     * @param permissionList
-     * @return
-     */
-    public List<Long> funPermissionIds(List<SysPermission> permissionList) {
-        List<Long> permissionIds = new ArrayList<>();
-        for(SysPermission permission:permissionList){
-            BaseDTO dto = new BaseDTO(new SysPermission());
-            dto.andFind("objectParent",permission.getPermissionId().toString());
-            dto.andFind("type",permission.getType());
-            List<SysPermission> permissionList1 = permissionMapper.selectByExample(dto.getExample());
-            if(permissionList1.size() <= 0){
-                permissionIds.add(permission.getPermissionId());
-            }
-        }
-        return permissionIds;
     }
 
     @Override

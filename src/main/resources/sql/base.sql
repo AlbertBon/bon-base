@@ -161,7 +161,7 @@ CREATE TABLE IF NOT EXISTS `sys_user` (
 -- 正在导出表  bon_base.sys_user 的数据：~3 rows (大约)
 /*!40000 ALTER TABLE `sys_user` DISABLE KEYS */;
 INSERT INTO `sys_user` (`user_id`, `gmt_create`, `gmt_modified`, `name`, `phone`, `email`, `telephone`, `address`, `username`, `password`, `remark`, `wx_openid`, `app_id`, `secret_key`, `salt`, `is_admin`) VALUES
-	(1, '2018-06-06 11:02:58', '2018-08-17 12:01:43', 'Albert', '15814371650', 'string', 'string', '天空之城', 'bon', '589b33c3fc225c1ead2038dd1e54b76b', 'string', 'string', 'string', 'string', '51a9179e10b148b7a01a67a55586ac65', 1),
+	(1, '2018-06-06 11:02:58', '2018-08-17 12:01:43', 'Albert', '13211112222', 'string', 'string', '天空之城', 'bon', '589b33c3fc225c1ead2038dd1e54b76b', 'string', 'string', 'string', 'string', '51a9179e10b148b7a01a67a55586ac65', 1),
 	(2, '2018-06-12 17:07:27', '2018-08-17 13:00:46', 'bon1', '', NULL, NULL, NULL, 'bon1', '589b33c3fc225c1ead2038dd1e54b76b', NULL, NULL, NULL, NULL, '51a9179e10b148b7a01a67a55586ac65', 0);
 /*!40000 ALTER TABLE `sys_user` ENABLE KEYS */;
 

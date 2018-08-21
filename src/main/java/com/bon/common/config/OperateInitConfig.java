@@ -15,6 +15,9 @@ import com.bon.modules.sys.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,8 +35,10 @@ import java.util.Map;
  * @author: Bon
  * @create: 2018-08-20 17:50
  **/
+@Component
+@Order(value = 1)
 @Transactional
-public class OperateInitConfig {
+public class OperateInitConfig implements CommandLineRunner{
     private static MyLog log = MyLog.getLog(OperateInitConfig.class);
 
     public void init() throws ClassNotFoundException {
@@ -151,4 +156,8 @@ public class OperateInitConfig {
         }
     }
 
+    @Override
+    public void run(String... strings) throws Exception {
+        this.init();
+    }
 }

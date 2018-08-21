@@ -27,6 +27,13 @@ public interface SysUserExtendMapper {
     List<SysPermission> getPermissionByRoleFlag(String roleFlag);
 
     /**
+     * 根据角色标识获取权限(获取没有子节点的权限)
+     * @param roleFlag
+     * @return
+     */
+    List<Long> getPermissionIdsByRoleFlag(String roleFlag);
+
+    /**
      * 根据用户名获取所有菜单,返回的是菜单类型的权限（只返回根节点的权限）
      * @param username
      * @return

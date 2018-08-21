@@ -29,7 +29,7 @@ import java.text.MessageFormat;
  * @create: 2018-05-16 11:10
  **/
 @RestController
-@Api(value = "登录管理模块")
+@Api(value = "登录管理模块",description = "登录管理模块")
 @RequestMapping("/login")
 public class LoginController {
 
