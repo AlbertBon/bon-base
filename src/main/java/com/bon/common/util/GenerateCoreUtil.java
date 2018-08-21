@@ -1,6 +1,9 @@
 package com.bon.common.util;
 
 
+import com.sun.javafx.logging.PulseLogger;
+
+import java.security.PublicKey;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -29,7 +32,9 @@ public class GenerateCoreUtil {
     public static final String TABLE_CAT = "TABLE_CAT";//表 catalog
     public static final String TABLE_SCHEM = "TABLE_SCHEM";//表 schema
     public static final String TABLE_NAME = "TABLE_NAME";//表名
+    public static String TABLE_COMMENT = "TABLE_COMMENT";//表注释
     public static final String TABLE_TYPE = "TABLE_TYPE";//表类型
+    public static final String KEY = "KEY";//表键类型
     public static final String REMARKS = "REMARKS";//表注释
     public static final String TYPE = "TYPE";//表的类型
     public static final String SIZE = "SIZE";//大小
@@ -62,15 +67,198 @@ public class GenerateCoreUtil {
         }
     }
 
+    /**
+     * 生成所有文件
+     * @param tableName
+     * @param modules
+     * @throws Exception
+     */
+    public static void generateAll(String tableName, String modules) throws Exception {
+        createEntityClass(tableName, modules);
+        createDTOClass(tableName, modules);
+        createVOClass(tableName, modules);
+        createListDTOClass(tableName, modules);
+        createServiceClass(tableName, modules);
+        createServiceImplClass(tableName, modules);
+        createMapperClass(tableName, modules);
+        createMapperXML(tableName, modules);
+        createControllerClass(tableName, modules);
+    }
+
+    /***
+     * 获取数据库表备注
+     * @return
+     * @throws Exception
+     */
+    public static String getTableComment(String table) {
+        //获取表注释信息
+        List<Object> params = new ArrayList<Object>();
+        params.add(DB_NAME);
+        params.add(table);
+        ResultSet rsTable = GenerateDBUtils.query("select table_comment from information_schema.tables where table_schema = ? and table_name = ?", params);
+        try {
+
+            while (rsTable.next()) {
+                TABLE_COMMENT = rsTable.getString(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return TABLE_COMMENT;
+    }
+
+    /***
+     * 列名 类型 => 说明
+     * TABLE_CAT String => 表 catalog
+     * TABLE_SCHEM String => 表 schema
+     * TABLE_NAME String => 表名
+     * TABLE_TYPE String => 表类型
+     * REMARKS String => 表注释
+     * 获取表的列
+     * @param table
+     * @return
+     * @throws Exception
+     */
+    private static List<Map<String, Object>> getCols(String table) throws Exception {
+
+        //获取表字段信息
+        List<Map<String, Object>> cols = new ArrayList<Map<String, Object>>();
+        ResultSetMetaData md = GenerateDBUtils.query("select * from " + table + " where 1 = 2", null).getMetaData();
+        for (int i = 1; i <= md.getColumnCount(); i++) {
+            Map<String, Object> col = new HashMap<String, Object>();
+            cols.add(col);
+            col.put(NAME, md.getColumnName(i));
+            col.put(CLASS, md.getColumnClassName(i));
+            col.put(SIZE, md.getColumnDisplaySize(i));
+            ResultSet rs = GenerateDBUtils.query("show full columns from " + table + " where field = '" + md.getColumnName(i) + "'", null);
+            while (rs.next()) {
+                col.put(KEY, rs.getString("Key"));
+                col.put(REMARKS, rs.getString("Comment"));
+            }
+            String _type = null;
+            String type = md.getColumnTypeName(i);
+            if (type.equals("INT")) {
+                _type = "INTEGER";
+            } else if (type.equals("DATETIME")) {
+                _type = "TIMESTAMP";
+            } else {
+                _type = type;
+            }
+            col.put(TYPE, _type);
+        }
+        return cols;
+    }
+
+    /**
+     *  获取字段类型
+     * @param col
+     * @return
+     * @throws ClassNotFoundException
+     */
+    public static String getType(Map col) throws ClassNotFoundException {
+        String type = "";
+        if (Class.forName(col.get(CLASS).toString()).isAssignableFrom(Date.class) || Class.forName(col.get(CLASS).toString()) == Timestamp.class) {
+            type = "Date";
+        } else if (col.get(TYPE).toString().equalsIgnoreCase("TINYINT")) {
+            type = "Byte";
+        } else if (StringUtils.underline2Camel(col.get(NAME).toString(), false).equals(Class.forName(col.get(CLASS).toString()).getSimpleName())) {
+            type = col.get(CLASS).toString();
+        } else {
+            type = Class.forName(col.get(CLASS).toString()).getSimpleName();
+        }
+        return type;
+    }
+
+    /**
+     * 生成get和set方法
+     * @param col
+     * @return
+     * @throws ClassNotFoundException
+     */
+    public static String generateGetAndSet(Map col) throws ClassNotFoundException {
+        String type = getType(col);
+        StringBuilder sb = new StringBuilder();
+        String string =
+                "    public " + type + " get" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "() {\n" +
+                        "        return " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";\n" +
+                        "    }\n" +
+                        "\n" +
+                        "    public void set" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "(" + type + " " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ") {\n" +
+                        "        this." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + " = " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";\n" +
+                        "    }";
+        return string;
+    }
+
+    /***
+     * 生成实体类的代码
+     * @param table
+     * @throws Exception
+     */
+    public static void createEntityClass(String table, String modules) throws Exception {
+        String className = StringUtils.underline2Camel(table, false);
+        StringBuilder sb = new StringBuilder();
+        sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".domain.entity;");
+        sb.append(ENTER);
+        sb.append(ENTER);
+        sb.append("import java.util.*;\n" +
+                "import java.io.Serializable;\n" +
+                "import org.springframework.format.annotation.DateTimeFormat;\n" +
+                "import com.fasterxml.jackson.annotation.JsonFormat;\n" +
+                "import io.swagger.annotations.ApiModel;\n" +
+                "import io.swagger.annotations.ApiModelProperty;\n" +
+                "import javax.persistence.Id;\n" +
+                "import javax.persistence.GeneratedValue;\n");
+        sb.append(ENTER);
+        sb.append(ENTER);
+        sb.append("/**\n" +
+                " * @Created：" + NOW_DATE + "\n" +
+                " * @Author " + AUTHOR + "\n" +
+                " * @Version: " + Version + "\n" +
+                " * @Description: " + className + "参数类\n" +
+                " * @Email: " + myEmail + "\n" +
+                "*/");
+        sb.append(ENTER);
+        sb.append("@ApiModel(value =\"" + className + "\",description = \"" + getTableComment(table) + "\")\n" +
+                "public class " + className + " implements Serializable{");
+        sb.append(ENTER).append(TAB);
+
+        sb.append("private static final long serialVersionUID = 1L;");
+        sb.append(ENTER);
+
+        for (Map<String, Object> col : getCols(table)) {
+            sb.append(ENTER).append(TAB);
+            String type = getType(col);
+            if (null != col.get(KEY) && col.get(KEY).toString().equals("PRI")) {
+                sb.append("@Id\n" +
+                        "    @GeneratedValue(generator = \"JDBC\")").append(ENTER).append(TAB);
+            }
+            sb.append("@ApiModelProperty(value = \"" + col.get(REMARKS) + "\")").append(ENTER).append(TAB);
+            if (type.equals("Date")) {
+                sb.append("@DateTimeFormat(pattern = \"yyyy-MM-dd HH:mm:ss\")");
+            }
+            sb.append("private " + type + " " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";");
+            sb.append(ENTER);
+        }
+        sb.append(ENTER);
+        for (Map<String, Object> col : getCols(table)) {
+            sb.append(TAB);
+            sb.append(generateGetAndSet(col)).append(ENTER);
+            sb.append(ENTER);
+        }
+
+        sb.append("}");
+        sb.append(ENTER);
+        String filePath = ROOT_PACKAGE + ".modules." + modules + ".domain.entity";
+        GenerateFileUtils.save("src/main/java/" + filePath.replaceAll("\\.", "/") + "/" + className + ".java", sb.toString());
+    }
+
     /***
      * 生成视图类的代码
      * @param table
      * @throws Exception
      */
     public static void createVOClass(String table, String modules) throws Exception {
-        String tableConstantName = getTableConstantName(table);
-
-        String className = getClassName(tableConstantName);
+        String className = StringUtils.underline2Camel(table, false);
         StringBuilder sb = new StringBuilder();
         sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".domain.vo;");
         sb.append(ENTER);
@@ -93,41 +281,15 @@ public class GenerateCoreUtil {
         sb.append("private static final long serialVersionUID = 1L;");
         sb.append(ENTER);
         for (Map<String, Object> col : getCols(table)) {
-            sb.append(ENTER);
-            sb.append(TAB);
-            sb.append("private ");
-            if (Class.forName(col.get(CLASS).toString()).isAssignableFrom(Date.class) || Class.forName(col.get(CLASS).toString()) == Timestamp.class) {
-                sb.append("Date");
-            } else if (col.get(TYPE).toString().equalsIgnoreCase("TINYINT")) {
-                sb.append("Byte");
-            } else if (getClassName(col.get(NAME).toString()).equals(Class.forName(col.get(CLASS).toString()).getSimpleName())) {
-                sb.append(col.get(CLASS));
-            } else {
-                sb.append(Class.forName(col.get(CLASS).toString()).getSimpleName());
-            }
-            sb.append(" " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";");
+            sb.append(ENTER).append(TAB);
+            String type = getType(col);
+            sb.append("private " + type + " " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";");
             sb.append(ENTER);
         }
         sb.append(ENTER);
         for (Map<String, Object> col : getCols(table)) {
-            String type = "";
-            if (Class.forName(col.get(CLASS).toString()).isAssignableFrom(Date.class) || Class.forName(col.get(CLASS).toString()) == Timestamp.class) {
-                type = "Date";
-            } else if (col.get(TYPE).toString().equalsIgnoreCase("TINYINT")) {
-                type = "Byte";
-            } else if (getClassName(col.get(NAME).toString()).equals(Class.forName(col.get(CLASS).toString()).getSimpleName())) {
-                type = col.get(CLASS).toString();
-            } else {
-                type = Class.forName(col.get(CLASS).toString()).getSimpleName();
-            }
             sb.append(TAB);
-            sb.append("public " + type + " get" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "() {\n" +
-                    "        return " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";\n" +
-                    "    }\n" +
-                    "\n" +
-                    "    public void set" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "(" + type + " " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ") {\n" +
-                    "        this." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + " = " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";\n" +
-                    "    }").append(ENTER).append(TAB);
+            sb.append(generateGetAndSet(col)).append(ENTER);
             sb.append(ENTER);
         }
         sb.append("}");
@@ -138,14 +300,12 @@ public class GenerateCoreUtil {
 
 
     /***
-     * 生成参数类的代码
+     * 生成实体参数类的代码
      * @param table
      * @throws Exception
      */
     public static void createDTOClass(String table, String modules) throws Exception {
-        String tableConstantName = getTableConstantName(table);
-
-        String className = getClassName(tableConstantName);
+        String className = StringUtils.underline2Camel(table, false);
         StringBuilder sb = new StringBuilder();
         sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".domain.dto;");
         sb.append(ENTER);
@@ -175,40 +335,15 @@ public class GenerateCoreUtil {
 
         for (Map<String, Object> col : getCols(table)) {
             sb.append(ENTER).append(TAB);
+            String type = getType(col);
             sb.append("@ApiModelProperty(value = \"" + col.get(REMARKS) + "\")").append(ENTER).append(TAB);
-            sb.append("private ");
-            if (Class.forName(col.get(CLASS).toString()).isAssignableFrom(Date.class) || Class.forName(col.get(CLASS).toString()) == Timestamp.class) {
-                sb.append("Date");
-            } else if (col.get(TYPE).toString().equalsIgnoreCase("TINYINT")) {
-                sb.append("Byte");
-            } else if (getClassName(col.get(NAME).toString()).equals(Class.forName(col.get(CLASS).toString()).getSimpleName())) {
-                sb.append(col.get(CLASS));
-            } else {
-                sb.append(Class.forName(col.get(CLASS).toString()).getSimpleName());
-            }
-            sb.append(" " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";");
+            sb.append("private " + type + " " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";");
             sb.append(ENTER);
         }
         sb.append(ENTER);
         for (Map<String, Object> col : getCols(table)) {
-            String type = "";
-            if (Class.forName(col.get(CLASS).toString()).isAssignableFrom(Date.class) || Class.forName(col.get(CLASS).toString()) == Timestamp.class) {
-                type = "Date";
-            } else if (col.get(TYPE).toString().equalsIgnoreCase("TINYINT")) {
-                type = "Byte";
-            } else if (getClassName(col.get(NAME).toString()).equals(Class.forName(col.get(CLASS).toString()).getSimpleName())) {
-                type = col.get(CLASS).toString();
-            } else {
-                type = Class.forName(col.get(CLASS).toString()).getSimpleName();
-            }
             sb.append(TAB);
-            sb.append("public " + type + " get" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "() {\n" +
-                    "        return " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";\n" +
-                    "    }\n" +
-                    "\n" +
-                    "    public void set" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "(" + type + " " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ") {\n" +
-                    "        this." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + " = " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";\n" +
-                    "    }").append(ENTER).append(TAB);
+            sb.append(generateGetAndSet(col)).append(ENTER);
             sb.append(ENTER);
         }
 
@@ -224,9 +359,7 @@ public class GenerateCoreUtil {
      * @throws Exception
      */
     public static void createListDTOClass(String table, String modules) throws Exception {
-        String tableConstantName = getTableConstantName(table);
-
-        String className = getClassName(tableConstantName);
+        String className = StringUtils.underline2Camel(table, false);
         StringBuilder sb = new StringBuilder();
         sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".domain.dto;");
         sb.append(ENTER);
@@ -265,7 +398,7 @@ public class GenerateCoreUtil {
      */
     public static void createServiceClass(String table, String modules) {
 
-        String className = getClassName(getTableConstantName(table));
+        String className = StringUtils.underline2Camel(table, false);
         String objectName = StringUtils.uncapitalize(className);
 
         StringBuilder sb = new StringBuilder();
@@ -324,7 +457,7 @@ public class GenerateCoreUtil {
      */
     public static void createServiceImplClass(String table, String modules) {
 
-        String className = getClassName(getTableConstantName(table));
+        String className = StringUtils.underline2Camel(table, false);
 
         String objectName = StringUtils.uncapitalize(className);
 
@@ -334,8 +467,8 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
         sb.append(ENTER);
 
-        sb.append("import java.io.Serializable;").append(ENTER);
-        sb.append("import java.util.*;\n" +
+        sb.append("import java.io.Serializable;\n" +
+                "import java.util.*;\n" +
                 "import com.bon.common.domain.vo.PageVO;\n" +
                 "import com.bon.common.exception.BusinessException;\n" +
                 "import com.bon.common.util.BeanUtil;\n" +
@@ -431,19 +564,77 @@ public class GenerateCoreUtil {
 
     }
 
+    /***
+     * 创建Dao的接口
+     * createServiceClass
+     * @param table
+     */
+    public static void createMapperClass(String table, String modules) {
+
+        String className = StringUtils.underline2Camel(table, false);
+        String objectName = StringUtils.uncapitalize(className);
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".dao;");
+        sb.append(ENTER);
+        sb.append(ENTER);
+
+        sb.append("import tk.mybatis.mapper.common.Mapper;\n" +
+                "import com.bon.modules." + modules + ".domain.entity." + className + ";").append(ENTER);
+        sb.append(ENTER);
+        sb.append(ENTER);
+
+        sb.append("/**\n" +
+                " * @Created：" + NOW_DATE + "\n" +
+                " * @Author " + AUTHOR + "\n" +
+                " * @Version: " + Version + "\n" +
+                " * @Description: " + className + "服务接口类\n" +
+                " * @Email: " + myEmail + "\n" +
+                "*/");
+        sb.append(ENTER);
+        sb.append("public interface " + className + "Mapper extends Mapper<" + className + "> {");
+
+        sb.append(ENTER);
+        sb.append(ENTER);
+        sb.append("}");
+        sb.append(ENTER);
+        String filePath = ROOT_PACKAGE + ".modules." + modules + ".dao";
+        GenerateFileUtils.save("src/main/java/" + filePath.replaceAll("\\.", "/") + "/" + className + "Mapper.java", sb.toString());
+
+    }
+
+    /***
+     * 创建mapper xml文件
+     * createServiceClass
+     * @param table
+     */
+    public static void createMapperXML(String table, String modules) {
+
+        String className = StringUtils.underline2Camel(table, false);
+        String objectName = StringUtils.uncapitalize(className);
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">\n" +
+                "<mapper namespace=\"com.bon.modules." + modules + ".dao." + className + "\">\n" +
+                "</mapper>");
+        sb.append(ENTER);
+        GenerateFileUtils.save("src/main/resources/mapper/" + modules + "/" + className + "Mapper.xml", sb.toString());
+
+    }
+
 
     /***
      * 创建控制层类Controller
      * @param table
      */
     public static void createControllerClass(String table, String modules) {
-        //类名
-        String className = getClassName(getTableConstantName(table));
+        //类名(从表名中获取，转化为驼峰并第一个字母为答谢)
+        String className = StringUtils.underline2Camel(table, false);
         //通过 org.apache.commons.lang3.StringUtils的uncapitalize方法把类名第一个字母转换成小写
         String objectName = StringUtils.uncapitalize(className);
 
         StringBuilder sb = new StringBuilder();
-        /*******处理这个导入需要的类*********/
         sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".controller;\n" +
                 "import com.bon.common.domain.vo.PageVO;\n" +
                 "import com.bon.common.domain.vo.ResultBody;\n" +
@@ -454,6 +645,7 @@ public class GenerateCoreUtil {
                 "import io.swagger.annotations.ApiOperation;\n" +
                 "import io.swagger.annotations.ApiResponse;\n" +
                 "import org.springframework.beans.factory.annotation.Autowired;\n" +
+                "import org.apache.shiro.authz.annotation.RequiresPermissions;\n" +
                 "import org.springframework.http.MediaType;\n" +
                 "import org.springframework.web.bind.annotation.*;").append(ENTER);
         sb.append(ENTER);
@@ -468,7 +660,7 @@ public class GenerateCoreUtil {
                 "*/");
         sb.append(ENTER);
 
-        sb.append("@Api(value = \"" + className + "\",description = \"" + className + "\")\n" +
+        sb.append("@Api(value = \"" + className + "\",description = \"" + getTableComment(table) + "\")\n" +
                 "@RestController\n" +
                 "@RequestMapping(\"/" + objectName + "\")\n" +
                 "public class " + className + "Controller {");
@@ -492,8 +684,8 @@ public class GenerateCoreUtil {
 
         //创建单个查询
         sb.append("    @ApiOperation(value = \"获取" + className + "\")\n" +
+                "    @RequiresPermissions({\"url:" + objectName + ":get" + className + "\"})\n" +
                 "    @GetMapping(value = \"/get\")\n" +
-                "    @RequiresPermissions({\"url:"+objectName+":get"+className+"\"})\n" +
                 "    public ResultBody get" + className + "(@RequestParam Long key){\n" +
                 "        " + className + "VO vo= " + objectName + "Service.get" + className + "(key);\n" +
                 "        return new ResultBody(vo);\n" +
@@ -501,7 +693,7 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
 
         sb.append("    @ApiOperation(value = \"新增" + className + "\")\n" +
-                "    @RequiresPermissions({\"url:"+objectName+":save"+className+"\"})\n" +
+                "    @RequiresPermissions({\"url:" + objectName + ":save" + className + "\"})\n" +
                 "    @PostMapping(value = \"/save\",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)\n" +
                 "    public ResultBody save" + className + "(@RequestBody " + className + "DTO dto){\n" +
                 "        " + objectName + "Service.save" + className + "(dto);\n" +
@@ -510,7 +702,7 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
 
         sb.append("    @ApiOperation(value = \"修改" + className + "\")\n" +
-                "    @RequiresPermissions({\"url:"+objectName+":update"+className+"\"})\n" +
+                "    @RequiresPermissions({\"url:" + objectName + ":update" + className + "\"})\n" +
                 "    @PostMapping(value = \"/update\",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)\n" +
                 "    public ResultBody update" + className + "(@RequestBody " + className + "DTO dto){\n" +
                 "        " + objectName + "Service.update" + className + "(dto);\n" +
@@ -519,7 +711,7 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
 
         sb.append("    @ApiOperation(value = \"删除" + className + "\")\n" +
-                "    @RequiresPermissions({\"url:"+objectName+":delete"+className+"\"})\n" +
+                "    @RequiresPermissions({\"url:" + objectName + ":delete" + className + "\"})\n" +
                 "    @GetMapping(value = \"/delete\")\n" +
                 "    public ResultBody delete" + className + "(@RequestParam Long key){\n" +
                 "        " + objectName + "Service.delete" + className + "(key);\n" +
@@ -535,175 +727,5 @@ public class GenerateCoreUtil {
 
     }
 
-    /***
-     * 获取数据库表名
-     * @return
-     * @throws Exception
-     */
-    public List<String> getTables() throws Exception {
-        List<Object> params = new ArrayList<Object>();
-        System.out.println("===========" + DB_NAME);
-        //params.add(DB_NAME);
-        String dbname = DB_NAME;
-        params.add(dbname);
 
-        ResultSet rs = GenerateDBUtils.query("select table_name from information_schema.tables where table_schema = ? order by table_name", params);
-        List<String> tables = new ArrayList<String>();
-        while (rs.next()) {
-            tables.add(rs.getString(1));
-        }
-        return tables;
-    }
-
-    /***
-     * 列名 类型 => 说明
-     * TABLE_CAT String => 表 catalog
-     * TABLE_SCHEM String => 表 schema
-     * TABLE_NAME String => 表名
-     * TABLE_TYPE String => 表类型
-     * REMARKS String => 表注释
-     * 获取表的列
-     * @param table
-     * @return
-     * @throws Exception
-     */
-    private static List<Map<String, Object>> getCols(String table) throws Exception {
-        List<Map<String, Object>> cols = new ArrayList<Map<String, Object>>();
-        ResultSetMetaData md = GenerateDBUtils.query("select * from " + table + " where 1 = 2", null).getMetaData();
-        for (int i = 1; i <= md.getColumnCount(); i++) {
-            Map<String, Object> col = new HashMap<String, Object>();
-            cols.add(col);
-            col.put(NAME, md.getColumnName(i));
-            col.put(CLASS, md.getColumnClassName(i));
-            col.put(SIZE, md.getColumnDisplaySize(i));
-            ResultSet rs = GenerateDBUtils.query("show full columns from " + table + " where field = '" + md.getColumnName(i) + "'", null);
-            while (rs.next()) {
-                col.put(REMARKS, rs.getString("Comment"));
-            }
-            String _type = null;
-            String type = md.getColumnTypeName(i);
-            if (type.equals("INT")) {
-                _type = "INTEGER";
-            } else if (type.equals("DATETIME")) {
-                _type = "TIMESTAMP";
-            } else {
-                _type = type;
-            }
-            col.put(TYPE, _type);
-        }
-        return cols;
-    }
-
-
-    /***
-     * 获取表的常量名，一般是在数据库建表的时候，写的注释..
-     * @param table
-     * @return
-     */
-    private static String getTableConstantName(String table) {
-        String tableConstantName = table.toUpperCase();
-        for (String item : IGNORE_TABLE_PREFIX) {
-            tableConstantName = tableConstantName.replaceAll("^" + item.toUpperCase(), "");
-        }
-        return tableConstantName;
-    }
-
-    /***
-     * 获取类的名
-     * @param name
-     * @return
-     */
-    private static String getClassName(String name) {
-        String[] names = name.split("_");
-        StringBuilder sb = new StringBuilder();
-        for (String n : names) {
-            if (n.length() == 0) {
-                sb.append("_");
-            } else {
-                sb.append(n.substring(0, 1).toUpperCase());
-                if (n.length() > 1) {
-                    sb.append(n.substring(1).toLowerCase());
-                }
-            }
-        }
-        return sb.toString();
-    }
-
-    /**
-     * 获取字段名
-     *
-     * @param name
-     * @return
-     */
-    private String getFieldName(String name) {
-        String _name = getClassName(name);
-        return _name.substring(0, 1).toLowerCase() + _name.substring(1);
-    }
-
-
-    /**
-     * 转换成泛型Map
-     *
-     * @param limit
-     * @param rs
-     * @return
-     * @throws SQLException
-     */
-    public static List<Map> toListMap(int limit, ResultSet rs) throws SQLException {
-        ResultSetMetaData rsmd = rs.getMetaData();
-        int count = 0;
-        List list = new ArrayList();
-        while (rs.next()) {
-            Map row = new HashMap();
-            for (int i = 1; i <= rsmd.getColumnCount(); i++) {
-                row.put(rsmd.getColumnName(i), rs.getObject(i));
-            }
-            list.add(row);
-            count++;
-            if (count >= limit) {
-                break;
-            }
-        }
-        return list;
-    }
-
-
-    /***
-     * 获取查询list
-     * @param conn
-     * @param sql
-     * @param limit
-     * @return
-     * @throws SQLException
-     */
-    public static List<Map> queryForList(Connection conn, String sql, int limit) throws SQLException {
-        PreparedStatement ps = conn.prepareStatement(sql.trim());
-        ps.setMaxRows(limit);
-        ps.setFetchDirection(1000);
-        ResultSet rs = ps.executeQuery();
-        return toListMap(limit, rs);
-    }
-
-    /***
-     * 获取查询list
-     * @param conn
-     * @param sql
-     * @param limit
-     * @return
-     * @throws SQLException
-     */
-    public static List<Map> queryForList(String sql, int limit) throws SQLException {
-        Connection conn = GenerateDBUtils.getConnection();
-        return queryForList(conn, sql, limit);
-    }
-
-    //生成所有文件
-    public static void generate(String tableName, String modules) throws Exception {
-        createDTOClass(tableName, modules);
-        createVOClass(tableName, modules);
-        createListDTOClass(tableName, modules);
-        createServiceClass(tableName, modules);
-        createServiceImplClass(tableName, modules);
-        createControllerClass(tableName, modules);
-    }
 }

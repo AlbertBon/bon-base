@@ -18,7 +18,7 @@ import java.util.List;
 public class generateMain {
     /**
      * @Author: Bon
-     * @Description: 根据生成数据库语句
+     * @Description: 根据excel生成数据库语句
      * @param
      * @return: void
      * @Date: 2018/8/19 12:57
@@ -26,13 +26,22 @@ public class generateMain {
     @Test
     public void generateViewSQL() throws Exception {
         List<String> tableList;
-//        table = null;
         tableList = new ArrayList<>();
         tableList.add("role");
         tableList.add("user");
         String s = POIUtil.generateViewSql(new File(SysBaseService.class.getResource("/sql/baoli.xls").getFile()).getAbsolutePath(),tableList);
         System.out.println(s);
     }
+    /**
+     * 生成所有文件
+     */
+    @Test
+    public void generateAll() throws Exception {
+        String tableName = "test";
+        String modules = "app";
+        GenerateCoreUtil.generateAll(tableName,modules);
+    }
+
 
     /**
      * @Author: Bon
@@ -46,6 +55,8 @@ public class generateMain {
         GenerateCoreUtil generateUtil = new GenerateCoreUtil();
         String tableName = "test";
         String modules = "app";
+        //实体类文件
+        generateUtil.createEntityClass(tableName,modules);
         //参数类文件
         generateUtil.createDTOClass(tableName,modules);
         //视图文件
@@ -56,6 +67,10 @@ public class generateMain {
         generateUtil.createServiceClass(tableName,modules);
         //服务实现文件
         generateUtil.createServiceImplClass(tableName,modules);
+        //mapper文件
+        generateUtil.createMapperClass(tableName,modules);
+        //mapper xml文件
+        generateUtil.createMapperXML(tableName,modules);
         //控制层文件
         generateUtil.createControllerClass(tableName,modules);
     }

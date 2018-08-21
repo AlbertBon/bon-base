@@ -1,34 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.bon.modules.sys.dao.SysBaseMapper">
-  <resultMap id="BaseResultMap" type="com.bon.modules.sys.domain.entity.SysBase">
-    <constructor>
-      <idArg column="base_id" javaType="java.lang.Long" jdbcType="BIGINT" />
-      <arg column="gmt_create" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="gmt_modified" javaType="java.util.Date" jdbcType="TIMESTAMP" />
-      <arg column="table_name" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="table_remark" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="field_name" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="field_type" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="field_length" javaType="java.lang.Integer" jdbcType="INTEGER" />
-      <arg column="is_null" javaType="java.lang.Byte" jdbcType="TINYINT" />
-      <arg column="is_unique" javaType="java.lang.Byte" jdbcType="TINYINT" />
-      <arg column="is_unsigned" javaType="java.lang.Byte" jdbcType="TINYINT" />
-      <arg column="default_value" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="field_remark" javaType="java.lang.String" jdbcType="VARCHAR" />
-      <arg column="is_id" javaType="java.lang.Byte" jdbcType="TINYINT" />
-      <arg column="modules" javaType="java.lang.String" jdbcType="VARCHAR" />
-    </constructor>
-  </resultMap>
-  <sql id="Base_Column_List">
-    base_id, gmt_create, gmt_modified, table_name, table_remark, field_name, field_type, 
-    field_length, is_null, is_unique, is_unsigned, default_value, field_remark, is_id, 
-    modules
-  </sql>
-  <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from sys_base
-    where base_id = #{baseId,jdbcType=BIGINT}
-  </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.bon;
 
+import com.bon.common.util.GenerateCoreUtil;
 import com.bon.modules.sys.dao.SysBaseExtendMapper;
 import com.bon.modules.sys.dao.SysBaseMapper;
 import com.bon.modules.sys.dao.SysUserExtendMapper;
@@ -57,78 +58,91 @@ public class generateApplication {
         LOG.info(String.format("【生成结束】"));
     }
 
-    @Test
     /**
-     * 生成某几个数据表类和mapper
+     * 根据系统基础表生成所有文件
      */
-    public void generateClass() throws Exception {
-        List<SysGenerateClassDTO> dtoList = new ArrayList<>();
-        SysGenerateClassDTO dto = new SysGenerateClassDTO();
-        List<String> tableNameList = new ArrayList<>();
-        //表名
-        /*
-        tableNameList.add("sys_user");//基础表
-        tableNameList.add("sys_user_role");//基础表
-        tableNameList.add("sys_role");//基础表
-        tableNameList.add("sys_role_permission");//基础表
-        tableNameList.add("sys_permission");//基础表
-        tableNameList.add("sys_menu");//基础表
-        tableNameList.add("sys_base");//基础表
-        */
-        tableNameList.add("sys_url");
-        dto.setTableNameList(tableNameList);
-        //模块
-        dto.setModules("sys");
-        //是否生成扩展类（service、controller、dto、vo等信息）
-        if("sys".equals(dto.getModules())){//固定系统模块不生成扩展类
-            dto.setIsExtend((byte) 0);
-        }else {
-            //dto.setIsExtend((byte) 0);//否
-            dto.setIsExtend((byte) 1);//是
-        }
-        dtoList.add(dto);
-        sysBaseService.generateClass(dtoList);
-    }
-
     @Test
-    /**
-     * 生成所有数据表类和mapper
-     */
     public void generateAllClass() throws Exception {
+        //使用util工具升
         List<SysBase> sysBaseList = sysBaseExtendMapper.listTables();
-        List<SysGenerateClassDTO> dtoList = new ArrayList<>();
-        Map<String,List<String>> modulesMap = new HashMap<>();
-        //遍历生成按照modules分组的map
-        for(SysBase sysBase:sysBaseList){
-            if("sys_base".equals(sysBase.getTableName())){
-                continue;
-            }
-            List<String> tableNameList = modulesMap.get(sysBase.getModules());
-            if(null!=tableNameList){
-                tableNameList.add(sysBase.getTableName());
-            }else {
-                tableNameList = new ArrayList<>();
-                tableNameList.add(sysBase.getTableName());
-                modulesMap.put(sysBase.getModules(),tableNameList);
-            }
+        for (SysBase sysBase : sysBaseList) {
+            GenerateCoreUtil.generateAll(sysBase.getTableName(), sysBase.getModules());
         }
-        //循环取出map放入list
-        for(Map.Entry<String,List<String>> entry:modulesMap.entrySet()){
-            SysGenerateClassDTO dto = new SysGenerateClassDTO();
-            dto.setModules(entry.getKey());
-            dto.setTableNameList(entry.getValue());
-            dto.setIsExtend((byte) 0);
-            dtoList.add(dto);
-        }
-        sysBaseService.generateClass(dtoList);
     }
 
-    @Test
     /**
-     * 生成数据库
+     * 根据excel文件生成数据库
      */
+    @Test
     public void generateTable() {
         sysBaseService.generateTable(new File(SysBaseService.class.getResource("/sql/generate.xls").getFile()));
     }
+
+    /**
+     * 生成某几个数据表类和mapper(需要用到mybatis生成工具)
+     */
+//    @Test
+//    public void generateClass() throws Exception {
+//        List<SysGenerateClassDTO> dtoList = new ArrayList<>();
+//        SysGenerateClassDTO dto = new SysGenerateClassDTO();
+//        List<String> tableNameList = new ArrayList<>();
+//        //表名
+//        /*
+//        tableNameList.add("sys_user");//基础表
+//        tableNameList.add("sys_user_role");//基础表
+//        tableNameList.add("sys_role");//基础表
+//        tableNameList.add("sys_role_permission");//基础表
+//        tableNameList.add("sys_permission");//基础表
+//        tableNameList.add("sys_menu");//基础表
+//        tableNameList.add("sys_base");//基础表
+//        */
+//        tableNameList.add("test");
+//        dto.setTableNameList(tableNameList);
+//        //模块
+//        dto.setModules("app");
+//        //是否生成扩展类（service、controller、dto、vo等信息）
+//        if("sys".equals(dto.getModules())){//固定系统模块不生成扩展类
+//            dto.setIsExtend((byte) 0);
+//        }else {
+//            //dto.setIsExtend((byte) 0);//否
+//            dto.setIsExtend((byte) 1);//是
+//        }
+//        dtoList.add(dto);
+//        sysBaseService.generateClass(dtoList);
+//    }
+    /**
+     * 根据系统基础表生成所有数据表类和mapper(需要用到mybatis生成工具)
+     */
+//    @Test
+//    public void generateAllClass() throws Exception {
+//        List<SysBase> sysBaseList = sysBaseExtendMapper.listTables();
+//        List<SysBase> sysBaseList = sysBaseExtendMapper.listTables();
+//        List<SysGenerateClassDTO> dtoList = new ArrayList<>();
+//        Map<String,List<String>> modulesMap = new HashMap<>();
+//        //遍历生成按照modules分组的map
+//        for(SysBase sysBase:sysBaseList){
+//            if("sys_base".equals(sysBase.getTableName())){
+//                continue;
+//            }
+//            List<String> tableNameList = modulesMap.get(sysBase.getModules());
+//            if(null!=tableNameList){
+//                tableNameList.add(sysBase.getTableName());
+//            }else {
+//                tableNameList = new ArrayList<>();
+//                tableNameList.add(sysBase.getTableName());
+//                modulesMap.put(sysBase.getModules(),tableNameList);
+//            }
+//        }
+//        //循环取出map放入list
+//        for(Map.Entry<String,List<String>> entry:modulesMap.entrySet()){
+//            SysGenerateClassDTO dto = new SysGenerateClassDTO();
+//            dto.setModules(entry.getKey());
+//            dto.setTableNameList(entry.getValue());
+//            dto.setIsExtend((byte) 0);
+//            dtoList.add(dto);
+//        }
+//        sysBaseService.generateClass(dtoList);
+//    }
+
 
 }
