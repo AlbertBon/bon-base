@@ -181,7 +181,7 @@ public class UserServiceImpl implements UserService {
         for (SysPermission permission : permissionList) {
             String permissionFlag = permission.getPermissionFlag();
             //判断是否有权限
-            if(!SecurityUtils.getSubject().isPermitted(permissionFlag) && !StringUtils.isByteTrue(user.getIsAdmin())){
+            if(!SecurityUtils.getSubject().isPermitted(permissionFlag)){
                 continue;
             }
             SysMenu menu = menuMapper.selectByPrimaryKey(permission.getObjectId());

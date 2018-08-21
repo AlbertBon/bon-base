@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `sys_permission` (
   `permission_name` varchar(32) DEFAULT NULL COMMENT '权限名称',
   `type` char(2) DEFAULT NULL COMMENT '00:菜单权限；01：接口url权限',
   `object_id` bigint(20) DEFAULT NULL COMMENT '对应表id（菜单权限即为菜单id）',
-  `object_parent` bigint(20) DEFAULT NULL COMMENT '对应表id的父id（菜单权限即为菜单id的父id）',
+  `parent_id` bigint(20) DEFAULT NULL COMMENT '父权限id（permission表中的id值）',
   `data_path` varchar(512) DEFAULT NULL COMMENT '数据库id地址',
   PRIMARY KEY (`permission_id`),
   UNIQUE KEY `permission_flag` (`permission_flag`)
@@ -86,12 +86,12 @@ CREATE TABLE IF NOT EXISTS `sys_permission` (
 
 -- 正在导出表  bon_base.sys_permission 的数据：~5 rows (大约)
 /*!40000 ALTER TABLE `sys_permission` DISABLE KEYS */;
-INSERT INTO `sys_permission` (`permission_id`, `gmt_create`, `gmt_modified`, `permission_flag`, `permission_name`, `type`, `object_id`, `object_parent`, `data_path`) VALUES
-	(1, '2018-06-06 11:19:08', '2018-07-24 12:00:47', 'sys:menu', '【菜单】系统管理', '00', 1, 0, '1'),
-	(2, '2018-06-06 11:19:55', '2018-07-24 12:01:24', 'userList:menu', '【菜单】用户管理', '00', 2, 1, '1/2'),
-	(3, '2018-06-06 14:11:05', '2018-07-24 12:01:30', 'roleList:menu', '【菜单】角色管理', '00', 3, 1, '1/3'),
-	(4, '2018-07-24 14:18:16', '2018-07-25 11:33:29', 'sysTable:menu', '【菜单】系统表管理', '00', 4, 1, '1/4'),
-	(5, '2018-08-06 20:14:20', '2018-08-06 20:14:20', 'permission:menu', '【菜单】权限管理', '00', 5, 1, '1/5');
+INSERT INTO `sys_permission` (`permission_id`, `gmt_create`, `gmt_modified`, `permission_flag`, `permission_name`, `type`, `object_id`, `parent_id`, `data_path`) VALUES
+	(1, '2018-06-06 11:19:08', '2018-07-24 12:00:47', 'menu:admin', '【菜单】系统管理', '00', 1, 0, '1'),
+	(2, '2018-06-06 11:19:55', '2018-07-24 12:01:24', 'menu:admin:user', '【菜单】用户管理', '00', 2, 1, '1/2'),
+	(3, '2018-06-06 14:11:05', '2018-07-24 12:01:30', 'menu:admin:role', '【菜单】角色管理', '00', 3, 1, '1/3'),
+	(4, '2018-07-24 14:18:16', '2018-07-25 11:33:29', 'menu:admin:sysBase', '【菜单】系统表管理', '00', 4, 1, '1/4'),
+	(5, '2018-08-06 20:14:20', '2018-08-06 20:14:20', 'menu:admin:permission', '【菜单】权限管理', '00', 5, 1, '1/5');
 /*!40000 ALTER TABLE `sys_permission` ENABLE KEYS */;
 
 -- 导出  表 bon_base.sys_role 结构

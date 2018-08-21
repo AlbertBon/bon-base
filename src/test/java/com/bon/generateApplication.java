@@ -6,6 +6,7 @@ import com.bon.modules.sys.dao.SysBaseMapper;
 import com.bon.modules.sys.dao.SysUserExtendMapper;
 import com.bon.modules.sys.domain.dto.SysGenerateClassDTO;
 import com.bon.modules.sys.domain.entity.SysBase;
+import com.bon.modules.sys.service.PermissionService;
 import com.bon.modules.sys.service.SysBaseService;
 import com.bon.common.util.MyLog;
 import org.junit.After;
@@ -42,10 +43,13 @@ public class generateApplication {
     private SysBaseMapper SysBaseMapper;
 
     @Autowired
-    SysBaseExtendMapper sysBaseExtendMapper;
+    private SysBaseExtendMapper sysBaseExtendMapper;
 
     @Autowired
     private SysUserExtendMapper sysUserExtendMapper;
+
+    @Autowired
+    private PermissionService permissionService;
 
 
     @Before
@@ -56,6 +60,15 @@ public class generateApplication {
     @After
     public void after() throws Exception {
         LOG.info(String.format("【生成结束】"));
+    }
+
+    @Test
+    public void generateAllAndVUE() throws Exception {
+        String tableName = "test";
+        String modules = "app";
+        GenerateCoreUtil.generateAll(tableName,modules);
+        GenerateCoreUtil.generateVUE(tableName,modules);
+        permissionService.generateMenuToVue(tableName,modules);
     }
 
     /**

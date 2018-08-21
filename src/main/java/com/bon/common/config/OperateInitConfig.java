@@ -134,7 +134,7 @@ public class OperateInitConfig implements CommandLineRunner{
                     sysUrl.setUrlPath(path);
                     sysUrl.setUrlRemark(remark);
                     dto.setUrl(sysUrl);
-                    dto.setObjectId(parentId);
+                    dto.setParentId(parentId);
                     permissionService.savePermission(dto);
                 }else {
                     PermissionUpdateDTO dto = new PermissionUpdateDTO();
@@ -145,7 +145,7 @@ public class OperateInitConfig implements CommandLineRunner{
                     sysUrl.setUrlPath(path);
                     sysUrl.setUrlRemark(remark);
                     dto.setUrl(sysUrl);
-                    dto.setObjectId(parentId);
+                    dto.setParentId(parentPermission.getPermissionId());
                     permissionService.savePermission(dto);
                 }
 

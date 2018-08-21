@@ -754,7 +754,7 @@ public class GenerateCoreUtil {
      * @param table
      */
     public static void createVUE(String table, String modules) throws Exception {
-        //类名(从表名中获取，转化为驼峰并第一个字母为答谢)
+        //类名(从表名中获取，转化为驼峰并第一个字母为大写)
         String className = StringUtils.underline2Camel(table, false);
         //通过 org.apache.commons.lang3.StringUtils的uncapitalize方法把类名第一个字母转换成小写
         String objectName = StringUtils.uncapitalize(className);
@@ -792,16 +792,20 @@ public class GenerateCoreUtil {
                 "        </template>\n" +
                 "      </el-table-column>\n");
         for (Map<String, Object> col : cols) {
-            String type = getType(col);
-            sb.append("      <el-table-column width=\"160px\" align=\"center\" label=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\">\n" +
-                    "        <template slot-scope=\"scope\">\n");
-            if (type.equals("Date")) {
-                sb.append("          <span>{{scope.row." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + " | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>\n");
-            } else {
-                sb.append("          <span>{{scope.row." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + "}}</span>\n");
+            if((col.get(KEY)!=null&&col.get(KEY).toString().equals("PRI")) || col.get(NAME).toString().equals("gmt_modified")){
+                sb.append("");
+            }else {
+                String type = getType(col);
+                sb.append("      <el-table-column width=\"160px\" align=\"center\" label=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\">\n" +
+                        "        <template slot-scope=\"scope\">\n");
+                if (type.equals("Date")) {
+                    sb.append("          <span>{{scope.row." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + " | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>\n");
+                } else {
+                    sb.append("          <span>{{scope.row." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + "}}</span>\n");
+                }
+                sb.append("        </template>\n" +
+                        "      </el-table-column>\n");
             }
-            sb.append("        </template>\n" +
-                    "      </el-table-column>\n");
         }
         sb.append("      <el-table-column align=\"center\" label=\"操作\" width=\"230\" class-name=\"small-padding fixed-width\">\n" +
                 "        <template slot-scope=\"scope\">\n" +
@@ -831,9 +835,16 @@ public class GenerateCoreUtil {
                 "          <el-input v-model=\"" + objectName + "Params." + objectName + "Id\"></el-input>\n" +
                 "        </el-form-item>\n");
         for (Map<String, Object> col : cols) {
-            sb.append("        <el-form-item label=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\" prop=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\">\n" +
-                    "          <el-input v-model=\"" + objectName + "Params." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + "\"></el-input>\n" +
-                    "        </el-form-item>\n");
+            if(col.get(KEY)!=null&&col.get(KEY).toString().equals("PRI")){
+                sb.append("        <el-form-item v-show=\"false\" label=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\" prop=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\">\n" +
+                        "          <el-input v-model=\"" + objectName + "Params." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + "\"></el-input>\n" +
+                        "        </el-form-item>\n");
+            }else if(!col.get(NAME).toString().equals("gmt_create") && !col.get(NAME).toString().equals("gmt_modified") ){
+                sb.append("        <el-form-item label=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\" prop=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\">\n" +
+                        "          <el-input v-model=\"" + objectName + "Params." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + "\"></el-input>\n" +
+                        "        </el-form-item>\n");
+            }
+
         }
         sb.append("      </el-form>\n" +
                 "      <div slot=\"footer\" class=\"dialog-footer\">\n" +
@@ -936,11 +947,6 @@ public class GenerateCoreUtil {
                 "        this.getRequest('/" + objectName + "/get?key='+" + objectName + "Id).then(res => {\n" +
                 "          if (res.data.code == '00') {\n" +
                 "            this." + objectName + "Params = res.data.data;\n" +
-                "            //防止roleIds为空\n" +
-                "            if(this." + objectName + "Params.roleIds == null){\n" +
-                "              this." + objectName + "Params.roleIds = [];\n" +
-                "            }\n" +
-                "            this." + objectName + "Params.isAdmin = res.data.data.isAdmin.toString()\n" +
                 "          }\n" +
                 "        })\n" +
                 "      },\n" +

@@ -27,6 +27,9 @@ public class PermissionUpdateDTO {
     @ApiModelProperty(value = "对应表id（菜单权限即为菜单id）")
     private Long objectId;
 
+    @ApiModelProperty(value = "父权限id（permission表中的id值）")
+    private Long parentId;
+
     @ApiModelProperty(value = "权限标识")
     private String permissionFlag;
 
@@ -35,6 +38,14 @@ public class PermissionUpdateDTO {
 
     @ApiModelProperty(value = "接口url")
     private SysUrl url;
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
 
     public SysUrl getUrl() {
         return url;

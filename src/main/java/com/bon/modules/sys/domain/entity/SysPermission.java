@@ -41,14 +41,14 @@ public class SysPermission implements Serializable {
     private Long objectId;
 
     @ApiModelProperty(value = "对应表id的父id（菜单权限即为菜单id的父id）")
-    private Long objectParent;
+    private Long parentId;
 
     @ApiModelProperty(value = "数据库id地址")
     private String dataPath;
 
     private static final long serialVersionUID = 1L;
 
-    public SysPermission(Long permissionId, Date gmtCreate, Date gmtModified, String permissionFlag, String permissionName, String type, Long objectId, Long objectParent, String dataPath) {
+    public SysPermission(Long permissionId, Date gmtCreate, Date gmtModified, String permissionFlag, String permissionName, String type, Long objectId, Long parentId, String dataPath) {
         this.permissionId = permissionId;
         this.gmtCreate = gmtCreate;
         this.gmtModified = gmtModified;
@@ -56,7 +56,7 @@ public class SysPermission implements Serializable {
         this.permissionName = permissionName;
         this.type = type;
         this.objectId = objectId;
-        this.objectParent = objectParent;
+        this.parentId = parentId;
         this.dataPath = dataPath;
     }
 
@@ -122,12 +122,12 @@ public class SysPermission implements Serializable {
         this.objectId = objectId;
     }
 
-    public Long getObjectParent() {
-        return objectParent;
+    public Long getParentId() {
+        return parentId;
     }
 
-    public void setObjectParent(Long objectParent) {
-        this.objectParent = objectParent;
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 
     public String getDataPath() {

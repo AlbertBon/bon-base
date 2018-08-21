@@ -33,4 +33,6 @@ public interface PermissionService {
      */
     List<PermissionTreeVO> getAllPermissionTree();
 
+    void generateMenuToVue(String tableName,String modules);
+
 }

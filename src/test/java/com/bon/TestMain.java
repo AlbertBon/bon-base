@@ -2,6 +2,7 @@ package com.bon;
 
 import com.bon.common.util.GenerateCoreUtil;
 import com.bon.common.util.MyLog;
+import com.bon.common.util.StringUtils;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.junit.After;
 import org.junit.Before;
@@ -31,8 +32,11 @@ public class TestMain {
     @Test
     public void utils() {
 //        System.out.println(MD5Util.encode("123123",2));
-        String url = TestMain.class.getResource("").toString();
-        System.out.println(url);
+//        String url = TestMain.class.getResource("").toString();
+//        System.out.println(url);
+        String s = "tablName";
+        System.out.println(StringUtils.underline2Camel(s,false));
+        System.out.println(StringUtils.upperCase(s));
     }
     @Test
     public void shiro() {

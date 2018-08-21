@@ -26,15 +26,15 @@ public class PermissionVO implements Serializable {
     @ApiModelProperty(value = "对应表id（菜单权限即为菜单id）")
     private Long objectId;
 
-    @ApiModelProperty(value = "对应表id的父id（菜单权限即为菜单id的父id）")
-    private Long objectParent;
+    @ApiModelProperty(value = "父权限id（permission表中的id值）")
+    private Long parentId;
 
-    public Long getObjectParent() {
-        return objectParent;
+    public Long getParentId() {
+        return parentId;
     }
 
-    public void setObjectParent(Long objectParent) {
-        this.objectParent = objectParent;
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 
     public Long getPermissionId() {

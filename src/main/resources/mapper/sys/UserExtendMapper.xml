@@ -20,14 +20,14 @@
         p.permission_id
         from sys_permission p
         INNER JOIN sys_role_permission rp ON rp.permission_id = p.permission_id
-        AND p.permission_id NOT IN (select p1.object_parent from sys_permission p1 where object_parent != 0 group by object_parent)
+        AND p.permission_id NOT IN (select p1.parent_id from sys_permission p1 where parent_id != 0 group by parent_id)
         INNER JOIN sys_role r ON rp.role_id = r.role_id AND role_flag = #{roleFlag} group by p.permission_id
     </select>
     <select id="getMenuByUsername" resultType="com.bon.modules.sys.domain.entity.SysPermission">
         SELECT
         p.*
         FROM sys_permission p
-        INNER JOIN sys_role_permission rp ON p.permission_id = rp.permission_id AND p.`type`='00' AND p.object_parent=0
+        INNER JOIN sys_role_permission rp ON p.permission_id = rp.permission_id AND p.`type`='00' AND p.parent_id=0
         INNER JOIN sys_role r ON r.role_id = rp.role_id
         INNER JOIN sys_user_role ur ON ur.role_id = r.role_id
         INNER JOIN sys_user u ON u.user_id = ur.user_id AND u.username = #{username} group by p.object_id

@@ -60,7 +60,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils{
     }
 
     /**
-     * 小写转大写
+     * 首字母小写转大写
      * @param str
      * @return
      */
