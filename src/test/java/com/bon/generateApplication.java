@@ -63,7 +63,6 @@ public class generateApplication {
      */
     @Test
     public void generateAllClass() throws Exception {
-        //使用util工具升
         List<SysBase> sysBaseList = sysBaseExtendMapper.listTables();
         for (SysBase sysBase : sysBaseList) {
             GenerateCoreUtil.generateAll(sysBase.getTableName(), sysBase.getModules());

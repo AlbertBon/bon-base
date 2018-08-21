@@ -128,16 +128,19 @@ public class PermissionServiceImpl implements PermissionService {
      * @param permission
      */
     private void savePermissionByType(PermissionUpdateDTO dto,PermissionType permissionType,SysPermission permission) {
+        BaseDTO baseDTO = new BaseDTO();
         permission.setGmtCreate(new Date());
         permission.setGmtModified(new Date());
         permission.setPermissionFlag(dto.getPermissionFlag());
         permission.setType(permissionType.getKey());
-        permission.setObjectParent(dto.getObjectId());
         permissionMapper.insertSelective(permission);
         //添加权限表的数据库id路径,如果不为空则有父节点
-        BaseDTO baseDTO = new BaseDTO();
         if (dto.getObjectId()!=null) {
-            SysPermission permissionParent = permissionMapper.selectByPrimaryKey(dto.getObjectId());
+            //根据objectId获取权限对应id
+            baseDTO.andFind(new SysPermission(),"type",permissionType.getKey());
+            baseDTO.andFind("objectId",dto.getObjectId().toString());
+            SysPermission permissionParent = permissionMapper.selectOneByExample(baseDTO.getExample());
+            permission.setObjectParent(permissionParent.getPermissionId());
             permission.setDataPath(permissionParent.getDataPath()+ "/" + permission.getPermissionId());
         } else {
             permission.setObjectParent(0L);

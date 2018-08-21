@@ -32,13 +32,15 @@ public class GenerateCoreUtil {
     public static final String TABLE_CAT = "TABLE_CAT";//表 catalog
     public static final String TABLE_SCHEM = "TABLE_SCHEM";//表 schema
     public static final String TABLE_NAME = "TABLE_NAME";//表名
-    public static String TABLE_COMMENT = "TABLE_COMMENT";//表注释
     public static final String TABLE_TYPE = "TABLE_TYPE";//表类型
     public static final String KEY = "KEY";//表键类型
     public static final String REMARKS = "REMARKS";//表注释
     public static final String TYPE = "TYPE";//表的类型
     public static final String SIZE = "SIZE";//大小
     public static final String CLASS = "CLASS";//类别
+
+    public static String TABLE_COMMENT = "TABLE_COMMENT";//表注释
+    public static String TABLE_PRIMARY_KEY = "";//表主键名称
 
     /*************************变量****End************************************/
 
@@ -58,17 +60,12 @@ public class GenerateCoreUtil {
 
     /*******定义代码块*******/
     static {
-        String ignoreTablePrefix = GeneratePropertiesUtils.getValueByKey("ignoreTablePrefix");
-        if (ignoreTablePrefix.length() > 0) {
-            String[] ignoreTablePrefixs = ignoreTablePrefix.split("\\s*\\,\\s*");
-            for (String elem : ignoreTablePrefixs) {
-                IGNORE_TABLE_PREFIX.add(elem);
-            }
-        }
+
     }
 
     /**
      * 生成所有文件
+     *
      * @param tableName
      * @param modules
      * @throws Exception
@@ -83,6 +80,17 @@ public class GenerateCoreUtil {
         createMapperClass(tableName, modules);
         createMapperXML(tableName, modules);
         createControllerClass(tableName, modules);
+    }
+
+    /**
+     * 生成所有文件
+     *
+     * @param tableName
+     * @param modules
+     * @throws Exception
+     */
+    public static void generateVUE(String tableName, String modules) throws Exception {
+        createVUE(tableName, modules);
     }
 
     /***
@@ -105,6 +113,19 @@ public class GenerateCoreUtil {
             e.printStackTrace();
         }
         return TABLE_COMMENT;
+    }
+
+    public static void getPrimaryField(String table) throws SQLException {
+        List<Map<String, Object>> cols = new ArrayList<Map<String, Object>>();
+        ResultSetMetaData md = GenerateDBUtils.query("select * from " + table + " where 1 = 2", null).getMetaData();
+        for (int i = 1; i <= md.getColumnCount(); i++) {
+            ResultSet rs = GenerateDBUtils.query("show full columns from " + table + " where field = '" + md.getColumnName(i) + "'", null);
+            while (rs.next()) {
+                if (null != rs.getString("Key") && rs.getString("Key").equals("PRI")) {
+                    TABLE_PRIMARY_KEY = md.getColumnName(i);
+                }
+            }
+        }
     }
 
     /***
@@ -150,7 +171,8 @@ public class GenerateCoreUtil {
     }
 
     /**
-     *  获取字段类型
+     * 获取字段类型
+     *
      * @param col
      * @return
      * @throws ClassNotFoundException
@@ -171,6 +193,7 @@ public class GenerateCoreUtil {
 
     /**
      * 生成get和set方法
+     *
      * @param col
      * @return
      * @throws ClassNotFoundException
@@ -234,7 +257,7 @@ public class GenerateCoreUtil {
             }
             sb.append("@ApiModelProperty(value = \"" + col.get(REMARKS) + "\")").append(ENTER).append(TAB);
             if (type.equals("Date")) {
-                sb.append("@DateTimeFormat(pattern = \"yyyy-MM-dd HH:mm:ss\")");
+                sb.append("@DateTimeFormat(pattern = \"yyyy-MM-dd HH:mm:ss\")").append(ENTER).append(TAB);
             }
             sb.append("private " + type + " " + StringUtils.underline2Camel(col.get(NAME).toString(), true) + ";");
             sb.append(ENTER);
@@ -529,10 +552,10 @@ public class GenerateCoreUtil {
         sb.append("@Override\n" +
                 "    public void save" + className + "(" + className + "DTO dto) {\n" +
                 "        " + className + " " + objectName + " = new " + className + "();\n" +
+                "        BeanUtil.copyPropertys(dto, " + objectName + ");\n" +
                 "        " + objectName + ".set" + className + "Id(null);\n" +
                 "        " + objectName + ".setGmtCreate(new Date());\n" +
                 "        " + objectName + ".setGmtModified(new Date());\n" +
-                "        BeanUtil.copyPropertys(dto, " + objectName + ");\n" +
                 "        " + objectName + "Mapper.insertSelective(" + objectName + ");\n" +
                 "    }").append(ENTER).append(TAB);
 
@@ -543,8 +566,8 @@ public class GenerateCoreUtil {
                 "        if (" + objectName + " == null) {\n" +
                 "            throw new BusinessException(\"获取信息失败\");\n" +
                 "        }\n" +
-                "        " + objectName + ".setGmtModified(new Date());\n" +
                 "        BeanUtil.copyPropertys(dto, " + objectName + ");\n" +
+                "        " + objectName + ".setGmtModified(new Date());\n" +
                 "        " + objectName + "Mapper.updateByPrimaryKeySelective(" + objectName + ");\n" +
                 "    }").append(ENTER).append(TAB);
 
@@ -724,6 +747,240 @@ public class GenerateCoreUtil {
         String filePath = ROOT_PACKAGE + ".modules." + modules + ".controller";
         GenerateFileUtils.save("src/main/java/" + filePath.replaceAll("\\.", "/") + "/" + className + "Controller.java", sb.toString());
 
+    }
+
+    /***
+     * 创建VUE视图文件
+     * @param table
+     */
+    public static void createVUE(String table, String modules) throws Exception {
+        //类名(从表名中获取，转化为驼峰并第一个字母为答谢)
+        String className = StringUtils.underline2Camel(table, false);
+        //通过 org.apache.commons.lang3.StringUtils的uncapitalize方法把类名第一个字母转换成小写
+        String objectName = StringUtils.uncapitalize(className);
+        List<Map<String, Object>> cols = getCols(table);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("<template>\n" +
+                "  <div class=\"app-container calendar-list-container\">\n" +
+                "    <div class=\"filter-container\">\n" +
+                "      <el-input style=\"width: 200px;\" v-model=\"listParams.keyMap.equal_" + objectName + "Id\" class=\"filter-item\" placeholder=\"序号\">\n" +
+                "      </el-input>\n" +
+                "      <el-date-picker style=\"width: 200px;\" v-model=\"listParams.keyMap.greater_gmtCreate\" type=\"datetime\"\n" +
+                "                      class=\"filter-item\" placeholder=\"起始时间\" value-format=\"yyyy-MM-dd HH:mm:ss\">\n" +
+                "      </el-date-picker>  -\n" +
+                "      <el-date-picker style=\"width: 200px;\" v-model=\"listParams.keyMap.less_gmtCreate\" type=\"datetime\"\n" +
+                "                      class=\"filter-item\" placeholder=\"结束时间\" value-format=\"yyyy-MM-dd HH:mm:ss\">\n" +
+                "      </el-date-picker>\n" +
+                "      <el-button class=\"filter-item\" @click=\"getList\" style=\"margin-left: 10px;\" type=\"primary\" icon=\"el-icon-search\">\n" +
+                "        搜索\n" +
+                "      </el-button>\n" +
+                "      <el-button @click=\"handleCreate\" class=\"filter-item\" style=\"margin-left: 10px;\" type=\"primary\" icon=\"el-icon-edit\">\n" +
+                "        新增\n" +
+                "      </el-button>\n" +
+                "    </div>\n");
+        sb.append(ENTER);
+        sb.append(ENTER);
+
+
+        sb.append("    <el-table :data=\"pageInfo.list\" v-loading=\"listLoading\" element-loading-text=\"给我一点时间\" border fit\n" +
+                "              highlight-current-row\n" +
+                "              style=\"width: 100%\">\n" +
+                "      <el-table-column align=\"center\" label=\"序号\" width=\"65\">\n" +
+                "        <template slot-scope=\"scope\">\n" +
+                "          <span>{{scope.row." + objectName + "Id}}</span>\n" +
+                "        </template>\n" +
+                "      </el-table-column>\n");
+        for (Map<String, Object> col : cols) {
+            String type = getType(col);
+            sb.append("      <el-table-column width=\"160px\" align=\"center\" label=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\">\n" +
+                    "        <template slot-scope=\"scope\">\n");
+            if (type.equals("Date")) {
+                sb.append("          <span>{{scope.row." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + " | parseTime('{y}-{m}-{d} {h}:{i}:{s}')}}</span>\n");
+            } else {
+                sb.append("          <span>{{scope.row." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + "}}</span>\n");
+            }
+            sb.append("        </template>\n" +
+                    "      </el-table-column>\n");
+        }
+        sb.append("      <el-table-column align=\"center\" label=\"操作\" width=\"230\" class-name=\"small-padding fixed-width\">\n" +
+                "        <template slot-scope=\"scope\">\n" +
+                "          <el-button type=\"primary\" size=\"mini\" @click=\"handleUpdate(scope.row." + objectName + "Id)\">修改</el-button>\n" +
+                "          <el-button type=\"danger\" size=\"mini\" @click=\"handleDel(scope.row." + objectName + "Id)\">删除</el-button>\n" +
+                "        </template>\n" +
+                "      </el-table-column>\n" +
+                "    </el-table>\n");
+        sb.append(ENTER);
+        sb.append(ENTER);
+
+
+        sb.append("    <pagination\n" +
+                "      :pageSizes=\"pageSizes\"\n" +
+                "      :pageSize=\"listParams.pageSize\"\n" +
+                "      :pageCount=\"pageInfo.total\"\n" +
+                "      @handleSizeChange=\"handleSizeChange\"\n" +
+                "      @handleCurrentChange=\"handleCurrentChange\"></pagination>\n");
+        sb.append(ENTER);
+        sb.append(ENTER);
+
+
+        sb.append("    <el-dialog :title=\"dialogTitle\" :visible.sync=\"dialogFormVisible\">\n" +
+                "      <el-form ref=\"" + objectName + "Form\" :rules=\"rules\" :model=\"" + objectName + "Params\" label-position=\"left\" label-width=\"100px\"\n" +
+                "               style='width: 400px; margin-left:50px;'>\n" +
+                "        <el-form-item v-show=\"false\" prop=\"" + objectName + "Id\">\n" +
+                "          <el-input v-model=\"" + objectName + "Params." + objectName + "Id\"></el-input>\n" +
+                "        </el-form-item>\n");
+        for (Map<String, Object> col : cols) {
+            sb.append("        <el-form-item label=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\" prop=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\">\n" +
+                    "          <el-input v-model=\"" + objectName + "Params." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + "\"></el-input>\n" +
+                    "        </el-form-item>\n");
+        }
+        sb.append("      </el-form>\n" +
+                "      <div slot=\"footer\" class=\"dialog-footer\">\n" +
+                "        <el-button @click=\"dialogFormVisible = false\">取消</el-button>\n" +
+                "        <el-button v-if=\"dialogTitle=='新增'\" type=\"primary\" @click=\"create" + className + "\">新增</el-button>\n" +
+                "        <el-button v-else-if=\"dialogTitle=='修改'\" type=\"primary\" @click=\"update" + className + "\">修改</el-button>\n" +
+                "      </div>\n" +
+                "    </el-dialog>\n");
+        sb.append(ENTER);
+        sb.append(ENTER);
+        sb.append("  </div>\n" +
+                "</template>\n");
+        sb.append(ENTER);
+        sb.append(ENTER);
+
+
+        sb.append("<script>\n" +
+                "  import Pagination from '@/components/Pagination'\n" +
+                "\n" +
+                "  export default {\n" +
+                "    components: {\n" +
+                "      Pagination\n" +
+                "    },\n" +
+                "    data() {\n" +
+                "      return {\n" +
+                "        //列表部分\n" +
+                "        listLoading: true,\n" +
+                "        listParams: {\n" +
+                "          pageSize: 5,\n" +
+                "          pageNum: 1,\n" +
+                "          keyMap:{},\n" +
+                "          orderBy:''\n" +
+                "        },\n" +
+                "        pageSizes: [5, 10, 30, 50],\n" +
+                "        pageInfo: {\n" +
+                "          list: []\n" +
+                "        },\n" +
+                "        //增删改部分\n" +
+                "        dialogFormVisible: false,\n" +
+                "        dialogTitle: '',\n" +
+                "        " + objectName + "Params: {\n" +
+                "        },\n" +
+                "        rules:{\n" +
+                "        }\n" +
+                "      };\n" +
+                "    },\n" +
+                "    created() {\n" +
+                "      this.getList();\n" +
+                "    },\n" +
+                "    methods: {\n" +
+                "      //分页调用方法\n" +
+                "      handleSizeChange(size) {\n" +
+                "        this.listParams.pageSize = size;\n" +
+                "        this.getList();\n" +
+                "      },\n" +
+                "      handleCurrentChange(currentPage) {\n" +
+                "        this.listParams.pageNum = currentPage;\n" +
+                "        this.getList();\n" +
+                "      },\n" +
+                "      //获取列表方法\n" +
+                "      getList() {\n" +
+                "        let _this = this;\n" +
+                "        this.listLoading = true;\n" +
+                "        this.postRequest('/" + objectName + "/list', this.listParams).then(res => {\n" +
+                "          _this.listLoading = false;\n" +
+                "          if (res.data.code == '00') {\n" +
+                "            this.pageInfo = res.data.data;\n" +
+                "          }\n" +
+                "        })\n" +
+                "      },\n" +
+                "      //点击新增按钮触发方法\n" +
+                "      handleCreate() {\n" +
+                "        if (this.$refs['" + objectName + "Form']!==undefined) {\n" +
+                "          this.$refs['" + objectName + "Form'].resetFields();\n" +
+                "        }\n" +
+                "        this.dialogFormVisible = true;\n" +
+                "        this.dialogTitle = '新增';\n" +
+                "      },\n" +
+                "      //新增提交方法\n" +
+                "      create" + className + "() {\n" +
+                "        this.$refs['" + objectName + "Form'].validate((valid=> {\n" +
+                "          if (valid) {\n" +
+                "            this.postRequest('/" + objectName + "/save', this." + objectName + "Params).then(res => {\n" +
+                "              if (res.data.code == '00') {\n" +
+                "                this.dialogFormVisible = false;\n" +
+                "                this.$message.success('新增成功');\n" +
+                "                this.getList();\n" +
+                "              }\n" +
+                "            })\n" +
+                "          }\n" +
+                "        }))\n" +
+                "      },\n" +
+                "      //点击修改按钮触发方法\n" +
+                "      handleUpdate(" + objectName + "Id) {\n" +
+                "        if (this.$refs['" + objectName + "Form']!==undefined) {\n" +
+                "          this.$refs['" + objectName + "Form'].resetFields();\n" +
+                "        }\n" +
+                "        this.dialogFormVisible = true;\n" +
+                "        this.dialogTitle = '修改';\n" +
+                "        this.getRequest('/" + objectName + "/get?key='+" + objectName + "Id).then(res => {\n" +
+                "          if (res.data.code == '00') {\n" +
+                "            this." + objectName + "Params = res.data.data;\n" +
+                "            //防止roleIds为空\n" +
+                "            if(this." + objectName + "Params.roleIds == null){\n" +
+                "              this." + objectName + "Params.roleIds = [];\n" +
+                "            }\n" +
+                "            this." + objectName + "Params.isAdmin = res.data.data.isAdmin.toString()\n" +
+                "          }\n" +
+                "        })\n" +
+                "      },\n" +
+                "      //修改提交方法\n" +
+                "      update" + className + "(){\n" +
+                "        this.$refs['" + objectName + "Form'].validate((valid=>{\n" +
+                "          if(valid){\n" +
+                "            this.postRequest('/" + objectName + "/update', this." + objectName + "Params).then(res => {\n" +
+                "              if (res.data.code == '00') {\n" +
+                "                this.dialogFormVisible = false;\n" +
+                "                this.$message.success('修改成功');\n" +
+                "                this.getList();\n" +
+                "              }\n" +
+                "            })\n" +
+                "          }\n" +
+                "        }))\n" +
+                "      },\n" +
+                "      //点击删除触发方法\n" +
+                "      handleDel(" + objectName + "Id) {\n" +
+                "        this.$confirm('是否删除该用户', '提示', {\n" +
+                "          confirmButtonText: '确定',\n" +
+                "          cancelButtonText: '取消',\n" +
+                "          type: 'warning'\n" +
+                "        }).then(() => {\n" +
+                "          this.getRequest('/" + objectName + "/delete?key='+" + objectName + "Id).then(res => {\n" +
+                "            if (res.data.code == '00') {\n" +
+                "              this.$message.success('删除成功');\n" +
+                "              this.getList();\n" +
+                "            }\n" +
+                "          })\n" +
+                "        }).catch(() => {\n" +
+                "          this.$message.info('已取消删除');\n" +
+                "        });\n" +
+                "      },\n" +
+                "    }\n" +
+                "  }\n" +
+                "\n" +
+                "</script>\n").append(ENTER);
+        sb.append(ENTER);
+        GenerateFileUtils.save("src/main/resources/vue/" + modules + "/" + className + ".vue", sb.toString());
 
     }
 

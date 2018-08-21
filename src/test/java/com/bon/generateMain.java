@@ -41,6 +41,15 @@ public class generateMain {
         String modules = "app";
         GenerateCoreUtil.generateAll(tableName,modules);
     }
+    /**
+     * 生成vue文件
+     */
+    @Test
+    public void generateVUE() throws Exception {
+        String tableName = "test";
+        String modules = "app";
+        GenerateCoreUtil.generateVUE(tableName,modules);
+    }
 
 
     /**

@@ -29,7 +29,7 @@ public class PageDTO<T> implements Serializable {
     private Boolean reasonable;
     @ApiModelProperty(value = "当设置为true的时候，如果pagesize设置为0（或RowBounds的limit=0），就不执行分页，返回全部结果", example = "false", hidden = true)
     private Boolean pageSizeZero;
-    @ApiModelProperty(value = "查询关键字,举例{\"equal_id\":\"1\",\"orMap\":\"{'equal_userId':'2','like_name':'2','in_name':'1,2,3','isNotNull':'name'}\"}", example = "{\"in:id\":\"1,2,3\",\"or:\":\"{'id=':'2','name=':'2','in:name':'1,2,3'}\"}")
+    @ApiModelProperty(value = "查询关键字,举例{\"equal_id\":\"1\",\"greater_gmtCreate\":\"2018-08-21 15:49:35\",\"less_gmtCreate\":\"2018-08-22 00:00:00\",\"orMap\":\"{'equal_userId':'2','like_name':'2','in_name':'1,2,3','isNotNull':'name'}\"}", example = "{\"in:id\":\"1,2,3\",\"or:\":\"{'id=':'2','name=':'2','in:name':'1,2,3'}\"}")
     private Map<String, Object> keyMap;
 
     @ApiModelProperty(value = "查询模板", hidden = true)
@@ -49,95 +49,18 @@ public class PageDTO<T> implements Serializable {
     //根据条件创建查询模板（根据定义泛型）
     public Example createExample() {
         this.getTClass();
-        if (null != this.getKeyMap()) {
-            example = new Example(tClass);
-            String flag = "";
-            for (Map.Entry<String, Object> entry : keyMap.entrySet()) {
-                if(entry.getValue()==null||StringUtils.isBlank(entry.getValue().toString())){
-                    break;
-                }
-                //获取标识值 or：,in: ,notIn:,isNull,isNotNull等等
-                flag = entry.getKey().split("_")[0];
-                String key= "";
-                switch (flag) {
-                    case "orMap":
-                        Map<String, Object> map = JSONObject.parseObject(entry.getValue().toString(),Map.class);
-                        Example example1 = new Example(tClass);
-                        Example.Criteria criteria = example1.createCriteria();
-                        for (Map.Entry<String,Object> en: map.entrySet()) {
-
-                            //判断类型
-                            if(en.getKey().split("_")[0].equals("isNull")){
-                                criteria.andIsNull(en.getValue().toString());
-                            }else if(en.getKey().split("_")[0].equals("isNotNull")){
-                                criteria.andIsNotNull(en.getValue().toString());
-                            }else if(en.getKey().split("_")[0].equals("in")){
-                                criteria.andIn(StringUtils.camel2Underline(en.getKey().split("_")[1]),Arrays.asList(en.getValue().toString().split(",")));
-                            }else if(en.getKey().split("_")[0].equals("notIn")){
-                                criteria.andNotIn(StringUtils.camel2Underline(en.getKey().split("_")[1]),Arrays.asList(en.getValue().toString().split(",")));
-                            }else if(en.getKey().split("_")[0].equals("equal")){
-                                criteria.andCondition(StringUtils.camel2Underline(en.getKey().split("_")[1])+" =",en.getValue());
-                            }else if(en.getKey().split("_")[0].equals("like")){
-                                criteria.andCondition(StringUtils.camel2Underline(en.getKey().split("_")[1])+" like",en.getValue());
-                            }
-                        }
-                        example.or(criteria);
-                        break;
-                    case "orEqual":
-                        key= StringUtils.camel2Underline(entry.getKey().split("_")[1]);
-                        example.or().andCondition(key+" =", entry.getValue());
-                        break;
-                    case "orLike":
-                        key= StringUtils.camel2Underline(entry.getKey().split("_")[1]);
-                        example.or().andCondition(key+" like", "%"+entry.getValue()+"%");
-                        break;
-                    case "in":
-                        String strIn[] = entry.getValue().toString().split(",");
-                        key= StringUtils.camel2Underline(entry.getKey().split("_")[1]);
-                        example.and().andIn(key,Arrays.asList(strIn));
-                        break;
-                    case "notIn":
-                        String strNotIn[] = entry.getValue().toString().split(",");
-                        key= StringUtils.camel2Underline(entry.getKey().split("_")[1]);
-                        example.and().andNotIn(key,Arrays.asList(strNotIn));
-                        break;
-                    case "isNull":
-                        example.and().andIsNull(StringUtils.camel2Underline(entry.getValue().toString()));
-                        break;
-                    case "isNotNull":
-                        example.and().andIsNotNull(StringUtils.camel2Underline(entry.getValue().toString()));
-                        break;
-                    case "equal":
-                        key= StringUtils.camel2Underline(entry.getKey().split("_")[1]);
-                        example.and().andCondition(key+" =", entry.getValue());
-                        break;
-                    case "like":
-                        key= StringUtils.camel2Underline(entry.getKey().split("_")[1]);
-                        example.and().andCondition(key+" like", "%"+entry.getValue()+"%");
-                        break;
-                    case "greater":
-                        key= StringUtils.camel2Underline(entry.getKey().split("_")[1]);
-                        example.and().andCondition(key+ " >=", entry.getValue());
-                        break;
-                    case "less":
-                        key= StringUtils.camel2Underline(entry.getKey().split("_")[1]);
-                        example.and().andCondition(key+ " <=", entry.getValue());
-                        break;
-                    default:
-                        example.and().andCondition(entry.getKey(), entry.getValue());
-                        break;
-                }
-            }
-            return example;
-        } else {
-            return null;
-        }
+        example = new Example(tClass);
+        return this.generateExample(example);
     }
 
     //根据条件创建查询模板(自定义泛型)
     public Example createExample(T t) {
+        example = new Example(t.getClass());
+        return this.generateExample(example);
+    }
+
+    private Example generateExample(Example example){
         if (null != this.getKeyMap()) {
-            example = new Example(t.getClass());
             String flag = "";
             for (Map.Entry<String, Object> entry : keyMap.entrySet()) {
                 if(entry.getValue()==null||StringUtils.isBlank(entry.getValue().toString())){
