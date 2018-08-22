@@ -761,9 +761,11 @@ public class GenerateCoreUtil {
         List<Map<String, Object>> cols = getCols(table);
 
         StringBuilder sb = new StringBuilder();
+        //条件过滤部分
         sb.append("<template>\n" +
-                "  <div class=\"app-container calendar-list-container\">\n" +
-                "    <div class=\"filter-container\">\n" +
+                "  <div class=\"app-container calendar-list-container\">\n" );
+                sb.append("<!--新增修改弹出框部分-->").append(ENTER);
+                sb.append("    <div class=\"filter-container\">\n" +
                 "      <el-input style=\"width: 200px;\" v-model=\"listParams.keyMap.equal_" + objectName + "Id\" class=\"filter-item\" placeholder=\"序号\">\n" +
                 "      </el-input>\n" +
                 "      <el-date-picker style=\"width: 200px;\" v-model=\"listParams.keyMap.greater_gmtCreate\" type=\"datetime\"\n" +
@@ -782,14 +784,12 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
         sb.append(ENTER);
 
-
+        //列表显示部分
+        sb.append("<!--新增修改弹出框部分-->").append(ENTER);
         sb.append("    <el-table :data=\"pageInfo.list\" v-loading=\"listLoading\" element-loading-text=\"给我一点时间\" border fit\n" +
                 "              highlight-current-row\n" +
                 "              style=\"width: 100%\">\n" +
-                "      <el-table-column align=\"center\" label=\"序号\" width=\"65\">\n" +
-                "        <template slot-scope=\"scope\">\n" +
-                "          <span>{{scope.row." + objectName + "Id}}</span>\n" +
-                "        </template>\n" +
+                "      <el-table-column type=\"index\" align=\"center\" label=\"序号\" width=\"65\">\n" +
                 "      </el-table-column>\n");
         for (Map<String, Object> col : cols) {
             if((col.get(KEY)!=null&&col.get(KEY).toString().equals("PRI")) || col.get(NAME).toString().equals("gmt_modified")){
@@ -817,7 +817,8 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
         sb.append(ENTER);
 
-
+        //分页部分
+        sb.append("<!--分页部分-->").append(ENTER);
         sb.append("    <pagination\n" +
                 "      :pageSizes=\"pageSizes\"\n" +
                 "      :pageSize=\"listParams.pageSize\"\n" +
@@ -827,7 +828,8 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
         sb.append(ENTER);
 
-
+        //新增修改弹出框部分
+        sb.append("<!--新增修改弹出框部分-->").append(ENTER);
         sb.append("    <el-dialog :title=\"dialogTitle\" :visible.sync=\"dialogFormVisible\">\n" +
                 "      <el-form ref=\"" + objectName + "Form\" :rules=\"rules\" :model=\"" + objectName + "Params\" label-position=\"left\" label-width=\"100px\"\n" +
                 "               style='width: 400px; margin-left:50px;'>\n" +
@@ -860,7 +862,8 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
         sb.append(ENTER);
 
-
+        //js部分
+        sb.append("<!--js部分-->").append(ENTER);
         sb.append("<script>\n" +
                 "  import Pagination from '@/components/Pagination'\n" +
                 "\n" +

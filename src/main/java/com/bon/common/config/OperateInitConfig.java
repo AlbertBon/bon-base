@@ -125,6 +125,7 @@ public class OperateInitConfig implements CommandLineRunner{
                     parentSysUrl.setUrlRemark(parentRemark);
                     parentDTO.setUrl(parentSysUrl);
                     parentId = permissionService.savePermission(parentDTO);
+                    parentPermission = permissionMapper.selectByPrimaryKey(parentId);
 
                     PermissionUpdateDTO dto = new PermissionUpdateDTO();
                     dto.setType(PermissionType.URL.getKey());
@@ -145,12 +146,17 @@ public class OperateInitConfig implements CommandLineRunner{
                     sysUrl.setUrlPath(path);
                     sysUrl.setUrlRemark(remark);
                     dto.setUrl(sysUrl);
-                    dto.setParentId(parentPermission.getPermissionId());
+                    if(parentPermission != null){
+                        dto.setParentId(parentPermission.getPermissionId());
+                    }else {
+                        dto.setParentId(parentId);
+                    }
+
                     permissionService.savePermission(dto);
                 }
 
 
-                log.info("权限{}写入数据库，接口url为{}，接口名为{}",permissionFlag,path,remark);
+                log.info("权限{}写入数据库，接口url为{}",permissionFlag,path);
 
             }
         }

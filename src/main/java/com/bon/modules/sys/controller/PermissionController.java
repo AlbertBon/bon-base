@@ -3,6 +3,7 @@ package com.bon.modules.sys.controller;
 import com.bon.common.config.OperateInitConfig;
 import com.bon.common.domain.vo.PageVO;
 import com.bon.common.domain.vo.ResultBody;
+import com.bon.common.util.StringUtils;
 import com.bon.modules.sys.domain.dto.*;
 import com.bon.modules.sys.domain.vo.*;
 import com.bon.modules.sys.service.PermissionService;
@@ -10,6 +11,7 @@ import com.bon.modules.sys.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
+import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +88,14 @@ public class PermissionController {
     public ResultBody initPermission() throws Exception {
         OperateInitConfig config = new OperateInitConfig();
         config.init();
+        return new ResultBody();
+    }
+
+    @ApiOperation(value = "生成Vue",notes = "")
+    @GetMapping(value = "/generateVueMenu")
+    @RequiresRoles({"admin"})
+    public ResultBody generateVueMenu(@RequestParam String tableName,@RequestParam String modules) throws Exception {
+        permissionService.generateMenuToVue(StringUtils.camel2Underline(tableName),modules);
         return new ResultBody();
     }
 }

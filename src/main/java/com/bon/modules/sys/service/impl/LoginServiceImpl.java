@@ -114,11 +114,12 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public void loginOut() {
         Subject subject = SecurityUtils.getSubject();
-        if(null==subject.getPrincipal()){
-            throw new BusinessException(ExceptionType.EXPIRED_ERROR);
+        String username= "";
+        if(null!=subject.getPrincipal()){
+            username =  subject.getPrincipal().toString();
+            subject.logout();
         }
-        String username =  subject.getPrincipal().toString();
-        subject.logout();
+
 
         LOG.info("用户{}-session登录",username);
     }
