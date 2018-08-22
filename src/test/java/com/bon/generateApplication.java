@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import sun.nio.cs.ext.MS874;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -62,13 +63,22 @@ public class generateApplication {
         LOG.info(String.format("【生成结束】"));
     }
 
+    /**
+     * 根据表名生成所有类和视图，并将视图的菜单生成(需要生成多个表的文件时加入mapList中即可)
+     * @throws Exception
+     */
     @Test
     public void generateAllAndVUE() throws Exception {
-        String tableName = "test";
-        String modules = "app";
-        GenerateCoreUtil.generateAll(tableName,modules);
-        GenerateCoreUtil.generateVUE(tableName,modules);
-        permissionService.generateMenuToVue(tableName,modules);
+        List<Map<String,String>> maps = new ArrayList<>();
+        Map<String,String> map = new HashMap<>();
+        map.put("tableName","test");
+        map.put("modules","app");
+        maps.add(map);
+        for(Map<String,String> map1 : maps){
+            GenerateCoreUtil.generateAll(map1.get("tableName"),map1.get("modules"));
+            GenerateCoreUtil.generateVUE(map1.get("tableName"),map1.get("modules"));
+            permissionService.generateMenuToVue(map1.get("tableName"),map1.get("modules"));
+        }
     }
 
     /**

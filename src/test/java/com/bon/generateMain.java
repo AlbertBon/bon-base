@@ -7,7 +7,9 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: 后台-基础项目
@@ -16,6 +18,50 @@ import java.util.List;
  * @create: 2018-08-16 16:48
  **/
 public class generateMain {
+
+    /**
+     * 生成所有文件(需要生成多个表的文件时加入mapList中即可)
+     */
+    @Test
+    public void generateAll() throws Exception {
+        List<Map<String,String>> maps = new ArrayList<>();
+        Map<String,String> map = new HashMap<>();
+        map.put("tableName","test");
+        map.put("modules","app");
+        maps.add(map);
+        for(Map<String,String> map1 : maps) {
+            GenerateCoreUtil.generateAll(map1.get("tableName"),map1.get("modules"));
+        }
+    }
+    /**
+     * 生成vue文件(需要生成多个表的文件时加入mapList中即可)
+     */
+    @Test
+    public void generateVUE() throws Exception {
+        List<Map<String,String>> maps = new ArrayList<>();
+        Map<String,String> map = new HashMap<>();
+        map.put("tableName","test");
+        map.put("modules","app");
+        maps.add(map);
+        for(Map<String,String> map1 : maps) {
+            GenerateCoreUtil.generateVUE(map1.get("tableName"),map1.get("modules"));
+        }
+    }
+
+    /**
+     *只生成entity文件，用于(需要生成多个表的文件时加入mapList中即可)
+     */
+    @Test
+    public void generateEntity() throws Exception {
+        List<Map<String,String>> maps = new ArrayList<>();
+        Map<String,String> map = new HashMap<>();
+        map.put("tableName","test");
+        map.put("modules","app");
+        maps.add(map);
+        for(Map<String,String> map1 : maps) {
+            GenerateCoreUtil.createEntityClass(map1.get("tableName"),map1.get("modules"));
+        }
+    }
     /**
      * @Author: Bon
      * @Description: 根据excel生成数据库语句
@@ -31,24 +77,6 @@ public class generateMain {
         tableList.add("user");
         String s = POIUtil.generateViewSql(new File(SysBaseService.class.getResource("/sql/baoli.xls").getFile()).getAbsolutePath(),tableList);
         System.out.println(s);
-    }
-    /**
-     * 生成所有文件
-     */
-    @Test
-    public void generateAll() throws Exception {
-        String tableName = "test";
-        String modules = "app";
-        GenerateCoreUtil.generateAll(tableName,modules);
-    }
-    /**
-     * 生成vue文件
-     */
-    @Test
-    public void generateVUE() throws Exception {
-        String tableName = "test";
-        String modules = "app";
-        GenerateCoreUtil.generateVUE(tableName,modules);
     }
 
 
@@ -82,5 +110,7 @@ public class generateMain {
         generateUtil.createMapperXML(tableName,modules);
         //控制层文件
         generateUtil.createControllerClass(tableName,modules);
+        //vue文件
+        generateUtil.generateVUE(tableName,modules);
     }
 }

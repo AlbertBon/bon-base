@@ -39,7 +39,7 @@ import java.util.Map;
 @Order(value = 1)
 @Transactional
 public class OperateInitConfig implements CommandLineRunner{
-    private static MyLog log = MyLog.getLog(OperateInitConfig.class);
+    private static final MyLog log = MyLog.getLog(OperateInitConfig.class);
 
     public void init() throws ClassNotFoundException {
         PermissionService permissionService = SpringUtil.getBean(PermissionService.class);
