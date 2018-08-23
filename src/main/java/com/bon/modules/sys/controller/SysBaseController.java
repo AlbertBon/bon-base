@@ -1,17 +1,22 @@
 package com.bon.modules.sys.controller;
 
 import com.bon.common.domain.vo.ResultBody;
+
+import com.bon.common.util.FileUtil;
 import com.bon.modules.sys.domain.dto.SysBaseDTO;
 import com.bon.modules.sys.domain.dto.SysBaseDeleteDTO;
 import com.bon.modules.sys.domain.dto.SysGenerateTableDTO;
 import com.bon.modules.sys.domain.vo.SysBaseVO;
 import com.bon.modules.sys.service.SysBaseService;
+import com.sun.deploy.net.HttpResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -92,21 +97,20 @@ public class SysBaseController {
     @ApiOperation(value = "系统工具1",notes = "根据excel生成数据库语句\n2、根据系统基础表的表数据生成excel数据库文档")
     @PostMapping(value = "/generateSQLByXLS")
     @RequiresRoles(value = "admin")
-    public ResultBody generateSQLByXLS(@RequestParam("file") MultipartFile file) {
+    public ResultBody generateSQLByXLS(@RequestParam("file") MultipartFile file ) throws Exception{
         //MultipartFile转File文件
-        File f = null;
-        String sql= "";
-        try {
-            f = File.createTempFile("tmp", "."+file.getOriginalFilename().split("\\.")[1]);
+        File f = File.createTempFile("tmp", "." + file.getOriginalFilename().split("\\.")[1]);
         file.transferTo(f);
-        sql = sysBaseService.generateTableSQL(f, null);
+        String sql = sysBaseService.generateTableSQL(f, null).replace("\n","");
         f.deleteOnExit();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ResultBody(sql.replace("\n",""));
+        return new ResultBody(sql);
+    }
+
+    @ApiOperation(value = "系统工具2",notes = "根据excel生成数据库语句\n2、根据系统基础表的表数据生成excel数据库文档")
+    @GetMapping(value = "/downloadXLS")
+    @RequiresRoles(value = "admin")
+    public ResponseEntity<FileSystemResource> downloadXLS() throws Exception{
+        return FileUtil.export(new File("D://baoli.xls"));
     }
 
 
