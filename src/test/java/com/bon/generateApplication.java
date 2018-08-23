@@ -97,7 +97,7 @@ public class generateApplication {
      */
     @Test
     public void generateTable() {
-        sysBaseService.generateTable(new File(SysBaseService.class.getResource("/sql/generate.xls").getFile()));
+        sysBaseService.generateTable(new File(SysBaseService.class.getResource("/sql/generate.xls").getFile()),null);
     }
 
     /**

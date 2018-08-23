@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `sys_base` (
   `is_id` tinyint(4) DEFAULT NULL COMMENT '1:是，0：否；是否为id',
   `modules` varchar(50) DEFAULT NULL COMMENT '模块名称',
   PRIMARY KEY (`base_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数据库基础表，包含所有数据库信息';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数据库基础表（包含所有数据库信息）';
 
 -- 正在导出表  bon_base.sys_base 的数据：~8 rows (大约)
 /*!40000 ALTER TABLE `sys_base` DISABLE KEYS */;

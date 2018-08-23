@@ -95,7 +95,7 @@ public class SysBaseServiceImpl implements SysBaseService {
             sysBase.setModules(dto.getModules());
             //如果是id字段，则系统定义，无论前端如何修改
             if(StringUtils.isByteTrue(field.getIsId())){
-                sysBase.setDefaultValue("ID");
+                sysBase.setFieldRemark("ID");
                 sysBase.setFieldType("BIGINT");
                 sysBase.setFieldLength(20);
                 sysBase.setIsNull((byte) 0);
@@ -113,13 +113,11 @@ public class SysBaseServiceImpl implements SysBaseService {
     }
 
     @Override
-    public void generateTable(File file) {
+    public void generateTable(File file,List<String> tableList) {
         try {
             log.info("开始执行创建表语句");
-            List<String> list = POIUtil.excelSqlImport(file.getAbsolutePath());
-            for (String sql : list) {
-                generateMapper.generateTable(sql);
-            }
+            String sql = POIUtil.generateViewSql(file.getAbsolutePath(),tableList);
+            generateMapper.generateTable(sql);
             log.info("创建表完成");
         } catch (Exception e) {
             e.printStackTrace();
@@ -262,9 +260,7 @@ public class SysBaseServiceImpl implements SysBaseService {
         }
         String sql="";
         //语句头
-        sql += "CREATE TABLE IF NOT EXISTS `" + tableName + "` ( " +
-                "`gmt_create` datetime DEFAULT NULL COMMENT '创建时间'," +
-                "`gmt_modified` datetime DEFAULT NULL COMMENT '最后一次更新时间', ";
+        sql += "CREATE TABLE IF NOT EXISTS `" + tableName + "` ( " ;
         for(int i = 0;i<sysBaseList.size();i++){
             SysBase sysBase = sysBaseList.get(i);
             if(StringUtils.isBlank(sysBase.getFieldName())||StringUtils.isBlank(sysBase.getFieldType())){
@@ -272,8 +268,10 @@ public class SysBaseServiceImpl implements SysBaseService {
             }
             /*判断是否是表id*/
             if (StringUtils.isByteTrue(sysBase.getIsId())) {
-                sql += "  `" + sysBase.getFieldName() + "`  bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',PRIMARY KEY (`" + sysBase.getFieldName() + "`) ";
-                if(sysBaseList.size() > 1){
+                sql += "  `" + sysBase.getFieldName() + "`  bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',PRIMARY KEY (`" + sysBase.getFieldName() + "`) ,"+
+                        "`gmt_create` datetime DEFAULT NULL COMMENT '创建时间'," +
+                        "`gmt_modified` datetime DEFAULT NULL COMMENT '最后一次更新时间' ";
+                if(i<sysBaseList.size()-1){
                     sql += ", ";
                 }
                 continue;
@@ -308,11 +306,14 @@ public class SysBaseServiceImpl implements SysBaseService {
             }
             //字段默认值
             if(StringUtils.isNotBlank(sysBase.getDefaultValue())){
-                sql += sysBase.getDefaultValue() + " ";
+                sql += " DEFAULT '" + sysBase.getDefaultValue() + "' ";
             }
             //字段备注
             if(StringUtils.isNotBlank(sysBase.getFieldRemark())){
                 sql += " COMMENT '" + sysBase.getFieldRemark() + "' ";
+            }
+            if(i<sysBaseList.size()-1){
+                sql += ", ";
             }
         }
         //语句尾

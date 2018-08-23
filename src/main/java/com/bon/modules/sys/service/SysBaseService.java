@@ -51,7 +51,7 @@ public interface SysBaseService {
      * @return: void
      * @Date: 2018/8/10 9:57
      */
-    void generateTable(File file);
+    void generateTable(File file,List<String> tableList);
 
     /**
      * @Author: Bon

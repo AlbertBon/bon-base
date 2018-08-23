@@ -17,22 +17,6 @@ import java.util.List;
  **/
 public class POIUtil {
 
-    public static List<String> excelSqlImport(String filePath) throws Exception {
-        if (StringUtils.isBlank(filePath)) {
-            throw new Exception("路径不能为空");
-        }
-        FileInputStream fis = new FileInputStream(filePath);
-        if (filePath.endsWith(".xls")) {
-            HSSFWorkbook workbook = new HSSFWorkbook(fis);
-            return generateSql(workbook);
-        } else if (filePath.endsWith(".xlsx")) {//暂时有问题
-            XSSFWorkbook workbook = new XSSFWorkbook(fis);
-            return generateSql(workbook);
-        } else {
-            throw new Exception("请导入xls或xlsx文档");
-        }
-    }
-
     /**
      * @param workbook
      * @Author: Bon
@@ -71,151 +55,6 @@ public class POIUtil {
         return list;
     }
 
-    /**
-     * @param workbook
-     * @Author: Bon
-     * @Description: 导入xls
-     * @return: java.lang.String
-     * @Date: 2018/5/7 14:16
-     */
-    private static List<String> generateSql(Workbook workbook) throws Exception {
-        List<String> list = new ArrayList<>();
-        String tableName = "";//表名
-        String tableComment = "";//表备注
-        String isDropTable = "";//是否删除原表
-        String nameStr = "";//字段名
-        String typeStr = "";//数据类型
-        String lengthStr = "";//数据长度
-        String isNullStr = "";//是否为空 Y为空 N不为空
-        String defaultStr = "";//默认值
-        String commentStr = "";//注释
-        String sql = "";//sql语句
-        String tempStr = "";//临时字符串
-        /*遍历sheet*/
-        for (int i = 1; i < workbook.getNumberOfSheets(); i++) {
-            Sheet sheet = workbook.getSheetAt(i);
-            /*获取表名和备注*/
-            tableName = sheet.getRow(1).getCell(0).getRichStringCellValue().getString();
-            tableComment = sheet.getRow(1).getCell(1).getRichStringCellValue().getString();
-            isDropTable = sheet.getRow(1).getCell(2).getRichStringCellValue().getString();
-            /*开始写数据库语句，判断是否需要删除原表*/
-            if (StringUtils.isNotBlank(isDropTable) && isDropTable.equals("是")) {
-                sql = "DROP TABLE IF EXISTS `" + tableName + "`;";
-                list.add(sql);
-            }
-            /*清空sql语句*/
-            sql = "";
-            sql += "CREATE TABLE IF NOT EXISTS `" + tableName + "` ( ";
-            /*从第二行开始遍历*/
-            for (int j = 1; j < sheet.getPhysicalNumberOfRows(); j++) {
-                Row row = sheet.getRow(j);
-                if (null == row) {
-                    continue;
-                }
-                Cell cell1 = row.getCell(3);
-                if ((row.getCell(3) == null || StringUtils.isBlank(row.getCell(3).getRichStringCellValue().getString())) && j != sheet.getPhysicalNumberOfRows()-1) {
-                    continue;
-                }
-                /*加上逗号*/
-                if (j < sheet.getLastRowNum() && j > 1) {
-                    sql += ",";
-                }
-                /*从第四列开始遍历*/
-                if (null != row) {
-                    for (int k = 3; k < row.getLastCellNum(); k++) {
-                        Cell cell = row.getCell(k);
-                        /*处理单元格的值*/
-                        if (cell == null) {
-                            tempStr = " ";
-                        } else {
-                            switch (cell.getCellType()) {
-                                case Cell.CELL_TYPE_STRING:
-                                    tempStr = cell.getRichStringCellValue().getString();
-                                    break;
-                                case Cell.CELL_TYPE_NUMERIC:
-                                    if (DateUtil.isCellDateFormatted(cell)) {
-                                        tempStr = cell.getDateCellValue() + "";
-                                    } else {
-                                        tempStr = (int) cell.getNumericCellValue() + "";
-                                    }
-                                    break;
-                                case Cell.CELL_TYPE_BOOLEAN:
-                                    tempStr = cell.getBooleanCellValue() + "";
-                                    break;
-                                default:
-                                    tempStr = "";
-                            }
-                        }
-
-                        /*每一列处理，第四列开始*/
-                        switch (k) {
-                            case 3:
-                                nameStr = tempStr;
-                                break;
-                            case 4:
-                                typeStr = tempStr;
-                                break;
-                            case 5:
-                                if (StringUtils.isNotBlank(tempStr)) {
-                                    lengthStr = "(" + tempStr + ") ";
-                                } else {
-                                    lengthStr = tempStr;
-                                }
-                                break;
-                            case 6:
-                                if (tempStr.equals("N")) {
-                                    isNullStr = " NOT NULL ";
-                                } else {
-                                    isNullStr = " NULL ";
-                                }
-                                break;
-                            case 7:
-                                if (StringUtils.isNotBlank(tempStr) && !" ".equals(tempStr)) {
-                                    defaultStr = " DEFAULT '" + tempStr + "' ";
-                                } else {
-                                    defaultStr = " ";
-                                }
-                                break;
-                            case 8:
-                                if (tempStr.equals("Y")) {
-                                    isNullStr = " unique ";
-                                } else {
-                                    isNullStr = " ";
-                                }
-                                break;
-                            case 9:
-                                if (StringUtils.isNotBlank(tempStr)) {
-                                    commentStr = " COMMENT '" + tempStr + "'";
-                                }
-                                break;
-                        }
-                    }
-                }
-                /*根据行数填写信息*/
-                if (j == 1) {
-                    sql += "  `" + nameStr + "`  bigint NOT NULL AUTO_INCREMENT COMMENT 'ID',PRIMARY KEY (`" + nameStr + "`)";
-                } else if (j == sheet.getPhysicalNumberOfRows()-1) {
-                    if (StringUtils.isBlank(nameStr)) {
-                        //去掉最后一行前面的逗号
-                        if(",".equals(sql.substring(sql.length()-2,sql.length()-1))){
-                            sql = sql.substring(0,sql.length()-2);
-                        }
-                        sql += ") ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='" + tableComment + "';";
-                    } else {
-                        sql += ",";
-                        sql += "  `" + nameStr + "`  " + typeStr + lengthStr + isNullStr + defaultStr + commentStr + ") ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='" + tableComment + "';";
-                    }
-                } else {
-                    sql += "  `" + nameStr + "`  " + typeStr + lengthStr + isNullStr + defaultStr + commentStr;
-                }
-
-            }
-            list.add(sql);
-            sql = "";
-        }
-        return list;
-    }
-
     public static String generateViewSql(String filePath, List<String> tableList) throws Exception {
         if (StringUtils.isBlank(filePath)) {
             throw new Exception("路径不能为空");
@@ -245,6 +84,7 @@ public class POIUtil {
             Sheet sheet = workbook.getSheetAt(i);
             /*获取表名和备注*/
             tableName = sheet.getRow(1).getCell(0).getRichStringCellValue().getString();
+            /*如果list不为空，则只生成对应的表*/
             if (null != tableList && !tableList.contains(tableName)) {
                 continue;
             }
@@ -311,7 +151,7 @@ public class POIUtil {
                                 }
                                 break;
                             case 6:
-                                if (tempStr.equals("N")) {
+                                if (tempStr.equals("N") || tempStr.equals("NO")) {
                                     isNullStr = " NOT NULL ";
                                 } else {
                                     isNullStr = " NULL ";
@@ -325,7 +165,7 @@ public class POIUtil {
                                 }
                                 break;
                             case 8:
-                                if (tempStr.equals("Y")) {
+                                if (tempStr.equals("Y") || tempStr.equals("YES")) {
                                     isNullStr = " unique ";
                                 } else {
                                     isNullStr = " ";

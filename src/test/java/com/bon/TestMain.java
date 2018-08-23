@@ -34,9 +34,19 @@ public class TestMain {
 //        System.out.println(MD5Util.encode("123123",2));
 //        String url = TestMain.class.getResource("").toString();
 //        System.out.println(url);
-        String s = "tablName";
-        System.out.println(StringUtils.underline2Camel(s,false));
-        System.out.println(StringUtils.upperCase(s));
+
+//        String s = "tablName";
+//        System.out.println(StringUtils.underline2Camel(s,false));
+//        System.out.println(StringUtils.upperCase(s));
+
+//        Long paidAmount = 805812L;
+//        Long poundage = paidAmount*2/1000;
+//        if(poundage<=1000){
+//            paidAmount += 1000;
+//        }else{
+//            paidAmount += poundage;
+//        }
+//        System.out.println(poundage);
     }
     @Test
     public void shiro() {

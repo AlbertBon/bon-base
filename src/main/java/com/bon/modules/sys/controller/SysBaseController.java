@@ -9,9 +9,15 @@ import com.bon.modules.sys.service.SysBaseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -81,6 +87,26 @@ public class SysBaseController {
     public ResultBody dropTable(@RequestBody SysGenerateTableDTO dto){
         sysBaseService.dropTable(dto);
         return new ResultBody();
+    }
+
+    @ApiOperation(value = "系统工具1",notes = "根据excel生成数据库语句\n2、根据系统基础表的表数据生成excel数据库文档")
+    @PostMapping(value = "/generateSQLByXLS")
+    @RequiresRoles(value = "admin")
+    public ResultBody generateSQLByXLS(@RequestParam("file") MultipartFile file) {
+        //MultipartFile转File文件
+        File f = null;
+        String sql= "";
+        try {
+            f = File.createTempFile("tmp", "."+file.getOriginalFilename().split("\\.")[1]);
+        file.transferTo(f);
+        sql = sysBaseService.generateTableSQL(f, null);
+        f.deleteOnExit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ResultBody(sql.replace("\n",""));
     }
 
 
