@@ -1,10 +1,11 @@
 package com.bon.common.shiro;
 
+import com.bon.common.config.YamlConfig;
 import com.bon.common.domain.enums.ExceptionType;
 import com.bon.common.domain.vo.ResultBody;
 import com.bon.common.util.MyLog;
-import com.bon.common.util.PropertyUtil;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -22,6 +23,8 @@ import java.io.OutputStream;
  **/
 public class ShiroFilterFormAuthentication extends FormAuthenticationFilter {
     private static final MyLog log = MyLog.getLog(ShiroFilterFormAuthentication.class);
+    @Autowired
+    private YamlConfig config;
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         if (this.isLoginRequest(request, response)) {
@@ -51,7 +54,7 @@ public class ShiroFilterFormAuthentication extends FormAuthenticationFilter {
             //请求错误拦截
             resp.setCharacterEncoding("UTF-8");
             resp.setContentType("application/json; charset=utf-8");
-            resp.setHeader("Access-Control-Allow-Origin", PropertyUtil.getProperty("corsHost"));
+            resp.setHeader("Access-Control-Allow-Origin", config.getMapProps().get("corsHost"));
             resp.setHeader("Access-Control-Allow-Credentials","true");
             resp.setHeader("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
             OutputStream out = response.getOutputStream();

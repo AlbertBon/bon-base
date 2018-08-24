@@ -1,8 +1,8 @@
 package com.bon;
 
+import com.bon.common.config.YamlConfig;
 import com.bon.modules.sys.dao.SysBaseMapper;
 import com.bon.modules.sys.dao.SysUserExtendMapper;
-import com.bon.modules.sys.domain.entity.SysUser;
 import com.bon.modules.sys.service.SysBaseService;
 import com.bon.common.util.MyLog;
 import org.junit.After;
@@ -28,6 +28,9 @@ public class TestApplication {
     @Autowired
     private SysUserExtendMapper sysUserExtendMapper;
 
+    @Autowired
+    private YamlConfig config;
+
 
     @Before
     public void before() throws Exception {
@@ -47,6 +50,8 @@ public class TestApplication {
 //        }
 //        SysUser user = .(1L);
 //        System.out.println(user.getUserId());
+        //测试加载yml文件
+        System.out.println("simpleProp: " + config.getMapProps().get("corsHost"));
 	}
 
 }

@@ -25,10 +25,18 @@ public class generateMain {
     @Test
     public void generateAll() throws Exception {
         List<Map<String,String>> maps = new ArrayList<>();
-        Map<String,String> map = new HashMap<>();
-        map.put("tableName","test");
-        map.put("modules","app");
-        maps.add(map);
+        Map<String,String> map;
+
+//        map = new HashMap<>();
+//        map.put("tableName","sys_permission");
+//        map.put("modules","sys");
+//        maps.add(map);
+//
+//        map = new HashMap<>();
+//        map.put("tableName","sys_menu");
+//        map.put("modules","sys");
+//        maps.add(map);
+//
         for(Map<String,String> map1 : maps) {
             GenerateCoreUtil.generateAll(map1.get("tableName"),map1.get("modules"));
         }
@@ -39,10 +47,18 @@ public class generateMain {
     @Test
     public void generateVUE() throws Exception {
         List<Map<String,String>> maps = new ArrayList<>();
-        Map<String,String> map = new HashMap<>();
-        map.put("tableName","test");
-        map.put("modules","app");
-        maps.add(map);
+        Map<String,String> map;
+
+//        map = new HashMap<>();
+//        map.put("tableName","sys_permission");
+//        map.put("modules","sys");
+//        maps.add(map);
+//
+//        map = new HashMap<>();
+//        map.put("tableName","sys_menu");
+//        map.put("modules","sys");
+//        maps.add(map);
+
         for(Map<String,String> map1 : maps) {
             GenerateCoreUtil.generateVUE(map1.get("tableName"),map1.get("modules"));
         }
@@ -56,15 +72,15 @@ public class generateMain {
         List<Map<String,String>> maps = new ArrayList<>();
         Map<String,String> map;
 
-        map = new HashMap<>();
-        map.put("tableName","sys_permission");
-        map.put("modules","sys");
-        maps.add(map);
-
-        map = new HashMap<>();
-        map.put("tableName","sys_menu");
-        map.put("modules","sys");
-        maps.add(map);
+//        map = new HashMap<>();
+//        map.put("tableName","sys_permission");
+//        map.put("modules","sys");
+//        maps.add(map);
+//
+//        map = new HashMap<>();
+//        map.put("tableName","sys_menu");
+//        map.put("modules","sys");
+//        maps.add(map);
 
         for(Map<String,String> map1 : maps) {
             GenerateCoreUtil.createEntityClass(map1.get("tableName"),map1.get("modules"));

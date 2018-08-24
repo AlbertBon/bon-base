@@ -69,16 +69,16 @@ public class generateApplication {
      */
     @Test
     public void generateAllAndVUE() throws Exception {
-        List<Map<String,String>> maps = new ArrayList<>();
-        Map<String,String> map = new HashMap<>();
-        map.put("tableName","test");
-        map.put("modules","app");
-        maps.add(map);
-        for(Map<String,String> map1 : maps){
-            GenerateCoreUtil.generateAll(map1.get("tableName"),map1.get("modules"));
-            GenerateCoreUtil.generateVUE(map1.get("tableName"),map1.get("modules"));
-            permissionService.generateMenuToVue(map1.get("tableName"),map1.get("modules"));
-        }
+//        List<Map<String,String>> maps = new ArrayList<>();
+//        Map<String,String> map = new HashMap<>();
+//        map.put("tableName","test");
+//        map.put("modules","app");
+//        maps.add(map);
+//        for(Map<String,String> map1 : maps){
+//            GenerateCoreUtil.generateAll(map1.get("tableName"),map1.get("modules"));
+//            GenerateCoreUtil.generateVUE(map1.get("tableName"),map1.get("modules"));
+//            permissionService.generateMenuToVue(map1.get("tableName"),map1.get("modules"));
+//        }
     }
 
     /**
