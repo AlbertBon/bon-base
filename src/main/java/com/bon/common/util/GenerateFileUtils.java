@@ -17,6 +17,8 @@ public class GenerateFileUtils {
      * @param data
      */
     public static void save(String path, String data) {
+        /*转换文本换行为";"符号*/
+        data = data.replaceAll("\r\n",";");
         try {
             File file = new File(path);
             File dir = new File(path.substring(0, path.lastIndexOf("/")));

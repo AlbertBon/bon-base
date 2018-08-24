@@ -101,5 +101,13 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils{
         return false;
     }
 
+    public static StringBuilder replaceTxtEnter(StringBuilder sb){
+        String s = sb.toString();
+        s = s.replaceAll("\r\n",";");
+        sb = new StringBuilder();
+        sb.append(s);
+        return sb;
+    }
+
 
 }
