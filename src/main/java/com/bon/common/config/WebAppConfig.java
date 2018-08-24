@@ -2,6 +2,7 @@ package com.bon.common.config;
 
 import com.bon.common.interceptor.Interceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -23,8 +24,8 @@ public class WebAppConfig extends WebMvcConfigurerAdapter {
         return new Interceptor();
     }
 
-    @Autowired
-    private YamlConfig config;
+    @Value("app.corsHost")
+    private String corsHost;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -39,7 +40,7 @@ public class WebAppConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(config.getMapProps().get("corsHost"))
+                .allowedOrigins(corsHost)
                 .allowedMethods("GET", "POST")
                 .allowCredentials(true).maxAge(3600);
     }

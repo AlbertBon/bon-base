@@ -115,7 +115,7 @@ public class GenerateCoreUtil {
         return TABLE_COMMENT;
     }
 
-    public static void getPrimaryField(String table) throws SQLException {
+    public static String getPrimaryField(String table) throws SQLException {
         List<Map<String, Object>> cols = new ArrayList<Map<String, Object>>();
         ResultSetMetaData md = GenerateDBUtils.query("select * from " + table + " where 1 = 2", null).getMetaData();
         for (int i = 1; i <= md.getColumnCount(); i++) {
@@ -126,6 +126,7 @@ public class GenerateCoreUtil {
                 }
             }
         }
+        return TABLE_PRIMARY_KEY;
     }
 
     /***
@@ -475,11 +476,13 @@ public class GenerateCoreUtil {
      * createServiceImplClass
      * @param table
      */
-    public static void createServiceImplClass(String table, String modules) {
+    public static void createServiceImplClass(String table, String modules) throws SQLException {
 
         String className = StringUtils.underline2Camel(table, false);
 
         String objectName = StringUtils.uncapitalize(className);
+
+        String primaryKey = getPrimaryField(table);
 
         StringBuilder sb = new StringBuilder();
 
@@ -550,7 +553,7 @@ public class GenerateCoreUtil {
                 "    public void save" + className + "(" + className + "DTO dto) {\n" +
                 "        " + className + " " + objectName + " = new " + className + "();\n" +
                 "        BeanUtil.copyPropertys(dto, " + objectName + ");\n" +
-                "        " + objectName + ".set" + className + "Id(null);\n" +
+                "        " + objectName + ".set" + StringUtils.underline2Camel(primaryKey,false) + "(null);\n" +
                 "        " + objectName + ".setGmtCreate(new Date());\n" +
                 "        " + objectName + ".setGmtModified(new Date());\n" +
                 "        " + objectName + "Mapper.insertSelective(" + objectName + ");\n" +
@@ -559,7 +562,7 @@ public class GenerateCoreUtil {
         sb.append("/**更新数据*/").append(ENTER).append(TAB);
         sb.append("@Override\n" +
                 "    public void update" + className + "(" + className + "DTO dto) {\n" +
-                "        " + className + " " + objectName + " = " + objectName + "Mapper.selectByPrimaryKey(dto.get" + className + "Id());\n" +
+                "        " + className + " " + objectName + " = " + objectName + "Mapper.selectByPrimaryKey(dto.get" + StringUtils.underline2Camel(primaryKey,false) + "());\n" +
                 "        if (" + objectName + " == null) {\n" +
                 "            throw new BusinessException(\"获取信息失败\");\n" +
                 "        }\n" +
@@ -755,6 +758,10 @@ public class GenerateCoreUtil {
         String className = StringUtils.underline2Camel(table, false);
         //通过 org.apache.commons.lang3.StringUtils的uncapitalize方法把类名第一个字母转换成小写
         String objectName = StringUtils.uncapitalize(className);
+
+        String primaryClassName = StringUtils.underline2Camel(getPrimaryField(table),false);
+        String primaryObjectName = StringUtils.uncapitalize(primaryClassName);
+
         List<Map<String, Object>> cols = getCols(table);
 
         StringBuilder sb = new StringBuilder();
@@ -763,7 +770,7 @@ public class GenerateCoreUtil {
                 "  <div class=\"app-container calendar-list-container\">\n" );
                 sb.append("<!--新增修改弹出框部分-->").append(ENTER);
                 sb.append("    <div class=\"filter-container\">\n" +
-                "      <el-input style=\"width: 200px;\" v-model=\"listParams.keyMap.equal_" + objectName + "Id\" class=\"filter-item\" placeholder=\"序号\">\n" +
+                "      <el-input style=\"width: 200px;\" v-model=\"listParams.keyMap.equal_" + primaryObjectName + "\" class=\"filter-item\" placeholder=\"序号\">\n" +
                 "      </el-input>\n" +
                 "      <el-date-picker style=\"width: 200px;\" v-model=\"listParams.keyMap.greater_gmtCreate\" type=\"datetime\"\n" +
                 "                      class=\"filter-item\" placeholder=\"起始时间\" value-format=\"yyyy-MM-dd HH:mm:ss\">\n" +
@@ -806,8 +813,8 @@ public class GenerateCoreUtil {
         }
         sb.append("      <el-table-column align=\"center\" label=\"操作\" width=\"230\" class-name=\"small-padding fixed-width\">\n" +
                 "        <template slot-scope=\"scope\">\n" +
-                "          <el-button type=\"primary\" size=\"mini\" @click=\"handleUpdate(scope.row." + objectName + "Id)\">修改</el-button>\n" +
-                "          <el-button type=\"danger\" size=\"mini\" @click=\"handleDel(scope.row." + objectName + "Id)\">删除</el-button>\n" +
+                "          <el-button type=\"primary\" size=\"mini\" @click=\"handleUpdate(scope.row." + primaryObjectName + ")\">修改</el-button>\n" +
+                "          <el-button type=\"danger\" size=\"mini\" @click=\"handleDel(scope.row." + primaryObjectName + ")\">删除</el-button>\n" +
                 "        </template>\n" +
                 "      </el-table-column>\n" +
                 "    </el-table>\n");
@@ -830,8 +837,8 @@ public class GenerateCoreUtil {
         sb.append("    <el-dialog :title=\"dialogTitle\" :visible.sync=\"dialogFormVisible\">\n" +
                 "      <el-form ref=\"" + objectName + "Form\" :rules=\"rules\" :model=\"" + objectName + "Params\" label-position=\"left\" label-width=\"100px\"\n" +
                 "               style='width: 400px; margin-left:50px;'>\n" +
-                "        <el-form-item v-show=\"false\" prop=\"" + objectName + "Id\">\n" +
-                "          <el-input v-model=\"" + objectName + "Params." + objectName + "Id\"></el-input>\n" +
+                "        <el-form-item v-show=\"false\" prop=\"" + primaryObjectName + "\">\n" +
+                "          <el-input v-model=\"" + objectName + "Params." + primaryObjectName + "\"></el-input>\n" +
                 "        </el-form-item>\n");
         for (Map<String, Object> col : cols) {
             if(col.get(KEY)!=null&&col.get(KEY).toString().equals("PRI")){
@@ -938,13 +945,13 @@ public class GenerateCoreUtil {
                 "        }))\n" +
                 "      },\n" +
                 "      //点击修改按钮触发方法\n" +
-                "      handleUpdate(" + objectName + "Id) {\n" +
+                "      handleUpdate(" + primaryObjectName + ") {\n" +
                 "        if (this.$refs['" + objectName + "Form']!==undefined) {\n" +
                 "          this.$refs['" + objectName + "Form'].resetFields();\n" +
                 "        }\n" +
                 "        this.dialogFormVisible = true;\n" +
                 "        this.dialogTitle = '修改';\n" +
-                "        this.getRequest('/" + objectName + "/get?key='+" + objectName + "Id).then(res => {\n" +
+                "        this.getRequest('/" + objectName + "/get?key='+" + primaryObjectName + ").then(res => {\n" +
                 "          if (res.data.code == '00') {\n" +
                 "            this." + objectName + "Params = res.data.data;\n" +
                 "          }\n" +
@@ -965,13 +972,13 @@ public class GenerateCoreUtil {
                 "        }))\n" +
                 "      },\n" +
                 "      //点击删除触发方法\n" +
-                "      handleDel(" + objectName + "Id) {\n" +
+                "      handleDel(" + primaryObjectName + ") {\n" +
                 "        this.$confirm('是否删除该用户', '提示', {\n" +
                 "          confirmButtonText: '确定',\n" +
                 "          cancelButtonText: '取消',\n" +
                 "          type: 'warning'\n" +
                 "        }).then(() => {\n" +
-                "          this.getRequest('/" + objectName + "/delete?key='+" + objectName + "Id).then(res => {\n" +
+                "          this.getRequest('/" + objectName + "/delete?key='+" + primaryObjectName + ").then(res => {\n" +
                 "            if (res.data.code == '00') {\n" +
                 "              this.$message.success('删除成功');\n" +
                 "              this.getList();\n" +

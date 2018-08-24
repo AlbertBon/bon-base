@@ -3,9 +3,10 @@ app:
   name: bon-ydt
   logPath: C:/logs
   logLevel: INFO
+  #跨域请求地址
+  corsHost: http://localhost:8000
   map-props:
-      #跨域请求地址
-      corsHost: http://localhost:8000
+
       #验证码字体 ttf字体文件的十六进制字符串
       font:
 
@@ -21,7 +22,7 @@ spring:
   datasource:
       type: com.alibaba.druid.pool.DruidDataSource
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://127.0.0.1:3306/bon_ydt?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&&zeroDateTimeBehavior=convertToNull
+      url: jdbc:mysql://127.0.0.1:3306/bon_base?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&&zeroDateTimeBehavior=convertToNull
       name: wxmanage
       username: root
       password: root
