@@ -15,7 +15,7 @@ import java.util.Map;
  * @create: 2018-08-24 14:40
  **/
 @Component
-@ConfigurationProperties(prefix = "bon")
+@ConfigurationProperties(prefix = "app")
 public class YamlConfig {
 
     String simpleProp;
