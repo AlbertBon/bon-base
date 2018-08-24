@@ -178,6 +178,7 @@ public class UserServiceImpl implements UserService {
     public List<MenuRouterVO> funMenuChild(List<SysPermission> permissionList) {
         SysUser user = userExtendMapper.getByUsername(SecurityUtils.getSubject().getPrincipal().toString());
         List<MenuRouterVO> voList = new ArrayList<>();
+        Collections.sort(permissionList);//对列表进行排序
         for (SysPermission permission : permissionList) {
             String permissionFlag = permission.getPermissionFlag();
             //判断是否有权限
@@ -200,7 +201,7 @@ public class UserServiceImpl implements UserService {
 
             //判断如果还有子菜单就递归调用继续查找子菜单
             BaseDTO dto = new BaseDTO();
-            dto.likeFind(new SysPermission(), "dataPath", permission.getDataPath() + "/%");
+            dto.andFind(new SysPermission(), "parentId", permission.getPermissionId().toString());
             dto.andFind("type",PermissionType.MENU.getKey());
             List<SysPermission> permissionList1 = permissionMapper.selectByExample(dto.getExample());
             if (permissionList1.size() > 0) {

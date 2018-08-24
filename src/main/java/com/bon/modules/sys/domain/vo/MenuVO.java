@@ -40,10 +40,10 @@ public class MenuVO implements Serializable{
     private String icon;
 
     @ApiModelProperty(value = "00:true,01:false如果设置true，会在导航中隐藏")
-    private String hidden;
+    private Byte hidden;
 
     @ApiModelProperty(value = "00:true,01:false没有子菜单也会显示在导航中")
-    private String alwaysShow;
+    private Byte alwaysShow;
 
     @ApiModelProperty(value = "父菜单name")
     private String parentName;
@@ -112,19 +112,19 @@ public class MenuVO implements Serializable{
         this.icon = icon;
     }
 
-    public String getHidden() {
+    public Byte getHidden() {
         return hidden;
     }
 
-    public void setHidden(String hidden) {
+    public void setHidden(Byte hidden) {
         this.hidden = hidden;
     }
 
-    public String getAlwaysShow() {
+    public Byte getAlwaysShow() {
         return alwaysShow;
     }
 
-    public void setAlwaysShow(String alwaysShow) {
+    public void setAlwaysShow(Byte alwaysShow) {
         this.alwaysShow = alwaysShow;
     }
 

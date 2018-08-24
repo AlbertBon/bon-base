@@ -103,7 +103,7 @@ public class SysBaseController {
         file.transferTo(f);
         String sql = sysBaseService.generateTableSQL(f, null).replace("\n","");
         f.deleteOnExit();
-        return new ResultBody(sql);
+        return new ResultBody((Object) sql);//强转使得返回信息为data
     }
 
     @ApiOperation(value = "系统工具2",notes = "根据excel生成数据库语句\n2、根据系统基础表的表数据生成excel数据库文档")

@@ -36,10 +36,10 @@ public class PermissionMenuDTO implements Serializable {
     private String icon;
 
     @ApiModelProperty(value = "00:true,01:false如果设置true，会在导航中隐藏")
-    private String hidden;
+    private Byte hidden;
 
     @ApiModelProperty(value = "00:true,01:false没有子菜单也会显示在导航中")
-    private String alwaysShow;
+    private Byte alwaysShow;
 
     private static final long serialVersionUID = 1L;
 
@@ -91,19 +91,19 @@ public class PermissionMenuDTO implements Serializable {
         this.icon = icon == null ? null : icon.trim();
     }
 
-    public String getHidden() {
+    public Byte getHidden() {
         return hidden;
     }
 
-    public void setHidden(String hidden) {
-        this.hidden = hidden == null ? null : hidden.trim();
+    public void setHidden(Byte hidden) {
+        this.hidden = hidden;
     }
 
-    public String getAlwaysShow() {
+    public Byte getAlwaysShow() {
         return alwaysShow;
     }
 
-    public void setAlwaysShow(String alwaysShow) {
-        this.alwaysShow = alwaysShow == null ? null : alwaysShow.trim();
+    public void setAlwaysShow(Byte alwaysShow) {
+        this.alwaysShow = alwaysShow;
     }
 }

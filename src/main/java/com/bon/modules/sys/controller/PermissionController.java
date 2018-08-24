@@ -74,7 +74,7 @@ public class PermissionController {
         return new ResultBody();
     }
 
-    @ApiOperation(value = "修改权限",notes = "")
+    @ApiOperation(value = "删除权限",notes = "")
     @GetMapping(value = "/deletePermission")
     @RequiresPermissions({"url:user:deletePermission"})
     public ResultBody deletePermission(@RequestParam Long key){

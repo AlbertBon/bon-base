@@ -1,20 +1,26 @@
 package com.bon.modules.sys.domain.entity;
 
+import java.util.*;
 import java.io.Serializable;
-import java.util.Date;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
+
+
 /**
- * 
- * 实体类对应的数据表为：  sys_permission
- */
-@ApiModel(value ="SysPermission")
-public class SysPermission implements Serializable {
+ * @Created：2018-08-24
+ * @Author Albert
+ * @Version: 1.0
+ * @Description: SysPermission参数类
+ * @Email: 502285815@qq.com
+*/
+@ApiModel(value ="SysPermission",description = "权限表")
+public class SysPermission implements Serializable,Comparable<SysPermission>{
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "JDBC")
     @ApiModelProperty(value = "ID")
@@ -34,35 +40,20 @@ public class SysPermission implements Serializable {
     @ApiModelProperty(value = "权限名称")
     private String permissionName;
 
-    @ApiModelProperty(value = "00:菜单权限")
+    @ApiModelProperty(value = "00:菜单权限；01：接口url权限")
     private String type;
 
     @ApiModelProperty(value = "对应表id（菜单权限即为菜单id）")
     private Long objectId;
 
-    @ApiModelProperty(value = "对应表id的父id（菜单权限即为菜单id的父id）")
+    @ApiModelProperty(value = "父权限id（permission表中的id值）")
     private Long parentId;
 
     @ApiModelProperty(value = "数据库id地址")
     private String dataPath;
 
-    private static final long serialVersionUID = 1L;
-
-    public SysPermission(Long permissionId, Date gmtCreate, Date gmtModified, String permissionFlag, String permissionName, String type, Long objectId, Long parentId, String dataPath) {
-        this.permissionId = permissionId;
-        this.gmtCreate = gmtCreate;
-        this.gmtModified = gmtModified;
-        this.permissionFlag = permissionFlag;
-        this.permissionName = permissionName;
-        this.type = type;
-        this.objectId = objectId;
-        this.parentId = parentId;
-        this.dataPath = dataPath;
-    }
-
-    public SysPermission() {
-        super();
-    }
+    @ApiModelProperty(value = "排序值")
+    private Integer sort;
 
     public Long getPermissionId() {
         return permissionId;
@@ -72,7 +63,6 @@ public class SysPermission implements Serializable {
         this.permissionId = permissionId;
     }
 
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     public Date getGmtCreate() {
         return gmtCreate;
     }
@@ -81,7 +71,6 @@ public class SysPermission implements Serializable {
         this.gmtCreate = gmtCreate;
     }
 
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     public Date getGmtModified() {
         return gmtModified;
     }
@@ -95,7 +84,7 @@ public class SysPermission implements Serializable {
     }
 
     public void setPermissionFlag(String permissionFlag) {
-        this.permissionFlag = permissionFlag == null ? null : permissionFlag.trim();
+        this.permissionFlag = permissionFlag;
     }
 
     public String getPermissionName() {
@@ -103,7 +92,7 @@ public class SysPermission implements Serializable {
     }
 
     public void setPermissionName(String permissionName) {
-        this.permissionName = permissionName == null ? null : permissionName.trim();
+        this.permissionName = permissionName;
     }
 
     public String getType() {
@@ -111,7 +100,7 @@ public class SysPermission implements Serializable {
     }
 
     public void setType(String type) {
-        this.type = type == null ? null : type.trim();
+        this.type = type;
     }
 
     public Long getObjectId() {
@@ -135,6 +124,24 @@ public class SysPermission implements Serializable {
     }
 
     public void setDataPath(String dataPath) {
-        this.dataPath = dataPath == null ? null : dataPath.trim();
+        this.dataPath = dataPath;
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
+
+    @Override
+    public int compareTo(SysPermission o) {
+        if(null != o.getSort() && null!=this.getSort()){
+            int i = this.getSort() - o.getSort();//升序，相反的减法为降序
+            return i;
+        }else {
+            return 0;
+        }
     }
 }

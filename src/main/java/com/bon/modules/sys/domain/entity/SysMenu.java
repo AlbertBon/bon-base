@@ -1,20 +1,26 @@
 package com.bon.modules.sys.domain.entity;
 
+import java.util.*;
 import java.io.Serializable;
-import java.util.Date;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
+
+
 /**
- * 
- * 实体类对应的数据表为：  sys_menu
- */
-@ApiModel(value ="SysMenu")
-public class SysMenu implements Serializable {
+ * @Created：2018-08-24
+ * @Author Albert
+ * @Version: 1.0
+ * @Description: SysMenu参数类
+ * @Email: 502285815@qq.com
+*/
+@ApiModel(value ="SysMenu",description = "菜单表")
+public class SysMenu implements Serializable{
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "JDBC")
     @ApiModelProperty(value = "ID")
@@ -46,31 +52,11 @@ public class SysMenu implements Serializable {
     @ApiModelProperty(value = "菜单图标")
     private String icon;
 
-    @ApiModelProperty(value = "00:true,01:false如果设置true，会在导航中隐藏")
-    private String hidden;
+    @ApiModelProperty(value = "1:true,0:false;如果设置true，会在导航中隐藏")
+    private Byte hidden;
 
-    @ApiModelProperty(value = "00:true,01:false没有子菜单也会显示在导航中")
-    private String alwaysShow;
-
-    private static final long serialVersionUID = 1L;
-
-    public SysMenu(Long menuId, Date gmtCreate, Date gmtModified, String name, String path, String component, String redirect, String title, String icon, String hidden, String alwaysShow) {
-        this.menuId = menuId;
-        this.gmtCreate = gmtCreate;
-        this.gmtModified = gmtModified;
-        this.name = name;
-        this.path = path;
-        this.component = component;
-        this.redirect = redirect;
-        this.title = title;
-        this.icon = icon;
-        this.hidden = hidden;
-        this.alwaysShow = alwaysShow;
-    }
-
-    public SysMenu() {
-        super();
-    }
+    @ApiModelProperty(value = "1:true,0:false;如果设置true，没有子菜单也会显示在导航中")
+    private Byte alwaysShow;
 
     public Long getMenuId() {
         return menuId;
@@ -80,7 +66,6 @@ public class SysMenu implements Serializable {
         this.menuId = menuId;
     }
 
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     public Date getGmtCreate() {
         return gmtCreate;
     }
@@ -89,7 +74,6 @@ public class SysMenu implements Serializable {
         this.gmtCreate = gmtCreate;
     }
 
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     public Date getGmtModified() {
         return gmtModified;
     }
@@ -103,7 +87,7 @@ public class SysMenu implements Serializable {
     }
 
     public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+        this.name = name;
     }
 
     public String getPath() {
@@ -111,7 +95,7 @@ public class SysMenu implements Serializable {
     }
 
     public void setPath(String path) {
-        this.path = path == null ? null : path.trim();
+        this.path = path;
     }
 
     public String getComponent() {
@@ -119,7 +103,7 @@ public class SysMenu implements Serializable {
     }
 
     public void setComponent(String component) {
-        this.component = component == null ? null : component.trim();
+        this.component = component;
     }
 
     public String getRedirect() {
@@ -127,7 +111,7 @@ public class SysMenu implements Serializable {
     }
 
     public void setRedirect(String redirect) {
-        this.redirect = redirect == null ? null : redirect.trim();
+        this.redirect = redirect;
     }
 
     public String getTitle() {
@@ -135,7 +119,7 @@ public class SysMenu implements Serializable {
     }
 
     public void setTitle(String title) {
-        this.title = title == null ? null : title.trim();
+        this.title = title;
     }
 
     public String getIcon() {
@@ -143,22 +127,23 @@ public class SysMenu implements Serializable {
     }
 
     public void setIcon(String icon) {
-        this.icon = icon == null ? null : icon.trim();
+        this.icon = icon;
     }
 
-    public String getHidden() {
+    public Byte getHidden() {
         return hidden;
     }
 
-    public void setHidden(String hidden) {
-        this.hidden = hidden == null ? null : hidden.trim();
+    public void setHidden(Byte hidden) {
+        this.hidden = hidden;
     }
 
-    public String getAlwaysShow() {
+    public Byte getAlwaysShow() {
         return alwaysShow;
     }
 
-    public void setAlwaysShow(String alwaysShow) {
-        this.alwaysShow = alwaysShow == null ? null : alwaysShow.trim();
+    public void setAlwaysShow(Byte alwaysShow) {
+        this.alwaysShow = alwaysShow;
     }
+
 }

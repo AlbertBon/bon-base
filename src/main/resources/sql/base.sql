@@ -13,7 +13,9 @@
 
 
 -- 导出 bon_base 的数据库结构
+DROP DATABASE IF EXISTS `bon_base`;
 CREATE DATABASE IF NOT EXISTS `bon_base` /*!40100 DEFAULT CHARACTER SET utf8 */;
+USE `bon_base`;
 USE `bon_base`;
 
 -- 导出  表 bon_base.sys_base 结构
@@ -53,8 +55,8 @@ CREATE TABLE IF NOT EXISTS `sys_menu` (
   `redirect` varchar(128) DEFAULT NULL COMMENT '跳转地址（如果设置为noredirect会在面包屑导航中无连接）',
   `title` varchar(64) DEFAULT NULL COMMENT '菜单显示名称',
   `icon` varchar(64) DEFAULT NULL COMMENT '菜单图标',
-  `hidden` char(2) DEFAULT NULL COMMENT '00:true,01:false如果设置true，会在导航中隐藏',
-  `always_show` char(2) DEFAULT NULL COMMENT '00:true,01:false没有子菜单也会显示在导航中',
+  `hidden` tinyint(4) DEFAULT 0 COMMENT '1:true,0:false;如果设置true，会在导航中隐藏',
+  `always_show` tinyint(4) DEFAULT 0 COMMENT '1:true,0:false;如果设置true，没有子菜单也会显示在导航中',
   PRIMARY KEY (`menu_id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='菜单表';
@@ -62,11 +64,11 @@ CREATE TABLE IF NOT EXISTS `sys_menu` (
 -- 正在导出表  bon_base.sys_menu 的数据：~5 rows (大约)
 /*!40000 ALTER TABLE `sys_menu` DISABLE KEYS */;
 INSERT INTO `sys_menu` (`menu_id`, `gmt_create`, `gmt_modified`, `name`, `path`, `component`, `redirect`, `title`, `icon`, `hidden`, `always_show`) VALUES
-	(1, '2018-07-22 22:50:44', '2018-07-22 22:50:46', '系统管理', '/admin', '/layout/Layout', 'admin/user/list', '系统管理', 'fa fa-cogs', '', ''),
-	(2, '2018-07-22 22:50:44', '2018-07-22 22:50:44', '用户管理', 'user/list', '/admin/UserList', '', '用户管理', 'fa fa-users', '', ''),
-	(3, '2018-07-23 14:54:51', '2018-07-23 14:54:51', '角色管理', 'role/list', '/admin/RoleList', NULL, '角色管理', 'fa fa-user-circle-o', NULL, NULL),
-	(4, '2018-07-24 14:18:16', '2018-07-24 14:18:16', '系统表管理', 'sysTable', '/admin/SysTable', NULL, '系统表', 'fa fa-table', NULL, NULL),
-	(5, '2018-08-06 20:14:20', '2018-08-06 20:14:20', '权限管理', 'permission', '/admin/Permission', NULL, '权限管理', 'fa fa-unlock-alt', NULL, NULL);
+	(1, '2018-07-22 22:50:44', '2018-07-22 22:50:46', '系统管理', '/admin', '/layout/Layout', 'admin/user/list', '系统管理', 'fa fa-cogs', 0, 0),
+	(2, '2018-07-22 22:50:44', '2018-07-22 22:50:44', '用户管理', 'user/list', '/admin/UserList', NULL, '用户管理', 'fa fa-users', 0, 0),
+	(3, '2018-07-23 14:54:51', '2018-07-23 14:54:51', '角色管理', 'role/list', '/admin/RoleList', NULL, '角色管理', 'fa fa-user-circle-o', 0, 0),
+	(4, '2018-07-24 14:18:16', '2018-07-24 14:18:16', '系统表管理', 'sysTable', '/admin/SysTable', NULL, '系统表', 'fa fa-table', 0, 0),
+	(5, '2018-08-06 20:14:20', '2018-08-06 20:14:20', '权限管理', 'permission', '/admin/Permission', NULL, '权限管理', 'fa fa-unlock-alt', 0, 0);
 /*!40000 ALTER TABLE `sys_menu` ENABLE KEYS */;
 
 -- 导出  表 bon_base.sys_permission 结构
@@ -80,18 +82,19 @@ CREATE TABLE IF NOT EXISTS `sys_permission` (
   `object_id` bigint(20) DEFAULT NULL COMMENT '对应表id（菜单权限即为菜单id）',
   `parent_id` bigint(20) DEFAULT NULL COMMENT '父权限id（permission表中的id值）',
   `data_path` varchar(512) DEFAULT NULL COMMENT '数据库id地址',
+  `sort` int(11) DEFAULT 1 COMMENT '排序值',
   PRIMARY KEY (`permission_id`),
   UNIQUE KEY `permission_flag` (`permission_flag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='权限表';
 
 -- 正在导出表  bon_base.sys_permission 的数据：~5 rows (大约)
 /*!40000 ALTER TABLE `sys_permission` DISABLE KEYS */;
-INSERT INTO `sys_permission` (`permission_id`, `gmt_create`, `gmt_modified`, `permission_flag`, `permission_name`, `type`, `object_id`, `parent_id`, `data_path`) VALUES
-	(1, '2018-06-06 11:19:08', '2018-07-24 12:00:47', 'menu:admin', '【菜单】系统管理', '00', 1, 0, '1'),
-	(2, '2018-06-06 11:19:55', '2018-07-24 12:01:24', 'menu:admin:user', '【菜单】用户管理', '00', 2, 1, '1/2'),
-	(3, '2018-06-06 14:11:05', '2018-07-24 12:01:30', 'menu:admin:role', '【菜单】角色管理', '00', 3, 1, '1/3'),
-	(4, '2018-07-24 14:18:16', '2018-07-25 11:33:29', 'menu:admin:sysBase', '【菜单】系统表管理', '00', 4, 1, '1/4'),
-	(5, '2018-08-06 20:14:20', '2018-08-06 20:14:20', 'menu:admin:permission', '【菜单】权限管理', '00', 5, 1, '1/5');
+INSERT INTO `sys_permission` (`permission_id`, `gmt_create`, `gmt_modified`, `permission_flag`, `permission_name`, `type`, `object_id`, `parent_id`, `data_path`, `sort`) VALUES
+	(1, '2018-06-06 11:19:08', '2018-07-24 12:00:47', 'menu:admin:main', '【菜单】系统管理', '00', 1, 0, '1', 1),
+	(2, '2018-06-06 11:19:55', '2018-07-24 12:01:24', 'menu:admin:user', '【菜单】用户管理', '00', 2, 1, '1/2', 2),
+	(3, '2018-06-06 14:11:05', '2018-07-24 12:01:30', 'menu:admin:role', '【菜单】角色管理', '00', 3, 1, '1/3', 3),
+	(4, '2018-07-24 14:18:16', '2018-07-25 11:33:29', 'menu:admin:sysBase', '【菜单】系统表管理', '00', 4, 1, '1/4', 1),
+	(5, '2018-08-06 20:14:20', '2018-08-06 20:14:20', 'menu:admin:permission', '【菜单】权限管理', '00', 5, 1, '1/5', 4);
 /*!40000 ALTER TABLE `sys_permission` ENABLE KEYS */;
 
 -- 导出  表 bon_base.sys_role 结构

@@ -264,7 +264,6 @@ public class GenerateCoreUtil {
         }
         sb.append(ENTER);
         for (Map<String, Object> col : getCols(table)) {
-            sb.append(TAB);
             sb.append(generateGetAndSet(col)).append(ENTER);
             sb.append(ENTER);
         }
@@ -311,7 +310,6 @@ public class GenerateCoreUtil {
         }
         sb.append(ENTER);
         for (Map<String, Object> col : getCols(table)) {
-            sb.append(TAB);
             sb.append(generateGetAndSet(col)).append(ENTER);
             sb.append(ENTER);
         }
@@ -365,7 +363,6 @@ public class GenerateCoreUtil {
         }
         sb.append(ENTER);
         for (Map<String, Object> col : getCols(table)) {
-            sb.append(TAB);
             sb.append(generateGetAndSet(col)).append(ENTER);
             sb.append(ENTER);
         }

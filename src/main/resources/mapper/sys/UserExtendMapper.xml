@@ -30,7 +30,7 @@
         INNER JOIN sys_role_permission rp ON p.permission_id = rp.permission_id AND p.`type`='00' AND p.parent_id=0
         INNER JOIN sys_role r ON r.role_id = rp.role_id
         INNER JOIN sys_user_role ur ON ur.role_id = r.role_id
-        INNER JOIN sys_user u ON u.user_id = ur.user_id AND u.username = #{username} group by p.object_id
+        INNER JOIN sys_user u ON u.user_id = ur.user_id AND u.username = #{username} group by p.object_id order by sort
     </select>
 
     <select id="getAllPermission" resultType="com.bon.modules.sys.domain.vo.PermissionVO">
