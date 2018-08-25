@@ -24,7 +24,7 @@ import java.io.OutputStream;
  **/
 public class ShiroFilterFormAuthentication extends FormAuthenticationFilter {
     private static final MyLog log = MyLog.getLog(ShiroFilterFormAuthentication.class);
-    @Value("app.corsHost")
+    @Value("${app.corsHost}")
     private String corsHost;
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {

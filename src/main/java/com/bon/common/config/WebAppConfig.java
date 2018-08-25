@@ -24,7 +24,7 @@ public class WebAppConfig extends WebMvcConfigurerAdapter {
         return new Interceptor();
     }
 
-    @Value("app.corsHost")
+    @Value("${app.corsHost}")
     private String corsHost;
 
     @Override
