@@ -20,6 +20,23 @@ import java.util.Map;
 public class generateMain {
 
     /**
+     * @Author: Bon
+     * @Description: 根据excel生成数据库语句
+     * @param
+     * @return: void
+     * @Date: 2018/8/19 12:57
+     */
+    @Test
+    public void generateViewSQL() throws Exception {
+        List<String> tableList;
+        tableList = new ArrayList<>();
+        tableList.add("role");
+        tableList.add("user");
+        String s = POIUtil.generateViewSql(new File(SysBaseService.class.getResource("/sql/generate.xls").getFile()).getAbsolutePath(),null);
+        System.out.println(s);
+    }
+
+    /**
      * 生成所有文件(需要生成多个表的文件时加入mapList中即可)
      */
     @Test
@@ -72,10 +89,10 @@ public class generateMain {
         List<Map<String,String>> maps = new ArrayList<>();
         Map<String,String> map;
 
-//        map = new HashMap<>();
-//        map.put("tableName","sys_permission");
-//        map.put("modules","sys");
-//        maps.add(map);
+        map = new HashMap<>();
+        map.put("tableName","sys_permission");
+        map.put("modules","sys");
+        maps.add(map);
 //
 //        map = new HashMap<>();
 //        map.put("tableName","sys_menu");
@@ -86,22 +103,7 @@ public class generateMain {
             GenerateCoreUtil.createEntityClass(map1.get("tableName"),map1.get("modules"));
         }
     }
-    /**
-     * @Author: Bon
-     * @Description: 根据excel生成数据库语句
-     * @param
-     * @return: void
-     * @Date: 2018/8/19 12:57
-     */
-    @Test
-    public void generateViewSQL() throws Exception {
-        List<String> tableList;
-        tableList = new ArrayList<>();
-        tableList.add("role");
-        tableList.add("user");
-        String s = POIUtil.generateViewSql(new File(SysBaseService.class.getResource("/sql/baoli.xls").getFile()).getAbsolutePath(),tableList);
-        System.out.println(s);
-    }
+
 
 
     /**

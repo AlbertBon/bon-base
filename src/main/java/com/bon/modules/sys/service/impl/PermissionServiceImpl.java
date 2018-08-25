@@ -145,7 +145,7 @@ public class PermissionServiceImpl implements PermissionService {
             permission.setParentId(0L);
             permission.setDataPath(permission.getPermissionId().toString());
         }
-        permissionMapper.updateByPrimaryKey(permission);
+        permissionMapper.updateByPrimaryKeySelective(permission);
         //每次新增权限都添加到管理员角色中
         baseDTO.andFind(new SysRole(), "roleFlag", "admin");
         SysRole adminRole = roleMapper.selectOneByExample(baseDTO.getExample());
@@ -176,7 +176,7 @@ public class PermissionServiceImpl implements PermissionService {
             permission.setPermissionName("【" + permissionType.getValue() + "】" + menu.getName());
             permission.setPermissionFlag(dto.getPermissionFlag());
             permission.setGmtModified(new Date());
-            permissionMapper.updateByPrimaryKey(permission);
+            permissionMapper.updateByPrimaryKeySelective(permission);
         } else if (PermissionType.URL.getKey().equals(dto.getType())) {
             //接口url类型
             permissionType = PermissionType.URL;
@@ -192,7 +192,7 @@ public class PermissionServiceImpl implements PermissionService {
             permission.setPermissionName("【" + permissionType.getValue() + "】" + url.getUrlName());
             permission.setPermissionFlag(dto.getPermissionFlag());
             permission.setGmtModified(new Date());
-            permissionMapper.updateByPrimaryKey(permission);
+            permissionMapper.updateByPrimaryKeySelective(permission);
         }
     }
 
