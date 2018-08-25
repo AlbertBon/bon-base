@@ -3,12 +3,6 @@ app:
   name: bon-ydt
   logPath: C:/logs
   logLevel: INFO
-  #跨域请求地址
-  corsHost: http://localhost:8000
-  map-props:
-
-      #验证码字体 ttf字体文件的十六进制字符串
-      font:
 
 #web端口
 server:

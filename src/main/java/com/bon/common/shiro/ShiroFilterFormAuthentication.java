@@ -1,12 +1,10 @@
 package com.bon.common.shiro;
 
-import com.bon.common.config.YamlConfig;
 import com.bon.common.domain.enums.ExceptionType;
 import com.bon.common.domain.vo.ResultBody;
+import com.bon.common.util.PropertyUtil;
 import com.bon.common.util.MyLog;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -24,8 +22,7 @@ import java.io.OutputStream;
  **/
 public class ShiroFilterFormAuthentication extends FormAuthenticationFilter {
     private static final MyLog log = MyLog.getLog(ShiroFilterFormAuthentication.class);
-    @Value("${app.corsHost}")
-    private String corsHost;
+    private String corsHost = PropertyUtil.getProperty("corsHost");
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         if (this.isLoginRequest(request, response)) {
