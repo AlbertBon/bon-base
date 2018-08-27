@@ -2,23 +2,19 @@ package com.bon.modules.sys.service.impl;
 
 
 import com.bon.common.domain.dto.BaseDTO;
-import com.bon.common.domain.enums.ExceptionType;
-import com.bon.common.domain.vo.PageVO;
 import com.bon.common.exception.BusinessException;
 import com.bon.common.util.BeanUtil;
 import com.bon.common.util.MyLog;
-import com.bon.common.util.ShiroUtil;
 import com.bon.common.util.StringUtils;
 import com.bon.modules.sys.dao.*;
-import com.bon.modules.sys.domain.dto.*;
+import com.bon.modules.sys.domain.dto.PermissionGetDTO;
+import com.bon.modules.sys.domain.dto.PermissionUpdateDTO;
 import com.bon.modules.sys.domain.entity.*;
 import com.bon.modules.sys.domain.enums.PermissionType;
-import com.bon.modules.sys.domain.vo.*;
+import com.bon.modules.sys.domain.vo.BaseVO;
+import com.bon.modules.sys.domain.vo.PermissionTreeVO;
+import com.bon.modules.sys.domain.vo.PermissionVO;
 import com.bon.modules.sys.service.PermissionService;
-import com.bon.modules.sys.service.UserService;
-import com.github.pagehelper.PageHelper;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -145,7 +141,7 @@ public class PermissionServiceImpl implements PermissionService {
             permission.setParentId(0L);
             permission.setDataPath(permission.getPermissionId().toString());
         }
-        permissionMapper.updateByPrimaryKey(permission);
+        permissionMapper.updateByPrimaryKeySelective(permission);
         //每次新增权限都添加到管理员角色中
         baseDTO.andFind(new SysRole(), "roleFlag", "admin");
         SysRole adminRole = roleMapper.selectOneByExample(baseDTO.getExample());
@@ -176,7 +172,7 @@ public class PermissionServiceImpl implements PermissionService {
             permission.setPermissionName("【" + permissionType.getValue() + "】" + menu.getName());
             permission.setPermissionFlag(dto.getPermissionFlag());
             permission.setGmtModified(new Date());
-            permissionMapper.updateByPrimaryKey(permission);
+            permissionMapper.updateByPrimaryKeySelective(permission);
         } else if (PermissionType.URL.getKey().equals(dto.getType())) {
             //接口url类型
             permissionType = PermissionType.URL;
@@ -192,7 +188,7 @@ public class PermissionServiceImpl implements PermissionService {
             permission.setPermissionName("【" + permissionType.getValue() + "】" + url.getUrlName());
             permission.setPermissionFlag(dto.getPermissionFlag());
             permission.setGmtModified(new Date());
-            permissionMapper.updateByPrimaryKey(permission);
+            permissionMapper.updateByPrimaryKeySelective(permission);
         }
     }
 
@@ -262,6 +258,8 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public void generateMenuToVue(String tableName, String modules) {
+        //转为驼峰形式
+        tableName = StringUtils.underline2Camel(tableName,true);
         String parentPermissionFlag = "menu:" + modules + ":main";
         BaseDTO baseDTO = new BaseDTO();
         baseDTO.andFind(new SysPermission(), "permissionFlag", parentPermissionFlag);
