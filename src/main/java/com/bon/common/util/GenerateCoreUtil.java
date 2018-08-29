@@ -492,7 +492,7 @@ public class GenerateCoreUtil {
                 "import com.github.pagehelper.PageHelper;\n" +
                 "import com.bon.modules." + modules + ".domain.dto.*;\n" +
                 "import com.bon.modules." + modules + ".domain.vo.*;\n" +
-                "import com.bon.modules." + modules + ".domain.entity.*;\n" +
+                "import com.bon.modules." + modules + ".domain.entity." + className + ";\n" +
                 "import com.bon.modules." + modules + ".dao.*;\n" +
                 "import com.bon.modules." + modules + ".service.*;\n" +
                 "import org.springframework.transaction.annotation.Transactional;\n" +
