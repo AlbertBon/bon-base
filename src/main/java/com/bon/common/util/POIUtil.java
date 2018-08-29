@@ -73,8 +73,9 @@ public class POIUtil {
         String nameStr = "";//字段名
         String typeStr = "";//数据类型
         String lengthStr = "";//数据长度
-        String isNullStr = "";//是否为空 Y为空 N不为空
+        String isNullStr = "";//是否为空 Y/YES为空 N/NO不为空
         String defaultStr = "";//默认值
+        String isUnique = "";//是否唯一 Y/YES为空 N/NO不为空
         String commentStr = "";//注释
         String sql = "";//sql语句
         String tempStr = "";//临时字符串
@@ -154,7 +155,7 @@ public class POIUtil {
                                 if (tempStr.equals("N") || tempStr.equals("NO")) {
                                     isNullStr = " NOT NULL ";
                                 } else {
-                                    isNullStr = " NULL ";
+                                    isNullStr = " ";
                                 }
                                 break;
                             case 7:
@@ -166,9 +167,9 @@ public class POIUtil {
                                 break;
                             case 8:
                                 if (tempStr.equals("Y") || tempStr.equals("YES")) {
-                                    isNullStr = " unique ";
+                                    isUnique = " unique ";
                                 } else {
-                                    isNullStr = " ";
+                                    isUnique = " ";
                                 }
                                 break;
                             case 9:
@@ -191,10 +192,10 @@ public class POIUtil {
                         sql += "\n) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='" + tableComment + "';\n";
                     } else {
                         sql += ",\n";
-                        sql += "  `" + nameStr + "`  " + typeStr + lengthStr + isNullStr + defaultStr + commentStr + "\n) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='" + tableComment + "';\n";
+                        sql += "  `" + nameStr + "`  " + typeStr + lengthStr + isNullStr + defaultStr + isUnique + commentStr + "\n) ENGINE=InnoDB DEFAULT CHARSET=utf8 comment='" + tableComment + "';\n";
                     }
                 } else {
-                    sql += "  `" + nameStr + "`  " + typeStr + lengthStr + isNullStr + defaultStr + commentStr;
+                    sql += "  `" + nameStr + "`  " + typeStr + lengthStr + isNullStr + defaultStr + isUnique + commentStr;
                 }
 
             }
