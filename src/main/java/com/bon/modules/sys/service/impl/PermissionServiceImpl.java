@@ -227,6 +227,7 @@ public class PermissionServiceImpl implements PermissionService {
         //只查询根节点权限
         BaseDTO dto = new BaseDTO(new SysPermission());
         dto.andFind("parentId", "0");
+        dto.getExample().orderBy("type").orderBy("permissionName");
         List<SysPermission> permissionList = permissionMapper.selectByExample(dto.getExample());
         //通过递归方法获取权限树形结构
         List<PermissionTreeVO> voList = funPermissionChild(permissionList);
@@ -247,6 +248,7 @@ public class PermissionServiceImpl implements PermissionService {
             BaseDTO dto = new BaseDTO(new SysPermission());
             dto.andFind("parentId", vo.getPermissionId().toString());
             dto.andFind("type", vo.getType());
+            dto.getExample().orderBy("permissionName");
             List<SysPermission> permissionList1 = permissionMapper.selectByExample(dto.getExample());
             if (permissionList1.size() > 0) {
                 vo.setChildren(funPermissionChild(permissionList1));
