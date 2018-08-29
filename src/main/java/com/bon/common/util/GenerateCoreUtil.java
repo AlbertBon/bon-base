@@ -1,12 +1,6 @@
 package com.bon.common.util;
 
 
-import com.sun.javafx.logging.PulseLogger;
-
-import java.security.PublicKey;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -454,7 +448,7 @@ public class GenerateCoreUtil {
         sb.append(" public PageVO list" + className + "(" + className + "ListDTO dto);").append(ENTER).append(TAB);
 
         sb.append("/**保存数据*/").append(ENTER).append(TAB);
-        sb.append(" public void save" + className + "(" + className + "DTO dto);").append(ENTER).append(TAB);
+        sb.append(" public Long save" + className + "(" + className + "DTO dto);").append(ENTER).append(TAB);
 
         sb.append("/**更新数据*/").append(ENTER).append(TAB);
         sb.append(" public void update" + className + "(" + className + "DTO dto);").append(ENTER).append(TAB);
@@ -550,22 +544,20 @@ public class GenerateCoreUtil {
 
         sb.append("/**保存数据*/").append(ENTER).append(TAB);
         sb.append("@Override\n" +
-                "    public void save" + className + "(" + className + "DTO dto) {\n" +
+                "    public Long save" + className + "(" + className + "DTO dto) {\n" +
                 "        " + className + " " + objectName + " = new " + className + "();\n" +
                 "        BeanUtil.copyPropertys(dto, " + objectName + ");\n" +
                 "        " + objectName + ".set" + StringUtils.underline2Camel(primaryKey,false) + "(null);\n" +
                 "        " + objectName + ".setGmtCreate(new Date());\n" +
                 "        " + objectName + ".setGmtModified(new Date());\n" +
                 "        " + objectName + "Mapper.insertSelective(" + objectName + ");\n" +
+                "        return " + objectName + ".get" + StringUtils.underline2Camel(primaryKey,false) + "();\n" +
                 "    }").append(ENTER).append(TAB);
 
         sb.append("/**更新数据*/").append(ENTER).append(TAB);
         sb.append("@Override\n" +
                 "    public void update" + className + "(" + className + "DTO dto) {\n" +
-                "        " + className + " " + objectName + " = " + objectName + "Mapper.selectByPrimaryKey(dto.get" + StringUtils.underline2Camel(primaryKey,false) + "());\n" +
-                "        if (" + objectName + " == null) {\n" +
-                "            throw new BusinessException(\"获取信息失败\");\n" +
-                "        }\n" +
+                "        " + className + " " + objectName + " = new " + className + "();" +
                 "        BeanUtil.copyPropertys(dto, " + objectName + ");\n" +
                 "        " + objectName + ".setGmtModified(new Date());\n" +
                 "        " + objectName + "Mapper.updateByPrimaryKeySelective(" + objectName + ");\n" +
@@ -658,7 +650,7 @@ public class GenerateCoreUtil {
         String objectName = StringUtils.uncapitalize(className);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".controller;\n" +
+        sb.append("package " + ROOT_PACKAGE + ".modules." + modules + ".controller;\n\n" +
                 "import com.bon.common.domain.vo.PageVO;\n" +
                 "import com.bon.common.domain.vo.ResultBody;\n" +
                 "import com.bon.modules." + modules + ".domain.dto.*;\n" +
@@ -719,8 +711,8 @@ public class GenerateCoreUtil {
                 "    @RequiresPermissions({\"url:" + objectName + ":save" + className + "\"})\n" +
                 "    @PostMapping(value = \"/save\",produces = MediaType.APPLICATION_JSON_UTF8_VALUE)\n" +
                 "    public ResultBody save" + className + "(@RequestBody " + className + "DTO dto){\n" +
-                "        " + objectName + "Service.save" + className + "(dto);\n" +
-                "        return new ResultBody();\n" +
+                "        Long key = " + objectName + "Service.save" + className + "(dto);\n" +
+                "        return new ResultBody((Object) key);\n" +
                 "    }").append(ENTER);
         sb.append(ENTER);
 
