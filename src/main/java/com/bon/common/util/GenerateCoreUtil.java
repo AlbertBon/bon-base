@@ -837,7 +837,7 @@ public class GenerateCoreUtil {
                 "        </el-form-item>\n");
         for (Map<String, Object> col : cols) {
             if(col.get(KEY)!=null&&col.get(KEY).toString().equals("PRI")){
-                sb.append("        <el-form-item v-show=\"false\" label=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\" prop=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\">\n" +
+                sb.append("        <el-form-item v-show=\"false\" label=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\" prop=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), true) + "\">\n" +
                         "          <el-input v-model=\"" + objectName + "Params." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + "\"></el-input>\n" +
                         "        </el-form-item>\n");
             }else if(!col.get(NAME).toString().equals("gmt_create") && !col.get(NAME).toString().equals("gmt_modified") ){
