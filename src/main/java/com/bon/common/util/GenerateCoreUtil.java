@@ -219,6 +219,7 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
         sb.append(ENTER);
         sb.append("import java.util.*;\n" +
+                "import java.math.BigDecimal;\n"+
                 "import java.io.Serializable;\n" +
                 "import org.springframework.format.annotation.DateTimeFormat;\n" +
                 "import com.fasterxml.jackson.annotation.JsonFormat;\n" +
@@ -281,6 +282,7 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
         sb.append(ENTER);
         sb.append("import java.util.*;\n" +
+                "import java.math.BigDecimal;\n"+
                 "import java.io.Serializable;");
         sb.append(ENTER);
         sb.append(ENTER);
@@ -327,6 +329,7 @@ public class GenerateCoreUtil {
         sb.append(ENTER);
         sb.append(ENTER);
         sb.append("import java.util.*;\n" +
+                "import java.math.BigDecimal;\n"+
                 "import java.io.Serializable;\n" +
                 "import io.swagger.annotations.ApiModel;\n" +
                 "import io.swagger.annotations.ApiModelProperty;\n" +

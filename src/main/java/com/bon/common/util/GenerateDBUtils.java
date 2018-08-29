@@ -50,7 +50,7 @@ public class GenerateDBUtils {
      * @return
      */
     public static ResultSet query(String sql, List<Object> params) {
-        System.out.println("sql: " + sql);
+//        System.out.println("sql: " + sql);
         //System.out.println("params: " + params);
         try {
             PreparedStatement psmt = conn.prepareStatement(sql);
@@ -71,7 +71,7 @@ public class GenerateDBUtils {
      * @param params
      */
     public static void update(String sql, List<Object> params) {
-        System.out.println("sql: " + sql);
+//        System.out.println("sql: " + sql);
         //System.out.println("params: " + params);
         try {
             PreparedStatement psmt = conn.prepareStatement(sql);
