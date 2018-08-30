@@ -40,15 +40,15 @@ public class GenerateCoreUtil {
 
     public static final String NOW_DATE = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     /***************获取数据库的配置连接************/
-    public static final String DB_NAME = GeneratePropertiesUtils.getValueByKey("generator.jdbc.url").substring(
-            GeneratePropertiesUtils.getValueByKey("generator.jdbc.url").lastIndexOf("/") + 1,
-            GeneratePropertiesUtils.getValueByKey("generator.jdbc.url").indexOf("?") == -1 ?
-                    GeneratePropertiesUtils.getValueByKey("generator.jdbc.url").length() :
-                    GeneratePropertiesUtils.getValueByKey("generator.jdbc.url").indexOf("?"));
+    public static final String DB_NAME = GeneratePropertyUtil.getProperty("generator.jdbc.url").substring(
+            GeneratePropertyUtil.getProperty("generator.jdbc.url").lastIndexOf("/") + 1,
+            GeneratePropertyUtil.getProperty("generator.jdbc.url").indexOf("?") == -1 ?
+                    GeneratePropertyUtil.getProperty("generator.jdbc.url").length() :
+                    GeneratePropertyUtil.getProperty("generator.jdbc.url").indexOf("?"));
     //从配置获取工程的报名路径
-    public static final String ROOT_PACKAGE = GeneratePropertiesUtils.getValueByKey("basePackage");
+    public static final String ROOT_PACKAGE = GeneratePropertyUtil.getProperty("basePackage");
     //获取作者.
-    public static final String AUTHOR = GeneratePropertiesUtils.getValueByKey("author");
+    public static final String AUTHOR = GeneratePropertyUtil.getProperty("author");
     //忽略表的后缀.
     public static final List<String> IGNORE_TABLE_PREFIX = new ArrayList<String>();
 
@@ -806,7 +806,7 @@ public class GenerateCoreUtil {
                         "      </el-table-column>\n");
             }
         }
-        sb.append("      <el-table-column align=\"center\" label=\"操作\" width=\"230\" class-name=\"small-padding fixed-width\">\n" +
+        sb.append("      <el-table-column  fixed=\"right\" align=\"center\" label=\"操作\" width=\"230\" class-name=\"small-padding fixed-width\">\n" +
                 "        <template slot-scope=\"scope\">\n" +
                 "          <el-button type=\"primary\" size=\"mini\" @click=\"handleUpdate(scope.row." + primaryObjectName + ")\">修改</el-button>\n" +
                 "          <el-button type=\"danger\" size=\"mini\" @click=\"handleDel(scope.row." + primaryObjectName + ")\">删除</el-button>\n" +
@@ -841,7 +841,7 @@ public class GenerateCoreUtil {
                         "          <el-input v-model=\"" + objectName + "Params." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + "\"></el-input>\n" +
                         "        </el-form-item>\n");
             }else if(!col.get(NAME).toString().equals("gmt_create") && !col.get(NAME).toString().equals("gmt_modified") ){
-                sb.append("        <el-form-item label=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\" prop=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\">\n" +
+                sb.append("        <el-form-item label=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), false) + "\" prop=\"" + StringUtils.underline2Camel(col.get(NAME).toString(), true) + "\">\n" +
                         "          <el-input v-model=\"" + objectName + "Params." + StringUtils.underline2Camel(col.get(NAME).toString(), true) + "\"></el-input>\n" +
                         "        </el-form-item>\n");
             }

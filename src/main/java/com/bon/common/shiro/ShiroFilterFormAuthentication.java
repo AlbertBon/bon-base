@@ -2,7 +2,7 @@ package com.bon.common.shiro;
 
 import com.bon.common.domain.enums.ExceptionType;
 import com.bon.common.domain.vo.ResultBody;
-import com.bon.common.util.PropertyUtil;
+import com.bon.common.util.GeneratePropertyUtil;
 import com.bon.common.util.MyLog;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ import java.io.OutputStream;
  **/
 public class ShiroFilterFormAuthentication extends FormAuthenticationFilter {
     private static final MyLog log = MyLog.getLog(ShiroFilterFormAuthentication.class);
-    private String corsHost = PropertyUtil.getProperty("corsHost");
+    private String corsHost = GeneratePropertyUtil.getProperty("corsHost");
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
         if (this.isLoginRequest(request, response)) {
@@ -59,63 +59,17 @@ public class ShiroFilterFormAuthentication extends FormAuthenticationFilter {
             out.write(new ResultBody(ExceptionType.EXPIRED_ERROR).toErrString().getBytes("utf-8"));
             out.close();
 
-//            this.saveRequestAndRedirectToLogin(request, response);
             return false;
         }
-//        if (isLoginRequest(request, response)) {
-//            if (isLoginSubmission(request, response)) {
-//                if (log.isTraceEnabled()) {
-//                    log.trace("Login submission detected.  Attempting to execute login.");
-//                }
-//                return executeLogin(request, response);
-//            } else {
-//                if (log.isTraceEnabled()) {
-//                    log.trace("Login page view.");
-//                }
-//                //allow them to see the login page ;)
-//                return true;
-//            }
-//        } else {
-//            HttpServletRequest req = (HttpServletRequest)request;
-//            HttpServletResponse resp = (HttpServletResponse) response;
-//            if(req.getMethod().equals(RequestMethod.OPTIONS.name())) {
-//                resp.setStatus(HttpStatus.OK.value());
-//                return true;
-//            }
-//
-//            if (log.isTraceEnabled()) {
-//                log.trace("Attempting to access a path which requires authentication.  Forwarding to the " +
-//                        "Authentication url [" + getLoginUrl() + "]");
-//            }
-//
-//            //前端Ajax请求时requestHeader里面带一些参数，用于判断是否是前端的请求
-//            if (req.getHeader("axios") != null) {
-//                //请求错误拦截
-//                resp.setCharacterEncoding("UTF-8");
-//                resp.setContentType("application/json; charset=utf-8");
-//                resp.setHeader("Access-Control-Allow-Origin", PropertyUtil.getProperty("corsHost"));
-//                resp.setHeader("Access-Control-Allow-Credentials","true");
-//                resp.setHeader("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
-//                OutputStream out = response.getOutputStream();
-//                out.write(new ResultBody(ExceptionType.EXPIRED_ERROR).toErrString().getBytes("utf-8"));
-//                out.close();
-//            } else {
-//                saveRequestAndRedirectToLogin(request, response);
-//            }
-//            return false;
-//        }
     }
 
 //    @Override
-//    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-//        boolean allowed = super.isAccessAllowed(request, response, mappedValue);
-//        if (!allowed) {
-//            // 判断请求是否是options请求
-//            String method = WebUtils.toHttp(request).getMethod();
-//            if (StringUtils.equalsIgnoreCase("OPTIONS", method)) {
-//                return true;
-//            }
-//        }
-//        return allowed;
+//    protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request,
+//                                     ServletResponse response) throws Exception {
+//        //获取已登录的用户信息
+//        String username =  subject.getPrincipal().toString();
+//        //把用户信息保存到session
+//        subject.getSession().setAttribute("activeUser", username);
+//        return super.onLoginSuccess(token, subject, request, response);
 //    }
 }

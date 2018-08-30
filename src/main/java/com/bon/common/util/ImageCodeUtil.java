@@ -181,7 +181,7 @@ public class ImageCodeUtil {
          * @return
          */
         private String getFontByteStr(){
-            return PropertyUtil.getProperty("fontByte");
+            return GeneratePropertyUtil.getProperty("fontByte");
         }
     }
 

@@ -1,7 +1,7 @@
 package com.bon.common.config;
 
 import com.bon.common.interceptor.Interceptor;
-import com.bon.common.util.PropertyUtil;
+import com.bon.common.util.GeneratePropertyUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -23,7 +23,7 @@ public class WebAppConfig extends WebMvcConfigurerAdapter {
         return new Interceptor();
     }
 
-    private String corsHost = PropertyUtil.getProperty("corsHost");
+    private String corsHost = GeneratePropertyUtil.getProperty("corsHost");
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

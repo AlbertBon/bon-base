@@ -11,10 +11,10 @@ import java.util.List;
  **/
 public class GenerateDBUtils {
     private static final Connection conn;
-    private static final String driverClass = GeneratePropertiesUtils.getValueByKey("generator.jdbc.driver");
-    private static final String connectionUrl = GeneratePropertiesUtils.getValueByKey("generator.jdbc.url");
-    private static final String username = GeneratePropertiesUtils.getValueByKey("generator.jdbc.username");
-    private static final String password = GeneratePropertiesUtils.getValueByKey("generator.jdbc.password");
+    private static final String driverClass = GeneratePropertyUtil.getProperty("generator.jdbc.driver");
+    private static final String connectionUrl = GeneratePropertyUtil.getProperty("generator.jdbc.url");
+    private static final String username = GeneratePropertyUtil.getProperty("generator.jdbc.username");
+    private static final String password = GeneratePropertyUtil.getProperty("generator.jdbc.password");
 
     private static GenerateDBUtils instance = null;
     /**
