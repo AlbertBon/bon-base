@@ -19,7 +19,9 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -240,6 +242,21 @@ public class UserServiceImpl implements UserService {
             voList.add(userRole.getRoleId());
         }
         return voList;
+    }
+
+    @Override
+    public void uploadAvatar(MultipartFile file,Long key) {
+        String avatarUrl = AttachmentUtil.uploadAvatar(file);
+        SysUser user = new SysUser();
+        user.setUserId(key);
+        user.setAvatarUrl(avatarUrl);
+        userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    @Override
+    public void getAvatar(HttpServletResponse res, Long key) {
+        String filePath = userMapper.selectByPrimaryKey(key).getAvatarUrl();
+        AttachmentUtil.getImage(res,filePath);
     }
 
 }

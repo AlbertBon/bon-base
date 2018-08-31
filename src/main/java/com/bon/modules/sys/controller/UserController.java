@@ -3,6 +3,7 @@ package com.bon.modules.sys.controller;
 import com.bon.common.config.OperateInitConfig;
 import com.bon.common.domain.vo.PageVO;
 import com.bon.common.domain.vo.ResultBody;
+import com.bon.common.util.AttachmentUtil;
 import com.bon.modules.sys.domain.dto.*;
 import com.bon.modules.sys.domain.vo.*;
 import com.bon.modules.sys.service.UserService;
@@ -10,10 +11,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -68,6 +73,19 @@ public class UserController {
     public ResultBody deleteUser(@RequestParam Long key){
         userService.deleteUser(key);
         return new ResultBody();
+    }
+
+    @ApiOperation(value = "上传用户头像",notes = "上传用户头像")
+    @PostMapping(value = "/uploadAvatar")
+    public ResultBody uploadAvatar(@RequestParam("file") MultipartFile file,@RequestParam("key") Long key ) throws Exception{
+        userService.uploadAvatar(file,key);
+        return new ResultBody();//强转使得返回信息为data
+    }
+
+    @ApiOperation(value = "获取用户头像",notes = "获取用户头像")
+    @GetMapping(value = "/getAvatar")
+    public void getAvatar(@RequestParam("key") Long key, HttpServletResponse res) throws Exception{
+        userService.getAvatar(res,key);
     }
 
 }

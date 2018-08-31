@@ -37,6 +37,16 @@ public class UserVO implements Serializable{
 
     private Byte isAdmin;
 
+    private String avatarUrl;
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
     public Byte getIsAdmin() {
         return isAdmin;
     }

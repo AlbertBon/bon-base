@@ -23,6 +23,8 @@ public class LoginVO implements Serializable{
     private String username;
 
     private String remark;
+
+    private String avatarUrl;
     //token(uuid)
     private String token;
     //前端菜单路由
@@ -98,5 +100,13 @@ public class LoginVO implements Serializable{
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 }

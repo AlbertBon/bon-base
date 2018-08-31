@@ -1,20 +1,27 @@
 package com.bon.modules.sys.domain.entity;
 
+import java.util.*;
+import java.math.BigDecimal;
 import java.io.Serializable;
-import java.util.Date;
-
 import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
+
+
 /**
- * 
- * 实体类对应的数据表为：  sys_user
- */
-@ApiModel(value ="SysUser")
-public class SysUser implements Serializable {
+ * @Created：2018-08-30
+ * @Author Albert
+ * @Version: 1.0
+ * @Description: SysUser参数类
+ * @Email: 502285815@qq.com
+*/
+@ApiModel(value ="SysUser",description = "用户表")
+public class SysUser implements Serializable{
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = "JDBC")
     @ApiModelProperty(value = "ID")
@@ -67,30 +74,8 @@ public class SysUser implements Serializable {
     @ApiModelProperty(value = "是否是管理员")
     private Byte isAdmin;
 
-    private static final long serialVersionUID = 1L;
-
-    public SysUser(Long userId, Date gmtCreate, Date gmtModified, String name, String phone, String email, String telephone, String address, String username, String password, String remark, String wxOpenid, String appId, String secretKey, String salt, Byte isAdmin) {
-        this.userId = userId;
-        this.gmtCreate = gmtCreate;
-        this.gmtModified = gmtModified;
-        this.name = name;
-        this.phone = phone;
-        this.email = email;
-        this.telephone = telephone;
-        this.address = address;
-        this.username = username;
-        this.password = password;
-        this.remark = remark;
-        this.wxOpenid = wxOpenid;
-        this.appId = appId;
-        this.secretKey = secretKey;
-        this.salt = salt;
-        this.isAdmin = isAdmin;
-    }
-
-    public SysUser() {
-        super();
-    }
+    @ApiModelProperty(value = "头像地址")
+    private String avatarUrl;
 
     public Long getUserId() {
         return userId;
@@ -100,7 +85,6 @@ public class SysUser implements Serializable {
         this.userId = userId;
     }
 
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     public Date getGmtCreate() {
         return gmtCreate;
     }
@@ -109,7 +93,6 @@ public class SysUser implements Serializable {
         this.gmtCreate = gmtCreate;
     }
 
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     public Date getGmtModified() {
         return gmtModified;
     }
@@ -123,7 +106,7 @@ public class SysUser implements Serializable {
     }
 
     public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+        this.name = name;
     }
 
     public String getPhone() {
@@ -131,7 +114,7 @@ public class SysUser implements Serializable {
     }
 
     public void setPhone(String phone) {
-        this.phone = phone == null ? null : phone.trim();
+        this.phone = phone;
     }
 
     public String getEmail() {
@@ -139,7 +122,7 @@ public class SysUser implements Serializable {
     }
 
     public void setEmail(String email) {
-        this.email = email == null ? null : email.trim();
+        this.email = email;
     }
 
     public String getTelephone() {
@@ -147,7 +130,7 @@ public class SysUser implements Serializable {
     }
 
     public void setTelephone(String telephone) {
-        this.telephone = telephone == null ? null : telephone.trim();
+        this.telephone = telephone;
     }
 
     public String getAddress() {
@@ -155,7 +138,7 @@ public class SysUser implements Serializable {
     }
 
     public void setAddress(String address) {
-        this.address = address == null ? null : address.trim();
+        this.address = address;
     }
 
     public String getUsername() {
@@ -163,7 +146,7 @@ public class SysUser implements Serializable {
     }
 
     public void setUsername(String username) {
-        this.username = username == null ? null : username.trim();
+        this.username = username;
     }
 
     public String getPassword() {
@@ -171,7 +154,7 @@ public class SysUser implements Serializable {
     }
 
     public void setPassword(String password) {
-        this.password = password == null ? null : password.trim();
+        this.password = password;
     }
 
     public String getRemark() {
@@ -179,7 +162,7 @@ public class SysUser implements Serializable {
     }
 
     public void setRemark(String remark) {
-        this.remark = remark == null ? null : remark.trim();
+        this.remark = remark;
     }
 
     public String getWxOpenid() {
@@ -187,7 +170,7 @@ public class SysUser implements Serializable {
     }
 
     public void setWxOpenid(String wxOpenid) {
-        this.wxOpenid = wxOpenid == null ? null : wxOpenid.trim();
+        this.wxOpenid = wxOpenid;
     }
 
     public String getAppId() {
@@ -195,7 +178,7 @@ public class SysUser implements Serializable {
     }
 
     public void setAppId(String appId) {
-        this.appId = appId == null ? null : appId.trim();
+        this.appId = appId;
     }
 
     public String getSecretKey() {
@@ -203,7 +186,7 @@ public class SysUser implements Serializable {
     }
 
     public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey == null ? null : secretKey.trim();
+        this.secretKey = secretKey;
     }
 
     public String getSalt() {
@@ -211,7 +194,7 @@ public class SysUser implements Serializable {
     }
 
     public void setSalt(String salt) {
-        this.salt = salt == null ? null : salt.trim();
+        this.salt = salt;
     }
 
     public Byte getIsAdmin() {
@@ -221,4 +204,13 @@ public class SysUser implements Serializable {
     public void setIsAdmin(Byte isAdmin) {
         this.isAdmin = isAdmin;
     }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
 }

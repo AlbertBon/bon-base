@@ -7,7 +7,9 @@ import com.bon.modules.sys.domain.entity.SysPermission;
 import com.bon.modules.sys.domain.entity.SysRole;
 import com.bon.modules.sys.domain.entity.SysUser;
 import com.bon.modules.sys.domain.vo.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -50,5 +52,17 @@ public interface UserService {
      * @return
      */
     List<Long> getUserRoleIds(Long userId);
+    /**
+     * 上传用户头像
+     * @param roleIds
+     * @param userId
+     */
+    void uploadAvatar(MultipartFile file,Long key);
+    /**
+     * 获取用户头像
+     * @param roleIds
+     * @param userId
+     */
+    void getAvatar(HttpServletResponse res,Long key);
 
 }

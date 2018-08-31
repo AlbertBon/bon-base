@@ -90,7 +90,7 @@ public class generateMain {
         Map<String,String> map;
 
         map = new HashMap<>();
-        map.put("tableName","sys_permission");
+        map.put("tableName","sys_user");
         map.put("modules","sys");
         maps.add(map);
 //

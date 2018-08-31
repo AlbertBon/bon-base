@@ -56,6 +56,17 @@ public class UserDTO extends BaseDTO<SysUser> {
     @ApiModelProperty(value = "是否是管理员")
     private Byte isAdmin;
 
+    @ApiModelProperty(value = "头像地址")
+    private String avatarUrl;
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
     public Byte getIsAdmin() {
         return isAdmin;
     }
