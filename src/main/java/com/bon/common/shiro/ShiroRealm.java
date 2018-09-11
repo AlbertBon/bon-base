@@ -1,12 +1,11 @@
 package com.bon.common.shiro;
 
 import com.bon.common.service.RedisService;
+import com.bon.common.util.MyLog;
 import com.bon.modules.sys.domain.entity.SysPermission;
 import com.bon.modules.sys.domain.entity.SysRole;
 import com.bon.modules.sys.domain.entity.SysUser;
 import com.bon.modules.sys.service.ShiroService;
-import com.bon.modules.sys.service.UserService;
-import com.bon.common.util.MyLog;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -30,6 +29,11 @@ public class ShiroRealm extends AuthorizingRealm {
 
     @Autowired
     private RedisService redisService;
+
+    /**
+     * 支持的登陆类型
+     */
+    private String supportedLoginType;
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -61,11 +65,12 @@ public class ShiroRealm extends AuthorizingRealm {
         //实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
         SysUser user = shiroService.getUserByUsername(username);
         if (user == null) {
-            return null;
+            throw new UnknownAccountException();//没找到帐号
         }
-//        if (userInfo.getState() == 1) { //账户冻结
-//            throw new LockedAccountException();
-//        }
+        if (user.getSalt() == "01") {
+            throw new LockedAccountException(); //帐号冻结
+        }
+
         SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(
                 user.getUsername(), //用户名
                 user.getPassword(), //密码
@@ -76,4 +81,19 @@ public class ShiroRealm extends AuthorizingRealm {
         return authenticationInfo;
     }
 
+    public boolean supports(AuthenticationToken token) {
+        if (token instanceof ShiroToken) {
+            ShiroToken shiroToken = (ShiroToken) token;
+            return getSupportedLoginType().equals(shiroToken.getLoginType());
+        }
+        return false;
+    }
+
+    public String getSupportedLoginType() {
+        return supportedLoginType;
+    }
+
+    public void setSupportedLoginType(String supportedLoginType) {
+        this.supportedLoginType = supportedLoginType;
+    }
 }

@@ -63,7 +63,7 @@ public class LoginServiceImpl implements LoginService {
         //清除seesion中code
         redisService.del(key);
         //登录
-        ShiroToken token = new ShiroToken(loginDTO.getUsername(), loginDTO.getPassword(),loginDTO.getCode());
+        ShiroToken token = new ShiroToken(loginDTO.getUsername(), loginDTO.getPassword(),false,"","WX");
         //如果用户已登录过，先退出再登录
         if(subject.getPrincipal()!=null){
             subject.logout();

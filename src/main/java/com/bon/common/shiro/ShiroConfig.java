@@ -2,8 +2,10 @@ package com.bon.common.shiro;
 
 import com.bon.common.service.RedisService;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.session.mgt.SessionManager;
+import org.apache.shiro.authz.ModularRealmAuthorizer;
 import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.realm.Realm;
+import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -18,10 +20,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import javax.servlet.Filter;
+import java.util.*;
 
 /**
  * @program: bon基础项目
@@ -59,6 +59,7 @@ public class ShiroConfig {
 
 //        filterChainDefinitionMap.put("/sys/*", "anon");
         filterChainDefinitionMap.put("/login/*", "anon");
+        filterChainDefinitionMap.put("/wechat/login", "anon");
         filterChainDefinitionMap.put("/**", "authc");
         //配置shiro默认登录界面地址，前后端分离中登录界面跳转应由前端路由控制，后台仅返回json数据
 //        shiroFilterFactoryBean.setLoginUrl("/login/unauth");
@@ -97,10 +98,39 @@ public class ShiroConfig {
     }
 
     @Bean
+    public ModularRealmAuthorizer modularRealmAuthorizer(){
+        ModularRealmAuthorizer modularRealmAuthorizer = new ModularRealmAuthorizer();
+        Collection<Realm> realms = new ArrayList<>();
+        realms.add(myShiroRealm());
+        realms.add(wechatShiroRealm());
+        modularRealmAuthorizer.setRealms(realms);
+        return modularRealmAuthorizer;
+    }
+
+    @Bean
+    public ShiroModularRealmAuthenticator shiroModularRealmAuthenticator(){
+        ShiroModularRealmAuthenticator shiroModularRealmAuthenticator = new ShiroModularRealmAuthenticator();
+        Collection<Realm> realms = new ArrayList<>();
+        realms.add(myShiroRealm());
+        realms.add(wechatShiroRealm());
+        shiroModularRealmAuthenticator.setRealms(realms);
+        return shiroModularRealmAuthenticator;
+    }
+
+    @Bean
     public ShiroRealm myShiroRealm() {
         ShiroRealm shiroRealm = new ShiroRealm();
         shiroRealm.setCredentialsMatcher(hashedCredentialsMatcher());
+        shiroRealm.setSupportedLoginType("PC");
         return shiroRealm;
+    }
+
+    @Bean
+    public ShiroRealmWechat wechatShiroRealm() {
+        ShiroRealmWechat wechatShiroRealm = new ShiroRealmWechat();
+        wechatShiroRealm.setCredentialsMatcher(shiroCredentialsMatcher());
+        wechatShiroRealm.setSupportedLoginType("WX");
+        return wechatShiroRealm;
     }
 
 
@@ -112,6 +142,8 @@ public class ShiroConfig {
         securityManager.setSessionManager(defaultWebSessionManager());
         // 自定义缓存实现 使用redis
         securityManager.setCacheManager(cacheManager());
+        securityManager.setAuthenticator(shiroModularRealmAuthenticator());
+        securityManager.setAuthorizer(modularRealmAuthorizer());
         return securityManager;
     }
 

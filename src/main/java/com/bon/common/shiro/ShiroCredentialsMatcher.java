@@ -14,8 +14,9 @@ public class ShiroCredentialsMatcher extends SimpleCredentialsMatcher{
 
     @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
-        Object tokenCredentials = this.getCredentials(token);
-        Object accountCredentials = this.getCredentials(info);
-        return this.equals(tokenCredentials, accountCredentials);
+//        Object tokenCredentials = this.getCredentials(token);
+//        Object accountCredentials = this.getCredentials(info);
+//        return this.equals(tokenCredentials, accountCredentials);
+        return true;
     }
 }

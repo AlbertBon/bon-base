@@ -12,6 +12,8 @@ public class ShiroToken extends UsernamePasswordToken {
     //验证码
     private String vCode;
 
+    private String loginType;
+
     public ShiroToken(String username, String password, String vCode, boolean rememberMe) {
         super(username, (char[]) (password != null ? password.toCharArray() : null), rememberMe, (String) null);
         this.vCode = vCode;
@@ -20,6 +22,19 @@ public class ShiroToken extends UsernamePasswordToken {
     public ShiroToken(String username, String password, String vCode) {
         super(username, (char[]) (password != null ? password.toCharArray() : null), false, (String) null);
         this.vCode = vCode;
+    }
+
+    public ShiroToken(String username, String password, boolean rememberMe, String host, String loginType) {
+        super(username, password, rememberMe, host);
+        this.loginType = loginType;
+    }
+
+    public String getLoginType() {
+        return loginType;
+    }
+
+    public void setLoginType(String loginType) {
+        this.loginType = loginType;
     }
 
     public String getvCode() {
