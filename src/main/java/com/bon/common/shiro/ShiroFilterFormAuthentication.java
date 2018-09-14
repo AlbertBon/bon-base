@@ -63,7 +63,7 @@ public class ShiroFilterFormAuthentication extends FormAuthenticationFilter {
             //请求错误拦截
             resp.setCharacterEncoding("UTF-8");
             resp.setContentType("application/json; charset=utf-8");
-            resp.setHeader("Access-Control-Allow-Origin", "*");
+            resp.setHeader("Access-Control-Allow-Origin", corsHost);
             resp.setHeader("Access-Control-Allow-Credentials","true");
             resp.setHeader("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
             OutputStream out = response.getOutputStream();

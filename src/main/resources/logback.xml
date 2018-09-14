@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" ?>
 <configuration debug="false">
     <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
     <!-- 读取spring.application.name中的属性来生成日志文件名 -->
@@ -8,6 +8,9 @@
     <!-- 日志名称 -->
     <springProperty scope="context" name="log_level" source="app.logLevel" defaultValue="INFO"/>
 
+    <!--<property name="log_path" value="C:/logs"/>-->
+    <!--<property name="log_name" value="generatesql"/>-->
+    <!--<property name="log_level" value="INFO"/>-->
 
     <!-- 文件大小限制 -->
     <property name="MAX_FILE_SIZE" value="20MB"/>
